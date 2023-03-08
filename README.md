@@ -2,7 +2,6 @@
 
 [![NPM Version](https://img.shields.io/npm/v/lastfm-client-ts-client.svg?branch=main)](https://www.npmjs.com/package/lastfm-client-ts)
 [![Downloads Per Week](https://img.shields.io/npm/dw/lastfm-client-ts.svg?color=blue)](https://www.npmjs.com/package/lastfm-client-ts)
-[![Codacy Badge](https://app.codacy.com/project/badge/Grade/ba3b73c24e06433fabe0efed8b43d026)](https://www.codacy.com/gh/mannuelf/lastfm-client-ts/dashboard?utm_source=github.com&utm_medium=referral&utm_content=mannuelf/lastfm-client-ts&utm_campaign=Badge_Grade)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
 ## Table of Contents
