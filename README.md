@@ -1,6 +1,6 @@
 # lastfm-client-ts
 
-[![NPM Version](https://img.shields.io/npm/v/lastfm-client-ts-client.svg?branch=main)](https://www.npmjs.com/package/lastfm-client-ts)
+[![NPM Version](https://img.shields.io/npm/v/lastfm-client-ts.svg?branch=main)](https://www.npmjs.com/package/lastfm-client-ts)
 [![Downloads Per Week](https://img.shields.io/npm/dw/lastfm-client-ts.svg?color=blue)](https://www.npmjs.com/package/lastfm-client-ts)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
