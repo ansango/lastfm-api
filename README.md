@@ -13,6 +13,8 @@
     - [Installing](#installing)
     - [Usage](#usage)
     - [Environment Variables](#environment-variables)
+    - [Fullytyped](#fullytyped)
+  - [Contributing](#contributing)
 
 ## About <a name = "about"></a>
 
@@ -60,3 +62,11 @@ To run this project, you will need to add the following environment variables to
 - `LASTFM_USER=`
 - `LASTFM_API_KEY=`
 - `LASTFM_APPNAME=`
+
+### Fullytyped
+
+This project is fully typed with TypeScript.
+
+## Contributing
+
+Contributions are always welcome!
