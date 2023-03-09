@@ -79,11 +79,14 @@ export type RecentTracks = {
             mbid: Mbid;
             "#text": ArtistName;
         };
-        date: DateProp;
+        date?: DateProp;
         name: TrackName;
         mbid: Mbid;
         url: Url;
         image: Array<Image>;
+        "@attr"?: {
+            nowplaying: boolean;
+        };
     }>;
     "@attr": {
         user: UserName;
