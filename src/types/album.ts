@@ -28,10 +28,15 @@ import type {
 } from "./base";
 
 type AlbumTag = {
-  tag: Array<{
-    name: TagName;
-    url: Url;
-  }>;
+  tag?:
+    | Array<{
+        name: TagName;
+        url: Url;
+      }>
+    | {
+        name: TagName;
+        url: Url;
+      };
 };
 
 type AlbumTrackArtist = {

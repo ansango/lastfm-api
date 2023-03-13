@@ -1,9 +1,12 @@
 import type { AlbumName, ArtistName, Lang, Mbid, UserName, TagName, Url, Count, Limit, Page, Text, TotalResults, StartIndex, ItemsPerPage, For, Image, Duration, Name, Published, Summary, Content, Playcount, Listeners, Role, SearchTerms, StartPage } from "./base";
 type AlbumTag = {
-    tag: Array<{
+    tag?: Array<{
         name: TagName;
         url: Url;
-    }>;
+    }> | {
+        name: TagName;
+        url: Url;
+    };
 };
 type AlbumTrackArtist = {
     name: ArtistName;

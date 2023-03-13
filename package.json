@@ -1,6 +1,6 @@
 {
   "name": "lastfm-client-ts",
-  "version": "1.0.4-alpha.1",
+  "version": "1.0.4-alpha.2",
   "description": "A LastFM client written in Typescript",
   "main": "./dist",
   "types": "./dist/index.d.ts",
