@@ -54,7 +54,16 @@
     "build": "rimraf dist && tsc",
     "clean": "rimraf dist",
     "dev": "bun run clean && tsc --watch --project tsconfig.dev.json",
-    "prepublishOnly": "bun run build"
+    "test": "bun test-real.ts",
+    "prepublishOnly": "bun run build",
+    "changelog": "bun scripts/changelog.ts",
+    "release": "bun scripts/release.ts",
+    "release:patch": "bun scripts/release.ts patch",
+    "release:minor": "bun scripts/release.ts minor",
+    "release:major": "bun scripts/release.ts major",
+    "release:alpha": "bun scripts/release.ts alpha",
+    "release:beta": "bun scripts/release.ts beta",
+    "gh:release": "bun scripts/github-release.ts"
   },
   "repository": "https://github.com/ansango/lastfm-client-ts.git",
   "author": "Anibal Santos",

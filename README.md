@@ -293,9 +293,60 @@ Contributions are always welcome!
 
 1. Fork the repository
 2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+3. Commit your changes using [Conventional Commits](https://www.conventionalcommits.org/)
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
+
+### Development Scripts
+
+```bash
+# Install dependencies
+bun install
+
+# Run in development mode (watch mode)
+bun run dev
+
+# Build the project
+bun run build
+
+# Run tests
+bun test
+
+# Clean build artifacts
+bun run clean
+```
+
+### Release Process
+
+This project uses automated release scripts:
+
+```bash
+# Create a patch release (1.0.0 -> 1.0.1)
+bun run release:patch
+
+# Create a minor release (1.0.0 -> 1.1.0)
+bun run release:minor
+
+# Create a major release (1.0.0 -> 2.0.0)
+bun run release:major
+
+# Create an alpha release (1.0.0 -> 1.0.1-alpha.0)
+bun run release:alpha
+
+# Create a beta release (1.0.0 -> 1.0.1-beta.0)
+bun run release:beta
+```
+
+The release script will:
+- Run tests
+- Build the project
+- Generate changelog from commits
+- Bump version in package.json
+- Create git tag
+- Create GitHub release
+- Publish to npm
+
+For more details, see [scripts/README.md](scripts/README.md).
 
 ## License
 

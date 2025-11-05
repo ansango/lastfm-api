@@ -7,6 +7,66 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [2.0.0-alpha.1] - 2025-11-05
 
+### ✨ Features
+
+- **rewrite**: complete v2.0.0-alpha.1 refactor — universal ESM Last.fm client ([bc6d43b](https://github.com/ansango/lastfm-client-ts/commit/bc6d43b))
+- **readme**: contributing ([5d4559e](https://github.com/ansango/lastfm-client-ts/commit/5d4559e))
+- **pkg**: up pkg ([0d0ef42](https://github.com/ansango/lastfm-client-ts/commit/0d0ef42))
+- **readme**: adding dotenv ([65b130f](https://github.com/ansango/lastfm-client-ts/commit/65b130f))
+- **readme**: basic readme ([cb467cb](https://github.com/ansango/lastfm-client-ts/commit/cb467cb))
+- **pkg**: update package ([5f80e0f](https://github.com/ansango/lastfm-client-ts/commit/5f80e0f))
+- **chart**: service and types ([8d3f612](https://github.com/ansango/lastfm-client-ts/commit/8d3f612))
+- **build**: build geo ([9f98f98](https://github.com/ansango/lastfm-client-ts/commit/9f98f98))
+- **geo**: service and types ([eadebaa](https://github.com/ansango/lastfm-client-ts/commit/eadebaa))
+- **library**: service and type library ([1a89551](https://github.com/ansango/lastfm-client-ts/commit/1a89551))
+- **tag**: tag service and types ([3d6de29](https://github.com/ansango/lastfm-client-ts/commit/3d6de29))
+- **tag**: service tag added ([87de559](https://github.com/ansango/lastfm-client-ts/commit/87de559))
+- **track**: track types and services ([f5e6363](https://github.com/ansango/lastfm-client-ts/commit/f5e6363))
+- **track**: track service ([62f342c](https://github.com/ansango/lastfm-client-ts/commit/62f342c))
+- **artist**: done artist ([59de841](https://github.com/ansango/lastfm-client-ts/commit/59de841))
+- **typed**: fix types ([0738393](https://github.com/ansango/lastfm-client-ts/commit/0738393))
+- **build**: artist service build ([a8bf981](https://github.com/ansango/lastfm-client-ts/commit/a8bf981))
+- **artist**: service constructor ([02c1db0](https://github.com/ansango/lastfm-client-ts/commit/02c1db0))
+- **types**: split api types ([5a90a8d](https://github.com/ansango/lastfm-client-ts/commit/5a90a8d))
+- **dist**: build album done ([50ec5cb](https://github.com/ansango/lastfm-client-ts/commit/50ec5cb))
+- **album**: services album ([bd509d2](https://github.com/ansango/lastfm-client-ts/commit/bd509d2))
+- **primitives**: refactor primitives ([3d8a5d3](https://github.com/ansango/lastfm-client-ts/commit/3d8a5d3))
+- **refactor types**: refator types user and base types ([e9d17b8](https://github.com/ansango/lastfm-client-ts/commit/e9d17b8))
+- **album**: album services ([4ab012f](https://github.com/ansango/lastfm-client-ts/commit/4ab012f))
+- **dist**: build dist ([c0e434e](https://github.com/ansango/lastfm-client-ts/commit/c0e434e))
+- **config**: config api modules ([19bc7d9](https://github.com/ansango/lastfm-client-ts/commit/19bc7d9))
+- **docs**: functions ([0896be4](https://github.com/ansango/lastfm-client-ts/commit/0896be4))
+- **docs**: user docs generated ([e47c4c5](https://github.com/ansango/lastfm-client-ts/commit/e47c4c5))
+- **package pub**: pub package dem ([c9d6b1d](https://github.com/ansango/lastfm-client-ts/commit/c9d6b1d))
+- **reset**: reset version npm ([1f0a23f](https://github.com/ansango/lastfm-client-ts/commit/1f0a23f))
+- **ignore**: npm ignore ([2d08998](https://github.com/ansango/lastfm-client-ts/commit/2d08998))
+- **dist**: added dist ([329d2fb](https://github.com/ansango/lastfm-client-ts/commit/329d2fb))
+- **lock**: yarn lock ([6854da4](https://github.com/ansango/lastfm-client-ts/commit/6854da4))
+- **typed**: split types ([1249635](https://github.com/ansango/lastfm-client-ts/commit/1249635))
+- **config**: dist and test ([c34b106](https://github.com/ansango/lastfm-client-ts/commit/c34b106))
+- **fetcher**: fetcher and types req res ([be94106](https://github.com/ansango/lastfm-client-ts/commit/be94106))
+- **config**: added config and method endpoints ([ac9921e](https://github.com/ansango/lastfm-client-ts/commit/ac9921e))
+- **ts**: config typescript ([c1edaa4](https://github.com/ansango/lastfm-client-ts/commit/c1edaa4))
+- **readme**: minimal readme added ([5264665](https://github.com/ansango/lastfm-client-ts/commit/5264665))
+- **pkg**: init with package ([9f12384](https://github.com/ansango/lastfm-client-ts/commit/9f12384))
+
+### 🐛 Bug Fixes
+
+- **build**: fix not published ([6e26de1](https://github.com/ansango/lastfm-client-ts/commit/6e26de1))
+- **fix album tag**: fix album tag type with correct api definition ([e46598c](https://github.com/ansango/lastfm-client-ts/commit/e46598c))
+- **track**: user recent track, isnowplaying ([fc03f5e](https://github.com/ansango/lastfm-client-ts/commit/fc03f5e))
+- **user**: user recent track type fixed ([cd0be82](https://github.com/ansango/lastfm-client-ts/commit/cd0be82))
+- **readme**: list ([3b84393](https://github.com/ansango/lastfm-client-ts/commit/3b84393))
+- **readme**: fix readme ([66b22bd](https://github.com/ansango/lastfm-client-ts/commit/66b22bd))
+- **fetcher**: fetcher and types ([4eb2aad](https://github.com/ansango/lastfm-client-ts/commit/4eb2aad))
+
+### ⚡ Performance Improvements
+
+- **build**: build client ([c30c9d0](https://github.com/ansango/lastfm-client-ts/commit/c30c9d0))
+
+
+## [2.0.0-alpha.1] - 2025-11-05
+
 ### 🚀 Major Refactoring
 
 Complete rewrite of the library to be a universal, framework-agnostic Last.fm API client.

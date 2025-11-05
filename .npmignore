@@ -1,5 +1,44 @@
 
-src
-tsconfig.json
+# Source files
+src/
+
+# Tests
+*.test.ts
+test-*.ts
+example.ts
+
+# Scripts
+scripts/
+
+# Config files
+tsconfig*.json
 prettier.json
-tsconfig.dev.json
+.env
+.env.*
+
+# Git
+.git/
+.gitignore
+
+# Documentation (except README and CHANGELOG)
+*.old.md
+REFACTOR_PLAN.md
+
+# Build artifacts
+*.log
+*.tsbuildinfo
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Misc
+node_modules/
+coverage/
+.nyc_output/
