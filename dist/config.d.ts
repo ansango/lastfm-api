@@ -1,11 +1,23 @@
-export declare const config: {
-    api_key: string;
-    app_name: string;
-    base_url: string;
-    format: {
-        json: string;
-        xml: string;
-    };
-    share_secret: string;
-    username: string;
-};
+export interface LastFmConfig {
+    apiKey: string;
+    sharedSecret?: string;
+    sessionKey?: string;
+    baseUrl?: string;
+}
+/**
+ * Crea una nueva configuración validada
+ */
+export declare function createConfig(options?: Partial<LastFmConfig>): LastFmConfig;
+/**
+ * Establece la configuración global
+ */
+export declare function setGlobalConfig(config: Partial<LastFmConfig>): void;
+/**
+ * Obtiene la configuración global
+ */
+export declare function getGlobalConfig(): LastFmConfig;
+/**
+ * Resetea la configuración global (útil para testing)
+ */
+export declare function resetGlobalConfig(): void;
+//# sourceMappingURL=config.d.ts.map

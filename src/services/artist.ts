@@ -1,0 +1,108 @@
+import type {
+	ArtistGetInfoRequest,
+	ArtistGetInfoResponse,
+	ArtistGetTagsRequest,
+	ArtistGetTagsResponse,
+	ArtistGetTopAlbumsRequest,
+	ArtistGetTopAlbumsResponse,
+	ArtistGetTopTagsRequest,
+	ArtistGetTopTagsResponse,
+	ArtistGetTopTracksRequest,
+	ArtistGetTopTracksResponse,
+	ArtistSearchRequest,
+	ArtistSearchResponse,
+	ArtistGetSimilarRequest,
+	ArtistGetSimilarResponse
+} from './artist.types.js';
+import { fetcher, buildUrl } from '../utils.js';
+import type { LastFmConfig } from '../config.js';
+
+export interface ArtistService {
+	/**
+	 * Get the metadata for an artist. Includes biography.
+	 * @param {ArtistGetInfoRequest} params
+	 * @param {RequestInit} init
+	 * @returns {Promise<ArtistGetInfoResponse>}
+	 * https://www.last.fm/api/show/artist.getInfo
+	 */
+	getInfo: (params: ArtistGetInfoRequest, init?: RequestInit) => Promise<ArtistGetInfoResponse>;
+	/**
+	 * Get the tags applied by an individual user to an artist on Last.fm.
+	 * @param {ArtistGetTagsRequest} params
+	 * @param {RequestInit} init
+	 * @returns {Promise<ArtistGetTagsResponse>}
+	 * https://www.last.fm/api/show/artist.getTags
+	 * */
+	getTags: (params: ArtistGetTagsRequest, init?: RequestInit) => Promise<ArtistGetTagsResponse>;
+	/**
+	 * Get the similar artists for this artist on Last.fm, based on listening data.
+	 * @param {ArtistGetSimilarRequest} params
+	 * @param {RequestInit} init
+	 * @returns {Promise<ArtistGetSimilarResponse>}
+	 * https://www.last.fm/api/show/artist.getSimilar
+	 * */
+	getSimilar: (
+		params: ArtistGetSimilarRequest,
+		init?: RequestInit
+	) => Promise<ArtistGetSimilarResponse>;
+	/**
+	 * Get the top tags for an artist on Last.fm, ordered by popularity.
+	 * @param {ArtistGetTopTagsRequest} params
+	 * @param {RequestInit} init
+	 * @returns {Promise<ArtistGetTopTagsResponse>}
+	 * https://www.last.fm/api/show/artist.getTopTags
+	 * */
+	getTopTags: (
+		params: ArtistGetTopTagsRequest,
+		init?: RequestInit
+	) => Promise<ArtistGetTopTagsResponse>;
+	/**
+	 * Get the top albums for an artist on Last.fm, ordered by popularity.
+	 * @param {ArtistGetTopAlbumsRequest} params
+	 * @param {RequestInit} init
+	 * @returns {Promise<ArtistGetTopAlbumsResponse>}
+	 * https://www.last.fm/api/show/artist.getTopAlbums
+	 * */
+	getTopAlbums: (
+		params: ArtistGetTopAlbumsRequest,
+		init?: RequestInit
+	) => Promise<ArtistGetTopAlbumsResponse>;
+	/**
+	 * Get the top tracks by an artist on Last.fm, ordered by popularity.
+	 * @param {ArtistGetTopTracksRequest} params
+	 * @param {RequestInit} init
+	 * @returns {Promise<ArtistGetTopTracksResponse>}
+	 * https://www.last.fm/api/show/artist.getTopTracks
+	 * */
+	getTopTracks: (
+		params: ArtistGetTopTracksRequest,
+		init?: RequestInit
+	) => Promise<ArtistGetTopTracksResponse>;
+	/**
+	 * Search for an artist by name. Returns artist matches sorted by relevance.
+	 * @param {ArtistSearchRequest} params
+	 * @param {RequestInit} init
+	 * @returns {Promise<ArtistSearchResponse>}
+	 * https://www.last.fm/api/show/artist.search
+	 * */
+	search: (params: ArtistSearchRequest, init?: RequestInit) => Promise<ArtistSearchResponse>;
+}
+
+export function createArtistService(config: LastFmConfig): ArtistService {
+	return {
+		getInfo: (params, init) =>
+			fetcher<ArtistGetInfoResponse>(buildUrl(config, 'artist.getInfo', params), init),
+		getTags: (params, init) =>
+			fetcher<ArtistGetTagsResponse>(buildUrl(config, 'artist.getTags', params), init),
+		getSimilar: (params, init) =>
+			fetcher<ArtistGetSimilarResponse>(buildUrl(config, 'artist.getSimilar', params), init),
+		getTopTags: (params, init) =>
+			fetcher<ArtistGetTopTagsResponse>(buildUrl(config, 'artist.getTopTags', params), init),
+		getTopAlbums: (params, init) =>
+			fetcher<ArtistGetTopAlbumsResponse>(buildUrl(config, 'artist.getTopAlbums', params), init),
+		getTopTracks: (params, init) =>
+			fetcher<ArtistGetTopTracksResponse>(buildUrl(config, 'artist.getTopTracks', params), init),
+		search: (params, init) =>
+			fetcher<ArtistSearchResponse>(buildUrl(config, 'artist.search', params), init)
+	};
+}

@@ -1,13 +1,60 @@
 {
   "name": "lastfm-client-ts",
-  "version": "1.0.4-alpha.2",
-  "description": "A LastFM client written in Typescript",
-  "main": "./dist",
+  "version": "2.0.0-alpha.1",
+  "description": "A universal Last.fm API client for Node.js and Browser",
+  "type": "module",
+  "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./user": {
+      "import": "./dist/entrypoints/user.js",
+      "types": "./dist/entrypoints/user.d.ts"
+    },
+    "./album": {
+      "import": "./dist/entrypoints/album.js",
+      "types": "./dist/entrypoints/album.d.ts"
+    },
+    "./artist": {
+      "import": "./dist/entrypoints/artist.js",
+      "types": "./dist/entrypoints/artist.d.ts"
+    },
+    "./track": {
+      "import": "./dist/entrypoints/track.js",
+      "types": "./dist/entrypoints/track.d.ts"
+    },
+    "./tag": {
+      "import": "./dist/entrypoints/tag.js",
+      "types": "./dist/entrypoints/tag.d.ts"
+    },
+    "./chart": {
+      "import": "./dist/entrypoints/chart.js",
+      "types": "./dist/entrypoints/chart.d.ts"
+    },
+    "./geo": {
+      "import": "./dist/entrypoints/geo.js",
+      "types": "./dist/entrypoints/geo.d.ts"
+    },
+    "./library": {
+      "import": "./dist/entrypoints/library.js",
+      "types": "./dist/entrypoints/library.d.ts"
+    },
+    "./auth": {
+      "import": "./dist/entrypoints/auth.js",
+      "types": "./dist/entrypoints/auth.d.ts"
+    }
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
   "scripts": {
     "build": "rimraf dist && tsc",
     "clean": "rimraf dist",
-    "dev": "npm run clean && tsc --watch --project tsconfig.dev.json"
+    "dev": "bun run clean && tsc --watch --project tsconfig.dev.json",
+    "prepublishOnly": "bun run build"
   },
   "repository": "https://github.com/ansango/lastfm-client-ts.git",
   "author": "Anibal Santos",
@@ -19,25 +66,24 @@
     "nodejs",
     "api",
     "node",
-    "typescript"
+    "typescript",
+    "browser",
+    "universal",
+    "esm"
   ],
   "dependencies": {
-    "cross-fetch": "^3.1.5",
-    "dotenv": "^16.0.3"
+    "js-md5": "^0.8.3"
   },
   "devDependencies": {
-    "@types/node": "^18.14.6",
+    "@types/node": "^24.10.0",
     "cz-conventional-changelog": "^3.3.0",
-    "rimraf": "^4.3.1",
-    "typescript": "^4.9.5"
+    "dotenv": "^17.2.3",
+    "rimraf": "^6.1.0",
+    "typescript": "^5.9.3"
   },
   "config": {
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"
     }
-  },
-  "peerDependencies": {
-    "cross-fetch": "^3.1.5",
-    "dotenv": "^16.0.3"
   }
 }

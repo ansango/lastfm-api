@@ -1,50 +1,90 @@
-"use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.buildUrl = exports.fetcher = void 0;
-const cross_fetch_1 = require("cross-fetch");
-const config_1 = require("./config");
+import { md5 } from 'js-md5';
 /**
- * Fetches data from an API, and throws an error if the request failed.
- * fetcher is a generic function with one type parameter T.
- * It takes any arguments that fetch() takes, and returns a promise that
- * resolves to a value of type T.
- * @param {Parameters<typeof fetch>} args
- * @returns {Promise<T>}
+ * Realiza una petición HTTP y parsea la respuesta como JSON
  */
-const fetcher = (...args) => __awaiter(void 0, void 0, void 0, function* () {
-    const response = yield (0, cross_fetch_1.fetch)(...args);
+export async function fetcher(url, init) {
+    const response = await fetch(url, init);
     if (!response.ok) {
-        throw new Error(`Failed to fetch: ${response.statusText}`);
+        throw new Error(`HTTP Error: ${response.status} ${response.statusText}`);
     }
-    const json = yield response.json();
-    return json;
-});
-exports.fetcher = fetcher;
+    const data = await response.json();
+    if (data.error) {
+        throw new Error(`Last.fm API Error ${data.error}: ${data.message}`);
+    }
+    return data;
+}
 /**
- * This function takes a method name and an object of parameters, and builds a
- * URL to call the Last.fm API.
- *
- * @param method - The method name to be called.
- * @param params - An object of parameters for the API call.
- * @returns A URL string for the Last.fm API call.
+ * Construye la URL para las peticiones a la API de Last.fm
  */
-const buildUrl = (method, params) => {
-    const url = new URL(config_1.config.base_url);
-    url.searchParams.append("method", method);
-    Object.entries(params).forEach(([key, value]) => {
-        url.searchParams.append(key, value.toString());
+export function buildUrl(config, method, params = {}) {
+    const urlParams = new URLSearchParams({
+        method,
+        api_key: config.apiKey,
+        format: 'json',
+        ...cleanParams(params)
     });
-    const api_key = config_1.config.api_key;
-    const format = config_1.config.format.json;
-    return `${url.toString()}&api_key=${api_key}&format=${format}`;
-};
-exports.buildUrl = buildUrl;
+    return `${config.baseUrl}?${urlParams.toString()}`;
+}
+/**
+ * Genera la firma MD5 requerida para métodos autenticados
+ */
+export function generateSignature(config, params) {
+    if (!config.sharedSecret) {
+        throw new Error('Shared secret is required for authenticated methods');
+    }
+    const sorted = Object.keys(params)
+        .sort()
+        .map((key) => `${key}${params[key]}`)
+        .join('');
+    return md5(sorted + config.sharedSecret);
+}
+/**
+ * Limpia parámetros removiendo valores undefined/null
+ */
+function cleanParams(params) {
+    const cleaned = {};
+    for (const [key, value] of Object.entries(params)) {
+        if (value !== undefined && value !== null) {
+            cleaned[key] = String(value);
+        }
+    }
+    return cleaned;
+}
+/**
+ * Construye URL para métodos autenticados
+ */
+export function buildAuthUrl(config, method, params = {}) {
+    const authParams = {
+        method,
+        api_key: config.apiKey,
+        ...cleanParams(params)
+    };
+    const signature = generateSignature(config, authParams);
+    const urlParams = new URLSearchParams({
+        ...authParams,
+        api_sig: signature,
+        format: 'json'
+    });
+    return `${config.baseUrl}?${urlParams.toString()}`;
+}
+/**
+ * Realiza una petición POST con body URL-encoded
+ */
+export async function postFetcher(url, body) {
+    const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body
+    });
+    if (!response.ok) {
+        throw new Error(`HTTP Error: ${response.status} ${response.statusText}`);
+    }
+    const data = await response.json();
+    if (data.error) {
+        throw new Error(`Last.fm API Error ${data.error}: ${data.message}`);
+    }
+    return data;
+}
+//# sourceMappingURL=utils.js.map
