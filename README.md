@@ -10,10 +10,11 @@ A universal Last.fm API client for Node.js and Browser, written in TypeScript.
 
 - ✅ **Universal**: Works in Node.js (≥20.0.0) and Browser
 - ✅ **TypeScript**: Full type safety with comprehensive type definitions
+- ✅ **Zod Schemas**: Runtime validation schemas for all types
 - ✅ **ESM**: Modern ES modules with tree-shaking support
 - ✅ **Flexible**: Global configuration or per-instance configuration
 - ✅ **Modular**: Import only what you need
-- ✅ **Zero Dependencies**: Only `js-md5` for API signatures
+- ✅ **Minimal Dependencies**: Only `js-md5` for API signatures and `zod` for runtime validation
 
 ## Table of Contents
 
@@ -170,6 +171,55 @@ const tracks = await trackService.search({ track: 'Come Together' });
 - `lastfm-client-ts/geo`
 - `lastfm-client-ts/library`
 - `lastfm-client-ts/auth`
+
+## Zod Schema Validation
+
+The library includes automatically generated Zod schemas for runtime validation. These schemas mirror all TypeScript types and can be used to validate API responses or user input at runtime.
+
+### Importing Schemas
+
+Schemas are available through modular imports, following the same pattern as the services:
+
+```typescript
+import { userGetInfoRequestSchema, userGetInfoResponseSchema } from 'lastfm-client-ts/user/schemas';
+import { albumSearchRequestSchema } from 'lastfm-client-ts/album/schemas';
+import { trackGetInfoResponseSchema } from 'lastfm-client-ts/track/schemas';
+```
+
+### Usage Example
+
+```typescript
+import { userGetInfoRequestSchema, userGetInfoResponseSchema } from 'lastfm-client-ts/user/schemas';
+
+// Validate request parameters
+const params = { user: 'ansango' };
+const validatedParams = userGetInfoRequestSchema.parse(params);
+
+// Validate API response
+const response = await fetch(`https://ws.audioscrobbler.com/2.0/...`);
+const data = await response.json();
+const validatedData = userGetInfoResponseSchema.parse(data);
+
+// Safe parsing (doesn't throw)
+const result = userGetInfoResponseSchema.safeParse(data);
+if (result.success) {
+  console.log(result.data);
+} else {
+  console.error(result.error);
+}
+```
+
+**Available schema imports:**
+- `lastfm-client-ts/user/schemas`
+- `lastfm-client-ts/album/schemas`
+- `lastfm-client-ts/artist/schemas`
+- `lastfm-client-ts/track/schemas`
+- `lastfm-client-ts/tag/schemas`
+- `lastfm-client-ts/chart/schemas`
+- `lastfm-client-ts/geo/schemas`
+- `lastfm-client-ts/library/schemas`
+- `lastfm-client-ts/auth/schemas`
+- `lastfm-client-ts/schemas` (base types like `imageSchema`, `datePropSchema`, etc.)
 
 ## Environment Variables
 

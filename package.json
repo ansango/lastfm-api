@@ -14,46 +14,87 @@
       "import": "./dist/entrypoints/user.js",
       "types": "./dist/entrypoints/user.d.ts"
     },
+    "./user/schemas": {
+      "import": "./dist/entrypoints/user.schemas.js",
+      "types": "./dist/entrypoints/user.schemas.d.ts"
+    },
     "./album": {
       "import": "./dist/entrypoints/album.js",
       "types": "./dist/entrypoints/album.d.ts"
+    },
+    "./album/schemas": {
+      "import": "./dist/entrypoints/album.schemas.js",
+      "types": "./dist/entrypoints/album.schemas.d.ts"
     },
     "./artist": {
       "import": "./dist/entrypoints/artist.js",
       "types": "./dist/entrypoints/artist.d.ts"
     },
+    "./artist/schemas": {
+      "import": "./dist/entrypoints/artist.schemas.js",
+      "types": "./dist/entrypoints/artist.schemas.d.ts"
+    },
     "./track": {
       "import": "./dist/entrypoints/track.js",
       "types": "./dist/entrypoints/track.d.ts"
+    },
+    "./track/schemas": {
+      "import": "./dist/entrypoints/track.schemas.js",
+      "types": "./dist/entrypoints/track.schemas.d.ts"
     },
     "./tag": {
       "import": "./dist/entrypoints/tag.js",
       "types": "./dist/entrypoints/tag.d.ts"
     },
+    "./tag/schemas": {
+      "import": "./dist/entrypoints/tag.schemas.js",
+      "types": "./dist/entrypoints/tag.schemas.d.ts"
+    },
     "./chart": {
       "import": "./dist/entrypoints/chart.js",
       "types": "./dist/entrypoints/chart.d.ts"
+    },
+    "./chart/schemas": {
+      "import": "./dist/entrypoints/chart.schemas.js",
+      "types": "./dist/entrypoints/chart.schemas.d.ts"
     },
     "./geo": {
       "import": "./dist/entrypoints/geo.js",
       "types": "./dist/entrypoints/geo.d.ts"
     },
+    "./geo/schemas": {
+      "import": "./dist/entrypoints/geo.schemas.js",
+      "types": "./dist/entrypoints/geo.schemas.d.ts"
+    },
     "./library": {
       "import": "./dist/entrypoints/library.js",
       "types": "./dist/entrypoints/library.d.ts"
     },
+    "./library/schemas": {
+      "import": "./dist/entrypoints/library.schemas.js",
+      "types": "./dist/entrypoints/library.schemas.d.ts"
+    },
     "./auth": {
       "import": "./dist/entrypoints/auth.js",
       "types": "./dist/entrypoints/auth.d.ts"
+    },
+    "./auth/schemas": {
+      "import": "./dist/entrypoints/auth.schemas.js",
+      "types": "./dist/entrypoints/auth.schemas.d.ts"
+    },
+    "./schemas": {
+      "import": "./dist/entrypoints/base.schemas.js",
+      "types": "./dist/entrypoints/base.schemas.d.ts"
     }
   },
   "engines": {
     "node": ">=20.0.0"
   },
   "scripts": {
-    "build": "rimraf dist && tsc",
+    "generate:schemas": "bun scripts/generate-schemas.ts",
+    "build": "bun run generate:schemas && rimraf dist && tsc",
     "clean": "rimraf dist",
-    "dev": "bun run clean && tsc --watch --project tsconfig.dev.json",
+    "dev": "bun run generate:schemas && bun run clean && tsc --watch --project tsconfig.dev.json",
     "test": "bun test-real.ts",
     "prepublishOnly": "bun run build",
     "changelog": "bun scripts/changelog.ts",
@@ -78,16 +119,20 @@
     "typescript",
     "browser",
     "universal",
-    "esm"
+    "esm",
+    "zod",
+    "validation"
   ],
   "dependencies": {
-    "js-md5": "^0.8.3"
+    "js-md5": "^0.8.3",
+    "zod": "4.1.12"
   },
   "devDependencies": {
     "@types/node": "^24.10.0",
     "cz-conventional-changelog": "^3.3.0",
     "dotenv": "^17.2.3",
     "rimraf": "^6.1.0",
+    "ts-to-zod": "5.0.1",
     "typescript": "^5.9.3"
   },
   "config": {
