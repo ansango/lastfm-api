@@ -1,6 +1,6 @@
 {
   "name": "lastfm-client-ts",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "description": "A universal Last.fm API client for Node.js and Browser",
   "type": "module",
   "main": "./dist/index.js",
