@@ -137,7 +137,6 @@
     "cz-conventional-changelog": "^3.3.0",
     "dotenv": "^17.2.3",
     "rimraf": "^6.1.0",
-    "ts-to-zod": "5.0.1",
     "typescript": "^5.9.3"
   },
   "config": {
