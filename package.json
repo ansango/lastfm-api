@@ -87,6 +87,12 @@
       "types": "./dist/entrypoints/base.schemas.d.ts"
     }
   },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md"
+  ],
   "engines": {
     "node": ">=20.0.0"
   },
