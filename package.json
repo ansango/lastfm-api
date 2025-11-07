@@ -134,7 +134,6 @@
   },
   "devDependencies": {
     "@types/node": "^24.10.0",
-    "cz-conventional-changelog": "^3.3.0",
     "dotenv": "^17.2.3",
     "rimraf": "^6.1.0",
     "typescript": "^5.9.3"
