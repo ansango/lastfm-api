@@ -36,17 +36,17 @@ export type {
 	AuthService
 } from './services/index.js';
 
-// Todos los tipos de request/response
-export type * from './services/user.types.js';
-export type * from './services/album.types.js';
-export type * from './services/artist.types.js';
-export type * from './services/track.types.js';
-export type * from './services/tag.types.js';
-export type * from './services/chart.types.js';
-export type * from './services/geo.types.js';
-export type * from './services/library.types.js';
-export type * from './services/auth.types.js';
-export type * from './services/base.types.js';
+// Todos los tipos de request/response y schemas
+export type * from './services/user.schemas.js';
+export type * from './services/album.schemas.js';
+export type * from './services/artist.schemas.js';
+export type * from './services/track.schemas.js';
+export type * from './services/tag.schemas.js';
+export type * from './services/chart.schemas.js';
+export type * from './services/geo.schemas.js';
+export type * from './services/library.schemas.js';
+export type * from './services/auth.schemas.js';
+export type * from './services/schemas/index.js';
 
 // Utilidades (para casos avanzados)
 export { fetcher, buildUrl, generateSignature, buildAuthUrl } from './utils.js';

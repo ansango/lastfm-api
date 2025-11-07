@@ -50,7 +50,7 @@ export declare const tagGetSimilarResponseSchema: z.ZodObject<{
 export declare const tagGetTopAlbumsRequestSchema: z.ZodObject<{
     tag: z.ZodString;
     limit: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodNumber]>>;
-    page: z.ZodOptional<z.ZodString>;
+    page: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodNumber]>>;
 }, z.core.$strip>;
 export declare const tagGetTopAlbumsResponseSchema: z.ZodObject<{
     albums: z.ZodObject<{
@@ -63,14 +63,17 @@ export declare const tagGetTopAlbumsResponseSchema: z.ZodObject<{
                 mbid: z.ZodString;
                 url: z.ZodString;
             }, z.core.$strip>;
-            image: z.ZodArray<z.ZodString>;
+            image: z.ZodArray<z.ZodObject<{
+                "#text": z.ZodString;
+                size: z.ZodUnion<readonly [z.ZodLiteral<"small">, z.ZodLiteral<"medium">, z.ZodLiteral<"large">, z.ZodLiteral<"extralarge">, z.ZodLiteral<"mega">]>;
+            }, z.core.$strip>>;
             "@attr": z.ZodObject<{
                 rank: z.ZodString;
             }, z.core.$strip>;
         }, z.core.$strip>>;
         "@attr": z.ZodObject<{
             tag: z.ZodString;
-            page: z.ZodString;
+            page: z.ZodUnion<readonly [z.ZodString, z.ZodNumber]>;
             perPage: z.ZodString;
             totalPages: z.ZodString;
             total: z.ZodUnion<readonly [z.ZodString, z.ZodNumber]>;
@@ -80,7 +83,7 @@ export declare const tagGetTopAlbumsResponseSchema: z.ZodObject<{
 export declare const tagGetTopArtistsRequestSchema: z.ZodObject<{
     tag: z.ZodString;
     limit: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodNumber]>>;
-    page: z.ZodOptional<z.ZodString>;
+    page: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodNumber]>>;
 }, z.core.$strip>;
 export declare const tagGetTopArtistsResponseSchema: z.ZodObject<{
     topartists: z.ZodObject<{
@@ -88,14 +91,17 @@ export declare const tagGetTopArtistsResponseSchema: z.ZodObject<{
             name: z.ZodString;
             mbid: z.ZodString;
             url: z.ZodString;
-            image: z.ZodArray<z.ZodString>;
+            image: z.ZodArray<z.ZodObject<{
+                "#text": z.ZodString;
+                size: z.ZodUnion<readonly [z.ZodLiteral<"small">, z.ZodLiteral<"medium">, z.ZodLiteral<"large">, z.ZodLiteral<"extralarge">, z.ZodLiteral<"mega">]>;
+            }, z.core.$strip>>;
             "@attr": z.ZodObject<{
                 rank: z.ZodString;
             }, z.core.$strip>;
         }, z.core.$strip>>;
         "@attr": z.ZodObject<{
             tag: z.ZodString;
-            page: z.ZodString;
+            page: z.ZodUnion<readonly [z.ZodString, z.ZodNumber]>;
             perPage: z.ZodString;
             totalPages: z.ZodString;
             total: z.ZodUnion<readonly [z.ZodString, z.ZodNumber]>;
@@ -122,7 +128,7 @@ export declare const tagGetTopTagsResponseSchema: z.ZodObject<{
 export declare const tagGetTopTracksRequestSchema: z.ZodObject<{
     tag: z.ZodString;
     limit: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodNumber]>>;
-    page: z.ZodOptional<z.ZodString>;
+    page: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodNumber]>>;
 }, z.core.$strip>;
 export declare const tagGetTopTracksResponseSchema: z.ZodObject<{
     toptracks: z.ZodObject<{
@@ -136,14 +142,17 @@ export declare const tagGetTopTracksResponseSchema: z.ZodObject<{
                 mbid: z.ZodString;
                 url: z.ZodString;
             }, z.core.$strip>;
-            image: z.ZodArray<z.ZodString>;
+            image: z.ZodArray<z.ZodObject<{
+                "#text": z.ZodString;
+                size: z.ZodUnion<readonly [z.ZodLiteral<"small">, z.ZodLiteral<"medium">, z.ZodLiteral<"large">, z.ZodLiteral<"extralarge">, z.ZodLiteral<"mega">]>;
+            }, z.core.$strip>>;
             "@attr": z.ZodObject<{
                 rank: z.ZodString;
             }, z.core.$strip>;
         }, z.core.$strip>>;
         "@attr": z.ZodObject<{
             tag: z.ZodString;
-            page: z.ZodString;
+            page: z.ZodUnion<readonly [z.ZodString, z.ZodNumber]>;
             perPage: z.ZodString;
             totalPages: z.ZodString;
             total: z.ZodUnion<readonly [z.ZodString, z.ZodNumber]>;
@@ -164,4 +173,20 @@ export declare const tagGetWeeklyChartListResponseSchema: z.ZodObject<{
         }, z.core.$strip>;
     }, z.core.$strip>;
 }, z.core.$strip>;
+export type TagWiki = z.infer<typeof tagWikiSchema>;
+export type Tag = z.infer<typeof tagSchema>;
+export type TagGetInfoRequest = z.infer<typeof tagGetInfoRequestSchema>;
+export type TagGetInfoResponse = z.infer<typeof tagGetInfoResponseSchema>;
+export type TagGetSimilarRequest = z.infer<typeof tagGetSimilarRequestSchema>;
+export type TagGetSimilarResponse = z.infer<typeof tagGetSimilarResponseSchema>;
+export type TagGetTopAlbumsRequest = z.infer<typeof tagGetTopAlbumsRequestSchema>;
+export type TagGetTopAlbumsResponse = z.infer<typeof tagGetTopAlbumsResponseSchema>;
+export type TagGetTopArtistsRequest = z.infer<typeof tagGetTopArtistsRequestSchema>;
+export type TagGetTopArtistsResponse = z.infer<typeof tagGetTopArtistsResponseSchema>;
+export type TagGetTopTagsRequest = z.infer<typeof tagGetTopTagsRequestSchema>;
+export type TagGetTopTagsResponse = z.infer<typeof tagGetTopTagsResponseSchema>;
+export type TagGetTopTracksRequest = z.infer<typeof tagGetTopTracksRequestSchema>;
+export type TagGetTopTracksResponse = z.infer<typeof tagGetTopTracksResponseSchema>;
+export type TagGetWeeklyChartListRequest = z.infer<typeof tagGetWeeklyChartListRequestSchema>;
+export type TagGetWeeklyChartListResponse = z.infer<typeof tagGetWeeklyChartListResponseSchema>;
 //# sourceMappingURL=tag.schemas.d.ts.map

@@ -13,7 +13,7 @@ import type {
 	TagGetTopTracksResponse,
 	TagGetWeeklyChartListRequest,
 	TagGetWeeklyChartListResponse
-} from './tag.types.js';
+} from './tag.schemas.js';
 import { fetcher, buildUrl } from '../utils.js';
 import type { LastFmConfig } from '../config.js';
 

@@ -23,7 +23,7 @@ import type {
 	UserGetWeeklyChartListResponse,
 	UserGetWeeklyTrackChartRequest,
 	UserGetWeeklyTrackChartResponse
-} from './user.types.js';
+} from './user.schemas.js';
 import { fetcher, buildUrl } from '../utils.js';
 import type { LastFmConfig } from '../config.js';
 

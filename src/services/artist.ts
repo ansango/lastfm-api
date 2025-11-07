@@ -13,7 +13,7 @@ import type {
 	ArtistSearchResponse,
 	ArtistGetSimilarRequest,
 	ArtistGetSimilarResponse
-} from './artist.types.js';
+} from './artist.schemas.js';
 import { fetcher, buildUrl } from '../utils.js';
 import type { LastFmConfig } from '../config.js';
 

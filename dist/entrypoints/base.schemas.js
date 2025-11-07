@@ -1,3 +1,3 @@
-// Generated schema exports for base types
-export * from '../services/base.schemas.js';
+// Base schema exports for all services
+export * from '../services/schemas/index.js';
 //# sourceMappingURL=base.schemas.js.map

@@ -97,10 +97,9 @@
     "node": ">=20.0.0"
   },
   "scripts": {
-    "generate:schemas": "bun scripts/generate-schemas.ts",
-    "build": "bun run generate:schemas && rimraf dist && tsc",
+    "build": "rimraf dist && tsc",
     "clean": "rimraf dist",
-    "dev": "bun run generate:schemas && bun run clean && tsc --watch --project tsconfig.dev.json",
+    "dev": "bun run clean && tsc --watch --project tsconfig.dev.json",
     "test": "bun test-real.ts",
     "prepublishOnly": "bun run build",
     "changelog": "bun scripts/changelog.ts",

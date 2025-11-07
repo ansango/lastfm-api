@@ -5,7 +5,7 @@ import type {
 	ChartGetTopTagsResponse,
 	ChartGetTopTracksRequest,
 	ChartGetTopTracksResponse
-} from './chart.types.js';
+} from './chart.schemas.js';
 
 import { fetcher, buildUrl } from '../utils.js';
 import type { LastFmConfig } from '../config.js';

@@ -16,7 +16,10 @@ export declare const albumSchema: z.ZodObject<{
         }, z.core.$strip>]>>;
     }, z.core.$strip>;
     playcount: z.ZodString;
-    image: z.ZodArray<z.ZodString>;
+    image: z.ZodArray<z.ZodObject<{
+        "#text": z.ZodString;
+        size: z.ZodUnion<readonly [z.ZodLiteral<"small">, z.ZodLiteral<"medium">, z.ZodLiteral<"large">, z.ZodLiteral<"extralarge">, z.ZodLiteral<"mega">]>;
+    }, z.core.$strip>>;
     tracks: z.ZodOptional<z.ZodObject<{
         track: z.ZodArray<z.ZodObject<{
             duration: z.ZodString;
@@ -60,7 +63,10 @@ export declare const albumGetInfoResponseSchema: z.ZodObject<{
             }, z.core.$strip>]>>;
         }, z.core.$strip>;
         playcount: z.ZodString;
-        image: z.ZodArray<z.ZodString>;
+        image: z.ZodArray<z.ZodObject<{
+            "#text": z.ZodString;
+            size: z.ZodUnion<readonly [z.ZodLiteral<"small">, z.ZodLiteral<"medium">, z.ZodLiteral<"large">, z.ZodLiteral<"extralarge">, z.ZodLiteral<"mega">]>;
+        }, z.core.$strip>>;
         tracks: z.ZodOptional<z.ZodObject<{
             track: z.ZodArray<z.ZodObject<{
                 duration: z.ZodString;
@@ -123,7 +129,7 @@ export declare const albumGetTopTagsResponseSchema: z.ZodObject<{
 export declare const albumSearchRequestSchema: z.ZodObject<{
     album: z.ZodString;
     limit: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodNumber]>>;
-    page: z.ZodOptional<z.ZodString>;
+    page: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodNumber]>>;
 }, z.core.$strip>;
 export declare const albumSearchResponseSchema: z.ZodObject<{
     results: z.ZodObject<{
@@ -141,7 +147,10 @@ export declare const albumSearchResponseSchema: z.ZodObject<{
                 name: z.ZodString;
                 artist: z.ZodString;
                 url: z.ZodString;
-                image: z.ZodArray<z.ZodString>;
+                image: z.ZodArray<z.ZodObject<{
+                    "#text": z.ZodString;
+                    size: z.ZodUnion<readonly [z.ZodLiteral<"small">, z.ZodLiteral<"medium">, z.ZodLiteral<"large">, z.ZodLiteral<"extralarge">, z.ZodLiteral<"mega">]>;
+                }, z.core.$strip>>;
                 mbid: z.ZodString;
             }, z.core.$strip>>;
         }, z.core.$strip>;
@@ -150,4 +159,13 @@ export declare const albumSearchResponseSchema: z.ZodObject<{
         }, z.core.$strip>;
     }, z.core.$strip>;
 }, z.core.$strip>;
+export type Album = z.infer<typeof albumSchema>;
+export type AlbumGetInfoRequest = z.infer<typeof albumGetInfoRequestSchema>;
+export type AlbumGetInfoResponse = z.infer<typeof albumGetInfoResponseSchema>;
+export type AlbumGetTagsRequest = z.infer<typeof albumGetTagsRequestSchema>;
+export type AlbumGetTagsResponse = z.infer<typeof albumGetTagsResponseSchema>;
+export type AlbumGetTopTagsRequest = z.infer<typeof albumGetTopTagsRequestSchema>;
+export type AlbumGetTopTagsResponse = z.infer<typeof albumGetTopTagsResponseSchema>;
+export type AlbumSearchRequest = z.infer<typeof albumSearchRequestSchema>;
+export type AlbumSearchResponse = z.infer<typeof albumSearchResponseSchema>;
 //# sourceMappingURL=album.schemas.d.ts.map

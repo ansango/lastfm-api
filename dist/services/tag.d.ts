@@ -1,4 +1,4 @@
-import type { TagGetInfoRequest, TagGetInfoResponse, TagGetSimilarRequest, TagGetSimilarResponse, TagGetTopAlbumsRequest, TagGetTopAlbumsResponse, TagGetTopArtistsRequest, TagGetTopArtistsResponse, TagGetTopTagsRequest, TagGetTopTagsResponse, TagGetTopTracksRequest, TagGetTopTracksResponse, TagGetWeeklyChartListRequest, TagGetWeeklyChartListResponse } from './tag.types.js';
+import type { TagGetInfoRequest, TagGetInfoResponse, TagGetSimilarRequest, TagGetSimilarResponse, TagGetTopAlbumsRequest, TagGetTopAlbumsResponse, TagGetTopArtistsRequest, TagGetTopArtistsResponse, TagGetTopTagsRequest, TagGetTopTagsResponse, TagGetTopTracksRequest, TagGetTopTracksResponse, TagGetWeeklyChartListRequest, TagGetWeeklyChartListResponse } from './tag.schemas.js';
 import type { LastFmConfig } from '../config.js';
 export interface TagService {
     /**

@@ -3,7 +3,7 @@ import type {
 	GeoGetTopArtistsResponse,
 	GeoGetTopTracksRequest,
 	GeoGetTopTracksResponse
-} from './geo.types.js';
+} from './geo.schemas.js';
 import { fetcher, buildUrl } from '../utils.js';
 import type { LastFmConfig } from '../config.js';
 

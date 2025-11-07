@@ -1,6 +1,6 @@
 import { generateSignature } from '../utils.js';
 import type { LastFmConfig } from '../config.js';
-import type { BatchTracksScrobbleRequest, TrackScrobbleRequest } from './track.types.js';
+import type { BatchTracksScrobbleRequest, TrackScrobbleRequest } from './track.schemas.js';
 
 export const parsePostParamsTrack = (config: LastFmConfig, params: TrackScrobbleRequest) => {
 	const { artist, track, album, timestamp, sk } = params;

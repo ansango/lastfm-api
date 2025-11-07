@@ -1,6 +1,6 @@
 import { fetcher, buildAuthUrl } from '../utils.js';
 import type { LastFmConfig } from '../config.js';
-import type { AuthGetSessionRequest, AuthGetSessionResponse } from './auth.types.js';
+import type { AuthGetSessionRequest, AuthGetSessionResponse } from './auth.schemas.js';
 
 export interface AuthService {
 	/**

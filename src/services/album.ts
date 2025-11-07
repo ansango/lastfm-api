@@ -9,7 +9,7 @@ import type {
 	AlbumGetTopTagsResponse,
 	AlbumSearchRequest,
 	AlbumSearchResponse
-} from './album.types.js';
+} from './album.schemas.js';
 
 export interface AlbumService {
 	/**

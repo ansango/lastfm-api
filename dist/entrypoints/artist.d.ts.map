@@ -1,1 +1,1 @@
-{"version":3,"file":"artist.d.ts","sourceRoot":"","sources":["../../src/entrypoints/artist.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,mBAAmB,EAAE,KAAK,aAAa,EAAE,MAAM,uBAAuB,CAAC;AAChF,mBAAmB,6BAA6B,CAAC"}
+{"version":3,"file":"artist.d.ts","sourceRoot":"","sources":["../../src/entrypoints/artist.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,mBAAmB,EAAE,KAAK,aAAa,EAAE,MAAM,uBAAuB,CAAC;AAChF,mBAAmB,+BAA+B,CAAC"}

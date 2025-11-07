@@ -1,4 +1,4 @@
-import type { LibraryGetArtistsRequest, LibraryGetArtistsResponse } from './library.types.js';
+import type { LibraryGetArtistsRequest, LibraryGetArtistsResponse } from './library.schemas.js';
 import { fetcher, buildUrl } from '../utils.js';
 import type { LastFmConfig } from '../config.js';
 

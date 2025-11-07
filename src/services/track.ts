@@ -12,7 +12,7 @@ import type {
 	TrackScrobbleResponse,
 	TrackSearchRequest,
 	TrackSearchResponse
-} from './track.types.js';
+} from './track.schemas.js';
 import { fetcher, buildUrl } from '../utils.js';
 import type { LastFmConfig } from '../config.js';
 

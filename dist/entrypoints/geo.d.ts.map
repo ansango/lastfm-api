@@ -1,1 +1,1 @@
-{"version":3,"file":"geo.d.ts","sourceRoot":"","sources":["../../src/entrypoints/geo.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,gBAAgB,EAAE,KAAK,UAAU,EAAE,MAAM,oBAAoB,CAAC;AACvE,mBAAmB,0BAA0B,CAAC"}
+{"version":3,"file":"geo.d.ts","sourceRoot":"","sources":["../../src/entrypoints/geo.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,gBAAgB,EAAE,KAAK,UAAU,EAAE,MAAM,oBAAoB,CAAC;AACvE,mBAAmB,4BAA4B,CAAC"}

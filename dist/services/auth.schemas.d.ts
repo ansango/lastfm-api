@@ -15,4 +15,7 @@ export declare const authGetSessionResponseSchema: z.ZodObject<{
         subscriber: z.ZodNumber;
     }, z.core.$strip>;
 }, z.core.$strip>;
+export type AuthGetSessionRequest = z.infer<typeof authGetSessionRequestSchema>;
+export type Session = z.infer<typeof sessionSchema>;
+export type AuthGetSessionResponse = z.infer<typeof authGetSessionResponseSchema>;
 //# sourceMappingURL=auth.schemas.d.ts.map

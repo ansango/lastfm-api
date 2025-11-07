@@ -1,4 +1,4 @@
-import type { GeoGetTopArtistsRequest, GeoGetTopArtistsResponse, GeoGetTopTracksRequest, GeoGetTopTracksResponse } from './geo.types.js';
+import type { GeoGetTopArtistsRequest, GeoGetTopArtistsResponse, GeoGetTopTracksRequest, GeoGetTopTracksResponse } from './geo.schemas.js';
 import type { LastFmConfig } from '../config.js';
 export interface GeoService {
     /**

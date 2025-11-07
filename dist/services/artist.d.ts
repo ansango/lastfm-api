@@ -1,4 +1,4 @@
-import type { ArtistGetInfoRequest, ArtistGetInfoResponse, ArtistGetTagsRequest, ArtistGetTagsResponse, ArtistGetTopAlbumsRequest, ArtistGetTopAlbumsResponse, ArtistGetTopTagsRequest, ArtistGetTopTagsResponse, ArtistGetTopTracksRequest, ArtistGetTopTracksResponse, ArtistSearchRequest, ArtistSearchResponse, ArtistGetSimilarRequest, ArtistGetSimilarResponse } from './artist.types.js';
+import type { ArtistGetInfoRequest, ArtistGetInfoResponse, ArtistGetTagsRequest, ArtistGetTagsResponse, ArtistGetTopAlbumsRequest, ArtistGetTopAlbumsResponse, ArtistGetTopTagsRequest, ArtistGetTopTagsResponse, ArtistGetTopTracksRequest, ArtistGetTopTracksResponse, ArtistSearchRequest, ArtistSearchResponse, ArtistGetSimilarRequest, ArtistGetSimilarResponse } from './artist.schemas.js';
 import type { LastFmConfig } from '../config.js';
 export interface ArtistService {
     /**

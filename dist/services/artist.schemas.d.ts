@@ -8,7 +8,10 @@ export declare const artistSimilarSchema: z.ZodObject<{
     artist: z.ZodArray<z.ZodObject<{
         name: z.ZodString;
         url: z.ZodString;
-        image: z.ZodArray<z.ZodString>;
+        image: z.ZodArray<z.ZodObject<{
+            "#text": z.ZodString;
+            size: z.ZodUnion<readonly [z.ZodLiteral<"small">, z.ZodLiteral<"medium">, z.ZodLiteral<"large">, z.ZodLiteral<"extralarge">, z.ZodLiteral<"mega">]>;
+        }, z.core.$strip>>;
     }, z.core.$strip>>;
 }, z.core.$strip>;
 export declare const artistTagsSchema: z.ZodObject<{
@@ -37,7 +40,10 @@ export declare const artistSchema: z.ZodObject<{
     name: z.ZodString;
     mbid: z.ZodString;
     url: z.ZodString;
-    image: z.ZodArray<z.ZodString>;
+    image: z.ZodArray<z.ZodObject<{
+        "#text": z.ZodString;
+        size: z.ZodUnion<readonly [z.ZodLiteral<"small">, z.ZodLiteral<"medium">, z.ZodLiteral<"large">, z.ZodLiteral<"extralarge">, z.ZodLiteral<"mega">]>;
+    }, z.core.$strip>>;
     ontour: z.ZodString;
     stats: z.ZodObject<{
         listeners: z.ZodString;
@@ -48,7 +54,10 @@ export declare const artistSchema: z.ZodObject<{
         artist: z.ZodArray<z.ZodObject<{
             name: z.ZodString;
             url: z.ZodString;
-            image: z.ZodArray<z.ZodString>;
+            image: z.ZodArray<z.ZodObject<{
+                "#text": z.ZodString;
+                size: z.ZodUnion<readonly [z.ZodLiteral<"small">, z.ZodLiteral<"medium">, z.ZodLiteral<"large">, z.ZodLiteral<"extralarge">, z.ZodLiteral<"mega">]>;
+            }, z.core.$strip>>;
         }, z.core.$strip>>;
     }, z.core.$strip>;
     tags: z.ZodObject<{
@@ -81,7 +90,10 @@ export declare const artistGetInfoResponseSchema: z.ZodObject<{
         name: z.ZodString;
         mbid: z.ZodString;
         url: z.ZodString;
-        image: z.ZodArray<z.ZodString>;
+        image: z.ZodArray<z.ZodObject<{
+            "#text": z.ZodString;
+            size: z.ZodUnion<readonly [z.ZodLiteral<"small">, z.ZodLiteral<"medium">, z.ZodLiteral<"large">, z.ZodLiteral<"extralarge">, z.ZodLiteral<"mega">]>;
+        }, z.core.$strip>>;
         ontour: z.ZodString;
         stats: z.ZodObject<{
             listeners: z.ZodString;
@@ -92,7 +104,10 @@ export declare const artistGetInfoResponseSchema: z.ZodObject<{
             artist: z.ZodArray<z.ZodObject<{
                 name: z.ZodString;
                 url: z.ZodString;
-                image: z.ZodArray<z.ZodString>;
+                image: z.ZodArray<z.ZodObject<{
+                    "#text": z.ZodString;
+                    size: z.ZodUnion<readonly [z.ZodLiteral<"small">, z.ZodLiteral<"medium">, z.ZodLiteral<"large">, z.ZodLiteral<"extralarge">, z.ZodLiteral<"mega">]>;
+                }, z.core.$strip>>;
             }, z.core.$strip>>;
         }, z.core.$strip>;
         tags: z.ZodObject<{
@@ -142,7 +157,10 @@ export declare const artistGetSimilarResponseSchema: z.ZodObject<{
             name: z.ZodString;
             match: z.ZodString;
             url: z.ZodString;
-            image: z.ZodArray<z.ZodString>;
+            image: z.ZodArray<z.ZodObject<{
+                "#text": z.ZodString;
+                size: z.ZodUnion<readonly [z.ZodLiteral<"small">, z.ZodLiteral<"medium">, z.ZodLiteral<"large">, z.ZodLiteral<"extralarge">, z.ZodLiteral<"mega">]>;
+            }, z.core.$strip>>;
         }, z.core.$strip>>;
         "@attr": z.ZodObject<{
             artist: z.ZodString;
@@ -153,7 +171,7 @@ export declare const artistGetTopAlbumsRequestSchema: z.ZodObject<{
     artist: z.ZodString;
     mbid: z.ZodOptional<z.ZodString>;
     limit: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodNumber]>>;
-    page: z.ZodOptional<z.ZodString>;
+    page: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodNumber]>>;
 }, z.core.$strip>;
 export declare const artistGetTopAlbumsResponseSchema: z.ZodObject<{
     topalbums: z.ZodObject<{
@@ -167,11 +185,14 @@ export declare const artistGetTopAlbumsResponseSchema: z.ZodObject<{
                 mbid: z.ZodString;
                 url: z.ZodString;
             }, z.core.$strip>;
-            image: z.ZodArray<z.ZodString>;
+            image: z.ZodArray<z.ZodObject<{
+                "#text": z.ZodString;
+                size: z.ZodUnion<readonly [z.ZodLiteral<"small">, z.ZodLiteral<"medium">, z.ZodLiteral<"large">, z.ZodLiteral<"extralarge">, z.ZodLiteral<"mega">]>;
+            }, z.core.$strip>>;
         }, z.core.$strip>>;
         "@attr": z.ZodObject<{
             artist: z.ZodString;
-            page: z.ZodString;
+            page: z.ZodUnion<readonly [z.ZodString, z.ZodNumber]>;
             perPage: z.ZodString;
             totalPages: z.ZodString;
             total: z.ZodUnion<readonly [z.ZodString, z.ZodNumber]>;
@@ -198,7 +219,7 @@ export declare const artistGetTopTracksRequestSchema: z.ZodObject<{
     artist: z.ZodString;
     mbid: z.ZodOptional<z.ZodString>;
     limit: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodNumber]>>;
-    page: z.ZodOptional<z.ZodString>;
+    page: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodNumber]>>;
 }, z.core.$strip>;
 export declare const artistGetTopTracksResponseSchema: z.ZodObject<{
     toptracks: z.ZodObject<{
@@ -213,14 +234,17 @@ export declare const artistGetTopTracksResponseSchema: z.ZodObject<{
                 mbid: z.ZodString;
                 url: z.ZodString;
             }, z.core.$strip>;
-            image: z.ZodArray<z.ZodString>;
+            image: z.ZodArray<z.ZodObject<{
+                "#text": z.ZodString;
+                size: z.ZodUnion<readonly [z.ZodLiteral<"small">, z.ZodLiteral<"medium">, z.ZodLiteral<"large">, z.ZodLiteral<"extralarge">, z.ZodLiteral<"mega">]>;
+            }, z.core.$strip>>;
             "@attr": z.ZodObject<{
                 rank: z.ZodString;
             }, z.core.$strip>;
         }, z.core.$strip>>;
         "@attr": z.ZodObject<{
             artist: z.ZodString;
-            page: z.ZodString;
+            page: z.ZodUnion<readonly [z.ZodString, z.ZodNumber]>;
             perPage: z.ZodString;
             totalPages: z.ZodString;
             total: z.ZodUnion<readonly [z.ZodString, z.ZodNumber]>;
@@ -230,7 +254,7 @@ export declare const artistGetTopTracksResponseSchema: z.ZodObject<{
 export declare const artistSearchRequestSchema: z.ZodObject<{
     artist: z.ZodString;
     limit: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodNumber]>>;
-    page: z.ZodOptional<z.ZodString>;
+    page: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodNumber]>>;
 }, z.core.$strip>;
 export declare const artistSearchResponseSchema: z.ZodObject<{
     results: z.ZodObject<{
@@ -249,7 +273,10 @@ export declare const artistSearchResponseSchema: z.ZodObject<{
                 listeners: z.ZodString;
                 mbid: z.ZodString;
                 url: z.ZodString;
-                image: z.ZodArray<z.ZodString>;
+                image: z.ZodArray<z.ZodObject<{
+                    "#text": z.ZodString;
+                    size: z.ZodUnion<readonly [z.ZodLiteral<"small">, z.ZodLiteral<"medium">, z.ZodLiteral<"large">, z.ZodLiteral<"extralarge">, z.ZodLiteral<"mega">]>;
+                }, z.core.$strip>>;
             }, z.core.$strip>>;
         }, z.core.$strip>;
         "@attr": z.ZodObject<{
@@ -257,4 +284,23 @@ export declare const artistSearchResponseSchema: z.ZodObject<{
         }, z.core.$strip>;
     }, z.core.$strip>;
 }, z.core.$strip>;
+export type ArtistStats = z.infer<typeof artistStatsSchema>;
+export type ArtistSimilar = z.infer<typeof artistSimilarSchema>;
+export type ArtistTags = z.infer<typeof artistTagsSchema>;
+export type ArtistBio = z.infer<typeof artistBioSchema>;
+export type Artist = z.infer<typeof artistSchema>;
+export type ArtistGetInfoRequest = z.infer<typeof artistGetInfoRequestSchema>;
+export type ArtistGetInfoResponse = z.infer<typeof artistGetInfoResponseSchema>;
+export type ArtistGetTagsRequest = z.infer<typeof artistGetTagsRequestSchema>;
+export type ArtistGetTagsResponse = z.infer<typeof artistGetTagsResponseSchema>;
+export type ArtistGetSimilarRequest = z.infer<typeof artistGetSimilarRequestSchema>;
+export type ArtistGetSimilarResponse = z.infer<typeof artistGetSimilarResponseSchema>;
+export type ArtistGetTopAlbumsRequest = z.infer<typeof artistGetTopAlbumsRequestSchema>;
+export type ArtistGetTopAlbumsResponse = z.infer<typeof artistGetTopAlbumsResponseSchema>;
+export type ArtistGetTopTagsRequest = z.infer<typeof artistGetTopTagsRequestSchema>;
+export type ArtistGetTopTagsResponse = z.infer<typeof artistGetTopTagsResponseSchema>;
+export type ArtistGetTopTracksRequest = z.infer<typeof artistGetTopTracksRequestSchema>;
+export type ArtistGetTopTracksResponse = z.infer<typeof artistGetTopTracksResponseSchema>;
+export type ArtistSearchRequest = z.infer<typeof artistSearchRequestSchema>;
+export type ArtistSearchResponse = z.infer<typeof artistSearchResponseSchema>;
 //# sourceMappingURL=artist.schemas.d.ts.map
