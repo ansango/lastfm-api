@@ -1,6 +1,8 @@
 import { md5 } from 'js-md5';
 import type { LastFmConfig } from './config.js';
 
+const DEFAULT_BASE_URL = 'https://ws.audioscrobbler.com/2.0/';
+
 /**
  * Realiza una petición HTTP y parsea la respuesta como JSON
  */
@@ -28,6 +30,7 @@ export function buildUrl(
 	method: string,
 	params: Record<string, any> = {}
 ): string {
+	const baseUrl = config.baseUrl ?? DEFAULT_BASE_URL;
 	const urlParams = new URLSearchParams({
 		method,
 		api_key: config.apiKey,
@@ -35,7 +38,7 @@ export function buildUrl(
 		...cleanParams(params)
 	});
 
-	return `${config.baseUrl}?${urlParams.toString()}`;
+	return `${baseUrl}?${urlParams.toString()}`;
 }
 
 /**
@@ -88,13 +91,14 @@ export function buildAuthUrl(
 
 	const signature = generateSignature(config, authParams);
 
+	const baseUrl = config.baseUrl ?? DEFAULT_BASE_URL;
 	const urlParams = new URLSearchParams({
 		...authParams,
 		api_sig: signature,
 		format: 'json'
 	});
 
-	return `${config.baseUrl}?${urlParams.toString()}`;
+	return `${baseUrl}?${urlParams.toString()}`;
 }
 
 /**
