@@ -49,8 +49,7 @@ export const parsePostParamsBatchTrack = (
 };
 
 export const batchFetcher = async (config: LastFmConfig, { body }: { body: string }) => {
-	const baseUrl = config.baseUrl || 'https://ws.audioscrobbler.com/2.0/';
-	const response = await fetch(baseUrl, {
+	const response = await fetch(config.baseUrl!, {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/x-www-form-urlencoded'
