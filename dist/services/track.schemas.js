@@ -151,7 +151,7 @@ export const trackScrobbleRequestSchema = z.object({
     artist: artistNameSchema,
     track: trackNameSchema,
     timestamp: z.string(),
-    sk: z.string(),
+    sk: z.string().optional(),
     album: albumNameSchema.optional()
 });
 export const trackScrobbleResponseSchema = z.object({
@@ -186,6 +186,6 @@ export const trackScrobbleResponseSchema = z.object({
 });
 export const batchTracksScrobbleRequestSchema = z.object({
     tracks: z.array(trackScrobbleRequestSchema.omit({ "sk": true })),
-    sk: z.string()
+    sk: z.string().optional()
 });
 //# sourceMappingURL=track.schemas.js.map

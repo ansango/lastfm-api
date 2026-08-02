@@ -1,7 +1,6 @@
 import { z } from "zod";
 export declare const authGetSessionRequestSchema: z.ZodObject<{
     token: z.ZodString;
-    api_key: z.ZodString;
 }, z.core.$strip>;
 export declare const sessionSchema: z.ZodObject<{
     name: z.ZodString;

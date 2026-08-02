@@ -22,5 +22,5 @@ export * from './services/geo.schemas.js';
 export * from './services/library.schemas.js';
 export * from './services/auth.schemas.js';
 export * from './services/schemas/index.js';
-export { fetcher, buildUrl, generateSignature, buildAuthUrl } from './utils.js';
+export { fetcher, buildUrl, generateSignature, buildAuthUrl, parseLastFmResponse, LastFmApiError } from './utils.js';
 //# sourceMappingURL=index.d.ts.map

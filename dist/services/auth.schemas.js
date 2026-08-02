@@ -1,8 +1,7 @@
 import { z } from "zod";
 // Request schemas
 export const authGetSessionRequestSchema = z.object({
-    token: z.string(),
-    api_key: z.string(),
+    token: z.string()
 });
 // Entity schemas
 export const sessionSchema = z.object({

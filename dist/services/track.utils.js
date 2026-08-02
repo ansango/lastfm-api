@@ -1,6 +1,10 @@
-import { generateSignature } from '../utils.js';
+import { generateSignature, parseLastFmResponse } from '../utils.js';
 export const parsePostParamsTrack = (config, params) => {
-    const { artist, track, album, timestamp, sk } = params;
+    const { artist, track, album, timestamp, sk: skParam } = params;
+    const sk = skParam ?? config.sessionKey;
+    if (!sk) {
+        throw new Error('A session key (`sk`) is required to scrobble. Pass `sk` in the request params or set `sessionKey` on the LastFmConfig.');
+    }
     const paramsUrl = { artist, track, timestamp, sk };
     if (album)
         paramsUrl.album = album;
@@ -11,9 +15,13 @@ export const parsePostParamsTrack = (config, params) => {
     });
     return { ...paramsUrl, api_sig };
 };
-export const parsePostParamsBatchTrack = (config, { tracks, sk }) => {
+export const parsePostParamsBatchTrack = (config, { tracks, sk: skParam }) => {
     if (tracks.length > 50) {
         throw new Error('Max 50 tracks by request');
+    }
+    const sk = skParam ?? config.sessionKey;
+    if (!sk) {
+        throw new Error('A session key (`sk`) is required to scrobble. Pass `sk` in the request params or set `sessionKey` on the LastFmConfig.');
     }
     const params = {
         method: 'track.scrobble',
@@ -36,17 +44,13 @@ export const parsePostParamsBatchTrack = (config, { tracks, sk }) => {
     return body;
 };
 export const batchFetcher = async (config, { body }) => {
-    const baseUrl = config.baseUrl || 'https://ws.audioscrobbler.com/2.0/';
-    const response = await fetch(baseUrl, {
+    const response = await fetch(config.baseUrl, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded'
         },
         body
     });
-    if (!response.ok) {
-        throw new Error('Error scrobbling tracks');
-    }
-    return true;
+    return (await parseLastFmResponse(response));
 };
 //# sourceMappingURL=track.utils.js.map

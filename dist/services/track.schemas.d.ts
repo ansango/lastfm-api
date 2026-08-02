@@ -221,7 +221,7 @@ export declare const trackScrobbleRequestSchema: z.ZodObject<{
     artist: z.ZodString;
     track: z.ZodString;
     timestamp: z.ZodString;
-    sk: z.ZodString;
+    sk: z.ZodOptional<z.ZodString>;
     album: z.ZodOptional<z.ZodString>;
 }, z.core.$strip>;
 export declare const trackScrobbleResponseSchema: z.ZodObject<{
@@ -261,7 +261,7 @@ export declare const batchTracksScrobbleRequestSchema: z.ZodObject<{
         album: z.ZodOptional<z.ZodString>;
         timestamp: z.ZodString;
     }, z.core.$strip>>;
-    sk: z.ZodString;
+    sk: z.ZodOptional<z.ZodString>;
 }, z.core.$strip>;
 export type TrackArtist = z.infer<typeof trackArtistSchema>;
 export type TrackAlbum = z.infer<typeof trackAlbumSchema>;

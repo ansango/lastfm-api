@@ -1,5 +1,22 @@
 import type { LastFmConfig } from './config.js';
 /**
+ * Error thrown when a Last.fm API call fails. Carries the HTTP status and
+ * (when available) the Last.fm-specific error code so callers can branch on
+ * the failure reason (auth, rate limit, invalid params, etc.) without having
+ * to parse error messages.
+ */
+export declare class LastFmApiError extends Error {
+    readonly httpStatus: number;
+    readonly code?: number;
+    constructor(message: string, httpStatus: number, code?: number);
+}
+/**
+ * Parses a Last.fm API response. Throws a `LastFmApiError` if the response
+ * is not OK or the body contains a Last.fm error envelope; otherwise returns
+ * the parsed JSON body.
+ */
+export declare function parseLastFmResponse(response: Response): Promise<unknown>;
+/**
  * Realiza una petición HTTP y parsea la respuesta como JSON
  */
 export declare function fetcher<T>(url: string, init?: RequestInit): Promise<T>;
