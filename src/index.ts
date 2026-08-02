@@ -61,4 +61,4 @@ export * from './services/auth.schemas.js';
 export * from './services/schemas/index.js';
 
 // Utilidades (para casos avanzados)
-export { fetcher, buildUrl, generateSignature, buildAuthUrl } from './utils.js';
+export { fetcher, buildUrl, generateSignature, buildAuthUrl, parseLastFmResponse, LastFmApiError } from './utils.js';

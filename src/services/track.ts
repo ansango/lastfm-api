@@ -67,27 +67,58 @@ export interface TrackService {
 	search: (params: TrackSearchRequest, init?: RequestInit) => Promise<TrackSearchResponse>;
 
 	/**
-	 * Scrobble a track. Submits a track play to the Last.fm
+	 * Scrobble a track. Submits a track play to the Last.fm.
+	 * Canonical Last.fm method name: `track.scrobble`.
 	 * @param {TrackScrobbleRequest} params
 	 * @param {RequestInit} init
 	 * @returns {Promise<TrackScrobbleResponse>}
 	 * https://www.last.fm/api/show/track.scrobble
 	 */
-
+	scrobble: (params: TrackScrobbleRequest, init?: RequestInit) => Promise<TrackScrobbleResponse>;
+	/**
+	 * @deprecated Use `scrobble` instead. Renamed to match the canonical Last.fm
+	 * method name (`track.scrobble`). Kept as an alias for backwards compatibility.
+	 */
 	postTrackScrobble: (
 		params: TrackScrobbleRequest,
 		init?: RequestInit
 	) => Promise<TrackScrobbleResponse>;
 	/**
-	 * Scrobble a batch of tracks. Submits a batch of track plays to the Last.fm
+	 * Scrobble a batch of tracks. Submits a batch of track plays to the Last.fm.
+	 * Canonical Last.fm method name: `track.scrobble`.
 	 * @param {BatchTracksScrobbleRequest} params
-	 * @returns {Promise<boolean>}
+	 * @returns {Promise<TrackScrobbleResponse>}
 	 * https://www.last.fm/api/show/track.scrobble
 	 * */
-	postBatchTrackScrobble: (params: BatchTracksScrobbleRequest) => Promise<boolean>;
+	scrobbleMany: (params: BatchTracksScrobbleRequest) => Promise<TrackScrobbleResponse>;
+	/**
+	 * @deprecated Use `scrobbleMany` instead. Renamed to match the canonical
+	 * Last.fm method name (`track.scrobble`). Kept as an alias for backwards
+	 * compatibility.
+	 */
+	postBatchTrackScrobble: (params: BatchTracksScrobbleRequest) => Promise<TrackScrobbleResponse>;
 }
 
 export function createTrackService(config: LastFmConfig): TrackService {
+	const scrobbleImpl = (
+		{ artist, sk, timestamp, track, album }: TrackScrobbleRequest,
+		init?: RequestInit
+	) =>
+		fetcher<TrackScrobbleResponse>(
+			buildUrl(config, 'track.scrobble', {
+				...parsePostParamsTrack(config, { artist, sk, timestamp, track, album })
+			}),
+			{
+				...init,
+				method: 'POST'
+			}
+		);
+
+	const scrobbleManyImpl = ({ tracks, sk }: BatchTracksScrobbleRequest) =>
+		batchFetcher<TrackScrobbleResponse>(config, {
+			body: parsePostParamsBatchTrack(config, { tracks, sk })
+		});
+
 	return {
 		getInfo: (params, init) =>
 			fetcher<TrackGetInfoResponse>(buildUrl(config, 'track.getInfo', params), init),
@@ -99,17 +130,9 @@ export function createTrackService(config: LastFmConfig): TrackService {
 			fetcher<TrackGetTopTagsResponse>(buildUrl(config, 'track.getTopTags', params), init),
 		search: (params, init) =>
 			fetcher<TrackSearchResponse>(buildUrl(config, 'track.search', params), init),
-		postTrackScrobble: ({ artist, sk, timestamp, track, album }, init) =>
-			fetcher<TrackScrobbleResponse>(
-				buildUrl(config, 'track.scrobble', {
-					...parsePostParamsTrack(config, { artist, sk, timestamp, track, album })
-				}),
-				{
-					...init,
-					method: 'POST'
-				}
-			),
-		postBatchTrackScrobble: async ({ tracks, sk }) =>
-			batchFetcher(config, { body: parsePostParamsBatchTrack(config, { tracks, sk }) })
+		scrobble: scrobbleImpl,
+		postTrackScrobble: scrobbleImpl,
+		scrobbleMany: scrobbleManyImpl,
+		postBatchTrackScrobble: scrobbleManyImpl
 	};
 }
