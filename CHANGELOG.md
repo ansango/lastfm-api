@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.1.2] - 2026-08-02
+
+### 🐛 Bug Fixes
+
+- **auth**: drop required api_key from authGetSessionRequestSchema (#62) ([f1158de](https://github.com/ansango/lastfm-client-ts/commit/f1158de))
+- **errors**: normalize API errors via LastFmApiError (#61) ([143bede](https://github.com/ansango/lastfm-client-ts/commit/143bede))
+- **track**: auto-inject sessionKey from config for scrobble calls (#60) ([b2c3599](https://github.com/ansango/lastfm-client-ts/commit/b2c3599))
+- **track**: rename scrobble methods to canonical Last.fm names (#59) ([c997868](https://github.com/ansango/lastfm-client-ts/commit/c997868))
+- default baseUrl in buildUrl and buildAuthUrl (#58) ([c6e45e6](https://github.com/ansango/lastfm-client-ts/commit/c6e45e6))
+
+### 🔧 Chores
+
+- rebuild dist before release ([ba62a5a](https://github.com/ansango/lastfm-client-ts/commit/ba62a5a))
+
+
 ## [3.1.1] - 2025-11-07
 
 ### 🔧 Chores
