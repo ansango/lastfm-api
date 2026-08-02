@@ -1,4 +1,4 @@
-import { generateSignature } from '../utils.js';
+import { generateSignature, parseLastFmResponse } from '../utils.js';
 import type { LastFmConfig } from '../config.js';
 import type { BatchTracksScrobbleRequest, TrackScrobbleRequest } from './track.schemas.js';
 
@@ -61,7 +61,7 @@ export const parsePostParamsBatchTrack = (
 	return body;
 };
 
-export const batchFetcher = async (config: LastFmConfig, { body }: { body: string }) => {
+export const batchFetcher = async <T = unknown>(config: LastFmConfig, { body }: { body: string }) => {
 	const response = await fetch(config.baseUrl!, {
 		method: 'POST',
 		headers: {
@@ -70,8 +70,5 @@ export const batchFetcher = async (config: LastFmConfig, { body }: { body: strin
 		body
 	});
 
-	if (!response.ok) {
-		throw new Error('Error scrobbling tracks');
-	}
-	return true;
+	return (await parseLastFmResponse(response)) as T;
 };
