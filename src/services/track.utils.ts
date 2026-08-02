@@ -3,9 +3,16 @@ import type { LastFmConfig } from '../config.js';
 import type { BatchTracksScrobbleRequest, TrackScrobbleRequest } from './track.schemas.js';
 
 export const parsePostParamsTrack = (config: LastFmConfig, params: TrackScrobbleRequest) => {
-	const { artist, track, album, timestamp, sk } = params;
+	const { artist, track, album, timestamp, sk: skParam } = params;
+	const sk = skParam ?? config.sessionKey;
 
-	const paramsUrl = { artist, track, timestamp, sk } as TrackScrobbleRequest;
+	if (!sk) {
+		throw new Error(
+			'A session key (`sk`) is required to scrobble. Pass `sk` in the request params or set `sessionKey` on the LastFmConfig.'
+		);
+	}
+
+	const paramsUrl: Record<string, string> = { artist, track, timestamp, sk };
 	if (album) paramsUrl.album = album;
 	const api_sig = generateSignature(config, {
 		method: 'track.scrobble',
@@ -17,10 +24,16 @@ export const parsePostParamsTrack = (config: LastFmConfig, params: TrackScrobble
 
 export const parsePostParamsBatchTrack = (
 	config: LastFmConfig,
-	{ tracks, sk }: BatchTracksScrobbleRequest
+	{ tracks, sk: skParam }: BatchTracksScrobbleRequest
 ) => {
 	if (tracks.length > 50) {
 		throw new Error('Max 50 tracks by request');
+	}
+	const sk = skParam ?? config.sessionKey;
+	if (!sk) {
+		throw new Error(
+			'A session key (`sk`) is required to scrobble. Pass `sk` in the request params or set `sessionKey` on the LastFmConfig.'
+		);
 	}
 	const params = {
 		method: 'track.scrobble',
