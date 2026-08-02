@@ -25,6 +25,8 @@ A universal Last.fm API client for Node.js and Browser, written in TypeScript.
   - [Using Global Configuration](#using-global-configuration)
   - [Using Individual Services](#using-individual-services)
 - [Environment Variables](#environment-variables)
+- [Authentication & Scrobbling](#authentication--scrobbling)
+- [Error Handling](#error-handling)
 - [API Reference](#api-reference)
 - [TypeScript Support](#typescript-support)
 - [Contributing](#contributing)
@@ -89,6 +91,21 @@ const similarArtists = await client.artist.getSimilar({ artist: 'Radiohead' });
 // Track service
 const trackInfo = await client.track.getInfo({ artist: 'The Beatles', track: 'Yesterday' });
 const trackSearch = await client.track.search({ track: 'Yesterday', limit: 10 });
+
+// Scrobble (auth required — `sk` is auto-injected from `config.sessionKey`)
+const scrobbleResult = await client.track.scrobble({
+  artist: 'Cher',
+  track: 'Believe',
+  timestamp: Math.floor(Date.now() / 1000),
+});
+
+// Batch scrobble (max 50 tracks per call)
+const batchResult = await client.track.scrobbleMany({
+  tracks: [
+    { artist: 'Cher', track: 'Believe', timestamp: 1700000000 },
+    { artist: 'Cher', track: 'If You Believe', timestamp: 1700000600 },
+  ],
+});
 
 // Chart service
 const topChartArtists = await client.chart.getTopArtists();
@@ -258,6 +275,51 @@ const client = new LastFmClient({
 });
 ```
 
+## Authentication & Scrobbling
+
+Methods that mutate user state (`track.scrobble`, `track.scrobbleMany`, plus future write methods) require an authenticated session. Get one with `client.auth.getSession({ token })` after the user authorizes the token in a browser. Once you have a session key, pass it as `sessionKey` in your config — the client injects it into every authenticated call.
+
+```typescript
+import { LastFmClient } from 'lastfm-client-ts';
+
+const client = new LastFmClient({
+  apiKey: process.env.LASTFM_API_KEY!,
+  sharedSecret: process.env.LASTFM_SHARED_SECRET!,
+  sessionKey: process.env.LASTFM_SESSION_KEY!,
+});
+
+// Scrobble a track — `sk` is auto-injected from `config.sessionKey`,
+// so you don't need to pass it explicitly.
+await client.track.scrobble({
+  artist: 'Cher',
+  track: 'Believe',
+  timestamp: Math.floor(Date.now() / 1000),
+});
+```
+
+> **Note:** The previous method names `postTrackScrobble` and `postBatchTrackScrobble` are still available as deprecated aliases. They forward to `scrobble` and `scrobbleMany` respectively and will be removed in the next major release.
+
+## Error Handling
+
+API errors throw a `LastFmApiError` that carries the HTTP status and the Last.fm error code, so consumers can distinguish failures programmatically:
+
+```typescript
+import { LastFmClient, LastFmApiError } from 'lastfm-client-ts';
+
+try {
+  await client.user.getInfo({ user: 'nonexistent_user_xyz' });
+} catch (e) {
+  if (e instanceof LastFmApiError) {
+    console.error(`Last.fm error ${e.code}: ${e.message} (HTTP ${e.httpStatus})`);
+    // e.g. "Last.fm error 14: This token has not been authorized (HTTP 401)"
+  } else {
+    throw e;
+  }
+}
+```
+
+The `code` is the numeric error code from the [Last.fm API documentation](https://www.last.fm/api/show/user.getInfo#errors) (e.g. `9` for "Invalid session key", `10` for "Invalid API key", `29` for "Rate limit exceeded").
+
 ## API Reference
 
 ### Client
@@ -305,7 +367,7 @@ Each service provides methods for interacting with specific Last.fm API endpoint
 - **UserService**: User-related methods (getInfo, getTopArtists, getRecentTracks, etc.)
 - **AlbumService**: Album methods (getInfo, search, getTags, etc.)
 - **ArtistService**: Artist methods (getInfo, getSimilar, getTopAlbums, etc.)
-- **TrackService**: Track methods (getInfo, search, scrobble, etc.)
+- **TrackService**: Track methods (getInfo, search, scrobble, scrobbleMany, etc.)
 - **TagService**: Tag methods (getInfo, getTopArtists, getTopTracks, etc.)
 - **ChartService**: Chart methods (getTopArtists, getTopTracks, etc.)
 - **GeoService**: Geographic methods (getTopArtists, getTopTracks by country)
