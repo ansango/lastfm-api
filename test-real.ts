@@ -1,5 +1,5 @@
 /**
- * Real test of lastfm-client-ts with actual API
+ * Real test of @ansango/lastfm-api with actual API
  */
 
 import 'dotenv/config';

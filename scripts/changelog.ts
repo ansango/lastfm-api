@@ -136,7 +136,7 @@ function generateMarkdown(version: string, date: string, commits: Commit[]): str
 		markdown += `### 🚨 BREAKING CHANGES\n\n`;
 		for (const commit of breaking) {
 			const scope = commit.scope ? `**${commit.scope}**: ` : '';
-			markdown += `- ${scope}${commit.subject} ([${commit.hash}](https://github.com/ansango/lastfm-client-ts/commit/${commit.hash}))\n`;
+			markdown += `- ${scope}${commit.subject} ([${commit.hash}](https://github.com/ansango/lastfm-api/commit/${commit.hash}))\n`;
 		}
 		markdown += '\n';
 	}
@@ -153,7 +153,7 @@ function generateMarkdown(version: string, date: string, commits: Commit[]): str
 
 		for (const commit of typeCommits) {
 			const scope = commit.scope ? `**${commit.scope}**: ` : '';
-			markdown += `- ${scope}${commit.subject} ([${commit.hash}](https://github.com/ansango/lastfm-client-ts/commit/${commit.hash}))\n`;
+			markdown += `- ${scope}${commit.subject} ([${commit.hash}](https://github.com/ansango/lastfm-api/commit/${commit.hash}))\n`;
 		}
 		markdown += '\n';
 	}

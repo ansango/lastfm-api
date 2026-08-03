@@ -163,7 +163,7 @@ bun run build
 bun run gh:release
 
 # 7. Publicar en npm
-npm publish
+npm publish --access public
 ```
 
 ## 📝 Ejemplos de Uso
@@ -203,7 +203,7 @@ bun run release:minor
 bun run release:alpha
 
 # Resultado: 1.1.0 -> 1.1.1-alpha.0
-# Se publica como: npm install lastfm-client-ts@alpha
+# Se publica como: npm install @ansango/lastfm-api@alpha
 ```
 
 ### Ejemplo 4: Generar Changelog Manualmente
@@ -309,7 +309,7 @@ gh auth login
 # Sigue las instrucciones interactivas
 ```
 
-### Error: "npm publish failed"
+### Error: "npm publish --access public failed"
 
 ```bash
 # Asegúrate de estar logueado en npm

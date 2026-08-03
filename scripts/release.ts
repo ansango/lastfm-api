@@ -146,14 +146,14 @@ function main() {
 
 		// Publish to npm
 		const npmTag = isPrerelease ? `--tag ${releaseType}` : '';
-		exec(`npm publish ${npmTag}`.trim(), 'Publishing to npm');
+		exec(`npm publish --access public ${npmTag}`.trim(), 'Publishing to npm');
 
 		console.log('\n╔════════════════════════════════════════════════╗');
 		console.log('║          ✨ Release Successful! ✨             ║');
 		console.log('╚════════════════════════════════════════════════╝');
 		console.log(`\n📦 Version ${newVersion} has been released!`);
-		console.log(`🔗 https://github.com/ansango/lastfm-client-ts/releases/tag/v${newVersion}`);
-		console.log(`📦 https://www.npmjs.com/package/lastfm-client-ts`);
+		console.log(`🔗 https://github.com/ansango/lastfm-api/releases/tag/v${newVersion}`);
+		console.log(`📦 https://www.npmjs.com/package/@ansango/lastfm-api`);
 		console.log('\n🎉 Don\'t forget to announce the release!\n');
 	} catch (error) {
 		console.error('\n❌ Release failed!');

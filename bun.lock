@@ -3,7 +3,7 @@
   "configVersion": 0,
   "workspaces": {
     "": {
-      "name": "lastfm-client-ts",
+      "name": "@ansango/lastfm-api",
       "dependencies": {
         "js-md5": "^0.8.3",
         "zod": "4.1.12",
