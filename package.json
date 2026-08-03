@@ -1,5 +1,5 @@
 {
-  "name": "lastfm-client-ts",
+  "name": "@ansango/lastfm-api",
   "version": "3.1.3",
   "description": "A universal Last.fm API client for Node.js and Browser",
   "type": "module",
@@ -111,7 +111,17 @@
     "release:beta": "bun scripts/release.ts beta",
     "gh:release": "bun scripts/github-release.ts"
   },
-  "repository": "https://github.com/ansango/lastfm-client-ts.git",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ansango/lastfm-api.git"
+  },
+  "homepage": "https://github.com/ansango/lastfm-api#readme",
+  "bugs": {
+    "url": "https://github.com/ansango/lastfm-api/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
   "author": "Anibal Santos",
   "license": "MIT",
   "keywords": [

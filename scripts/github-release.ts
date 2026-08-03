@@ -122,7 +122,7 @@ function createGitHubRelease(
 		console.log(`\n📦 Creating GitHub release: ${tag}`);
 		execSync(cmd, { stdio: 'inherit' });
 		console.log(`✅ GitHub release created successfully!`);
-		console.log(`🔗 https://github.com/ansango/lastfm-client-ts/releases/tag/${tag}`);
+		console.log(`🔗 https://github.com/ansango/lastfm-api/releases/tag/${tag}`);
 	} catch (error) {
 		console.error('❌ Failed to create GitHub release:', error);
 		throw error;
@@ -191,7 +191,7 @@ function main() {
 	console.log('\n✨ Release process completed!\n');
 	console.log('Next steps:');
 	console.log('  1. Verify the release on GitHub');
-	console.log('  2. Run: npm publish' + (prerelease ? ' --tag alpha' : ''));
+	console.log('  2. Run: npm publish --access public' + (prerelease ? ' --tag alpha' : ''));
 	console.log('  3. Announce the release 🎉\n');
 }
 

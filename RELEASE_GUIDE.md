@@ -1,6 +1,6 @@
 # 🚀 Sistema de Release Automático
 
-Sistema completo de automatización para releases del proyecto lastfm-client-ts.
+Sistema completo de automatización para releases del proyecto @ansango/lastfm-api.
 
 ## 📦 ¿Qué se ha añadido?
 
@@ -69,7 +69,7 @@ bun run changelog
 bun run gh:release
 
 # 3. Publicar en npm
-npm publish
+npm publish --access public
 ```
 
 ## ✅ El script automático hace:
@@ -137,8 +137,8 @@ bun run release:minor
 
 # 4. ¡Listo!
 # 📦 Version 1.1.0 has been released!
-# 🔗 https://github.com/ansango/lastfm-client-ts/releases/tag/v1.1.0
-# 📦 https://www.npmjs.com/package/lastfm-client-ts
+# 🔗 https://github.com/ansango/lastfm-api/releases/tag/v1.1.0
+# 📦 https://www.npmjs.com/package/@ansango/lastfm-api
 ```
 
 ## 🎨 Características

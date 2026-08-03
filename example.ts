@@ -1,5 +1,5 @@
 /**
- * Example usage of lastfm-client-ts
+ * Example usage of @ansango/lastfm-api
  * 
  * This file demonstrates different ways to use the Last.fm client library.
  * 

@@ -1,10 +1,15 @@
-# lastfm-client-ts
+# @ansango/lastfm-api
 
-[![NPM Version](https://img.shields.io/npm/v/lastfm-client-ts.svg?branch=main)](https://www.npmjs.com/package/lastfm-client-ts)
-[![Downloads Per Week](https://img.shields.io/npm/dw/lastfm-client-ts.svg?color=blue)](https://www.npmjs.com/package/lastfm-client-ts)
+[![NPM Version](https://img.shields.io/npm/v/%40ansango%2Flastfm-api.svg?branch=main)](https://www.npmjs.com/package/@ansango/lastfm-api)
+[![Downloads Per Week](https://img.shields.io/npm/dw/%40ansango%2Flastfm-api.svg?color=blue)](https://www.npmjs.com/package/@ansango/lastfm-api)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
 A universal Last.fm API client for Node.js and Browser, written in TypeScript.
+
+> [!NOTE]
+> This package was previously published as `lastfm-client-ts`. The legacy package remains
+> installable but is deprecated. Migrate by installing `@ansango/lastfm-api` and updating the
+> package specifier in your imports; the exported API and subpaths are unchanged.
 
 ## Features
 
@@ -35,7 +40,7 @@ A universal Last.fm API client for Node.js and Browser, written in TypeScript.
 ## Installation
 
 ```bash
-npm install lastfm-client-ts
+npm install @ansango/lastfm-api
 ```
 
 **Requirements:**
@@ -45,7 +50,7 @@ npm install lastfm-client-ts
 ## Quick Start
 
 ```typescript
-import { LastFmClient } from 'lastfm-client-ts';
+import { LastFmClient } from '@ansango/lastfm-api';
 
 // Create a client instance
 const client = new LastFmClient({
@@ -68,7 +73,7 @@ console.log(albums);
 The client class provides access to all API services in one place:
 
 ```typescript
-import { LastFmClient } from 'lastfm-client-ts';
+import { LastFmClient } from '@ansango/lastfm-api';
 
 const client = new LastFmClient({
   apiKey: 'YOUR_API_KEY',
@@ -130,7 +135,7 @@ const session = await client.auth.getSession({ token: 'AUTH_TOKEN' });
 Set configuration globally and reuse it across multiple client instances:
 
 ```typescript
-import { setGlobalConfig, createClient } from 'lastfm-client-ts';
+import { setGlobalConfig, createClient } from '@ansango/lastfm-api';
 
 // Set global configuration once
 setGlobalConfig({
@@ -153,8 +158,8 @@ Import only the services you need for better tree-shaking:
 
 ```typescript
 // Import only the user service
-import { createUserService } from 'lastfm-client-ts/user';
-import type { UserGetInfoRequest } from 'lastfm-client-ts/user';
+import { createUserService } from '@ansango/lastfm-api/user';
+import type { UserGetInfoRequest } from '@ansango/lastfm-api/user';
 
 const userService = createUserService({
   apiKey: 'YOUR_API_KEY'
@@ -166,8 +171,8 @@ const userInfo = await userService.getInfo(params);
 
 ```typescript
 // Import multiple services
-import { createAlbumService } from 'lastfm-client-ts/album';
-import { createTrackService } from 'lastfm-client-ts/track';
+import { createAlbumService } from '@ansango/lastfm-api/album';
+import { createTrackService } from '@ansango/lastfm-api/track';
 
 const config = { apiKey: 'YOUR_API_KEY' };
 
@@ -179,15 +184,15 @@ const tracks = await trackService.search({ track: 'Come Together' });
 ```
 
 **Available service imports:**
-- `lastfm-client-ts/user`
-- `lastfm-client-ts/album`
-- `lastfm-client-ts/artist`
-- `lastfm-client-ts/track`
-- `lastfm-client-ts/tag`
-- `lastfm-client-ts/chart`
-- `lastfm-client-ts/geo`
-- `lastfm-client-ts/library`
-- `lastfm-client-ts/auth`
+- `@ansango/lastfm-api/user`
+- `@ansango/lastfm-api/album`
+- `@ansango/lastfm-api/artist`
+- `@ansango/lastfm-api/track`
+- `@ansango/lastfm-api/tag`
+- `@ansango/lastfm-api/chart`
+- `@ansango/lastfm-api/geo`
+- `@ansango/lastfm-api/library`
+- `@ansango/lastfm-api/auth`
 
 ## Zod Schema Validation
 
@@ -198,15 +203,15 @@ The library includes automatically generated Zod schemas for runtime validation.
 Schemas are available through modular imports, following the same pattern as the services:
 
 ```typescript
-import { userGetInfoRequestSchema, userGetInfoResponseSchema } from 'lastfm-client-ts/user/schemas';
-import { albumSearchRequestSchema } from 'lastfm-client-ts/album/schemas';
-import { trackGetInfoResponseSchema } from 'lastfm-client-ts/track/schemas';
+import { userGetInfoRequestSchema, userGetInfoResponseSchema } from '@ansango/lastfm-api/user/schemas';
+import { albumSearchRequestSchema } from '@ansango/lastfm-api/album/schemas';
+import { trackGetInfoResponseSchema } from '@ansango/lastfm-api/track/schemas';
 ```
 
 ### Usage Example
 
 ```typescript
-import { userGetInfoRequestSchema, userGetInfoResponseSchema } from 'lastfm-client-ts/user/schemas';
+import { userGetInfoRequestSchema, userGetInfoResponseSchema } from '@ansango/lastfm-api/user/schemas';
 
 // Validate request parameters
 const params = { user: 'ansango' };
@@ -227,16 +232,16 @@ if (result.success) {
 ```
 
 **Available schema imports:**
-- `lastfm-client-ts/user/schemas`
-- `lastfm-client-ts/album/schemas`
-- `lastfm-client-ts/artist/schemas`
-- `lastfm-client-ts/track/schemas`
-- `lastfm-client-ts/tag/schemas`
-- `lastfm-client-ts/chart/schemas`
-- `lastfm-client-ts/geo/schemas`
-- `lastfm-client-ts/library/schemas`
-- `lastfm-client-ts/auth/schemas`
-- `lastfm-client-ts/schemas` (base types like `imageSchema`, `datePropSchema`, etc.)
+- `@ansango/lastfm-api/user/schemas`
+- `@ansango/lastfm-api/album/schemas`
+- `@ansango/lastfm-api/artist/schemas`
+- `@ansango/lastfm-api/track/schemas`
+- `@ansango/lastfm-api/tag/schemas`
+- `@ansango/lastfm-api/chart/schemas`
+- `@ansango/lastfm-api/geo/schemas`
+- `@ansango/lastfm-api/library/schemas`
+- `@ansango/lastfm-api/auth/schemas`
+- `@ansango/lastfm-api/schemas` (base types like `imageSchema`, `datePropSchema`, etc.)
 
 ## Environment Variables
 
@@ -254,7 +259,7 @@ LASTFM_BASE_URL=https://ws.audioscrobbler.com/2.0/
 
 ```typescript
 // Configuration is loaded automatically from process.env
-import { createClient } from 'lastfm-client-ts';
+import { createClient } from '@ansango/lastfm-api';
 
 const client = createClient(); // Uses environment variables
 ```
@@ -280,7 +285,7 @@ const client = new LastFmClient({
 Methods that mutate user state (`track.scrobble`, `track.scrobbleMany`, plus future write methods) require an authenticated session. Get one with `client.auth.getSession({ token })` after the user authorizes the token in a browser. Once you have a session key, pass it as `sessionKey` in your config — the client injects it into every authenticated call.
 
 ```typescript
-import { LastFmClient } from 'lastfm-client-ts';
+import { LastFmClient } from '@ansango/lastfm-api';
 
 const client = new LastFmClient({
   apiKey: process.env.LASTFM_API_KEY!,
@@ -304,7 +309,7 @@ await client.track.scrobble({
 API errors throw a `LastFmApiError` that carries the HTTP status and the Last.fm error code, so consumers can distinguish failures programmatically:
 
 ```typescript
-import { LastFmClient, LastFmApiError } from 'lastfm-client-ts';
+import { LastFmClient, LastFmApiError } from '@ansango/lastfm-api';
 
 try {
   await client.user.getInfo({ user: 'nonexistent_user_xyz' });
@@ -379,13 +384,13 @@ Each service provides methods for interacting with specific Last.fm API endpoint
 The library is fully typed with comprehensive TypeScript definitions:
 
 ```typescript
-import { LastFmClient } from 'lastfm-client-ts';
+import { LastFmClient } from '@ansango/lastfm-api';
 import type {
   UserGetInfoRequest,
   UserGetInfoResponse,
   AlbumSearchRequest,
   AlbumSearchResponse
-} from 'lastfm-client-ts';
+} from '@ansango/lastfm-api';
 
 const client = new LastFmClient({ apiKey: 'YOUR_API_KEY' });
 
