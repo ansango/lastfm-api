@@ -1,4 +1,6 @@
 import type {
+	ArtistGetCorrectionRequest,
+	ArtistGetCorrectionResponse,
 	ArtistGetInfoRequest,
 	ArtistGetInfoResponse,
 	ArtistGetTagsRequest,
@@ -86,6 +88,19 @@ export interface ArtistService {
 	 * https://www.last.fm/api/show/artist.search
 	 * */
 	search: (params: ArtistSearchRequest, init?: RequestInit) => Promise<ArtistSearchResponse>;
+	/**
+	 * Get the canonical correction for a misspelled or noncanonical artist
+	 * name. Returns the list of corrections Last.fm would apply to the
+	 * provided input. Unsigned GET — no `sk` or `api_sig` are sent.
+	 * @param {ArtistGetCorrectionRequest} params
+	 * @param {RequestInit} init
+	 * @returns {Promise<ArtistGetCorrectionResponse>}
+	 * https://www.last.fm/api/show/artist.getCorrection
+	 */
+	getCorrection: (
+		params: ArtistGetCorrectionRequest,
+		init?: RequestInit
+	) => Promise<ArtistGetCorrectionResponse>;
 }
 
 export function createArtistService(config: LastFmConfig): ArtistService {
@@ -103,6 +118,11 @@ export function createArtistService(config: LastFmConfig): ArtistService {
 		getTopTracks: (params, init) =>
 			fetcher<ArtistGetTopTracksResponse>(buildUrl(config, 'artist.getTopTracks', params), init),
 		search: (params, init) =>
-			fetcher<ArtistSearchResponse>(buildUrl(config, 'artist.search', params), init)
+			fetcher<ArtistSearchResponse>(buildUrl(config, 'artist.search', params), init),
+		getCorrection: (params, init) =>
+			fetcher<ArtistGetCorrectionResponse>(
+				buildUrl(config, 'artist.getCorrection', params),
+				init
+			)
 	};
 }
