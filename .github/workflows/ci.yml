@@ -5,6 +5,15 @@ on:
     branches: [main]
   pull_request:
 
+# The default GITHUB_TOKEN is read-only on most personal repos. The
+# "Post test summary to PR" step needs to POST issue comments, so we
+# opt in to write on pull-requests + issues. `contents: read` is the
+# default for checkout and stays read-only.
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
 # No secrets, no network egress to Last.fm. This workflow only verifies the
 # deterministic unit tests, typecheck, and a clean build of the published
 # entrypoints. Live integration is intentionally excluded and lives in a
