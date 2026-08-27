@@ -279,6 +279,58 @@ export const batchTracksScrobbleRequestSchema = z.object({
     sk: z.string().optional()
 });
 
+/**
+ * Maximum number of tags accepted by `track.addTags` per the Last.fm
+ * API documentation.
+ */
+export const MAX_TRACK_TAGS_PER_ADD = 10;
+
+/**
+ * Request shape for `track.addTags`. The `tags` array is sent on the
+ * wire as a comma-separated string and validated to at most
+ * `MAX_TRACK_TAGS_PER_ADD` entries.
+ * https://www.last.fm/api/show/track.addTags
+ */
+export const trackAddTagsRequestSchema = z.object({
+    artist: artistNameSchema,
+    track: trackNameSchema,
+    tags: z.array(tagNameSchema).max(MAX_TRACK_TAGS_PER_ADD, {
+        message: `track.addTags accepts at most ${MAX_TRACK_TAGS_PER_ADD} tags per request`
+    }),
+    sk: z.string().optional()
+});
+
+/**
+ * Request shape for `track.removeTag`. A single tag is removed per
+ * call.
+ * https://www.last.fm/api/show/track.removeTag
+ */
+export const trackRemoveTagRequestSchema = z.object({
+    artist: artistNameSchema,
+    track: trackNameSchema,
+    tag: tagNameSchema,
+    sk: z.string().optional()
+});
+
+/**
+ * Request shape for `track.love` / `track.unlove`. Both share the
+ * same body — only the method name changes.
+ * https://www.last.fm/api/show/track.love
+ * https://www.last.fm/api/show/track.unlove
+ */
+export const trackLoveRequestSchema = z.object({
+    artist: artistNameSchema,
+    track: trackNameSchema,
+    sk: z.string().optional()
+});
+
+export const trackUnloveRequestSchema = trackLoveRequestSchema;
+
+/**
+ * Empty success payload for the void tag/love mutations.
+ */
+export const trackMutationResponseSchema = z.unknown();
+
 // Inferred types
 export type TrackArtist = z.infer<typeof trackArtistSchema>;
 export type TrackAlbum = z.infer<typeof trackAlbumSchema>;
@@ -301,3 +353,8 @@ export type TrackGetCorrectionResponse = z.infer<typeof trackGetCorrectionRespon
 export type TrackScrobbleRequest = z.infer<typeof trackScrobbleRequestSchema>;
 export type TrackScrobbleResponse = z.infer<typeof trackScrobbleResponseSchema>;
 export type BatchTracksScrobbleRequest = z.infer<typeof batchTracksScrobbleRequestSchema>;
+export type TrackAddTagsRequest = z.infer<typeof trackAddTagsRequestSchema>;
+export type TrackRemoveTagRequest = z.infer<typeof trackRemoveTagRequestSchema>;
+export type TrackLoveRequest = z.infer<typeof trackLoveRequestSchema>;
+export type TrackUnloveRequest = TrackLoveRequest;
+export type TrackMutationResponse = z.infer<typeof trackMutationResponseSchema>;
