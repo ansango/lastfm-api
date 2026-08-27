@@ -1,7 +1,7 @@
 import { describe, test, expect, beforeEach, afterEach } from 'bun:test';
 import { LastFmClient } from '../client.js';
 import { LastFmApiError } from '../utils.js';
-import { installFetchMock, type FetchMock, parseUrl } from './helpers/fetch-mock.js';
+import { installFetchMock, type FetchMock, parseFormBody, parseUrl } from './helpers/fetch-mock.js';
 import {
 	fakeAlbum,
 	fakeArtist,
@@ -263,6 +263,117 @@ describe('artist service', () => {
 		});
 	});
 
+	describe('addTags', () => {
+		test('routes to artist.addTags via signed POST with sk and comma-joined tags, returns void', async () => {
+			const authed = new LastFmClient({
+				apiKey: API_KEY,
+				sharedSecret: 'test-shared-secret',
+				sessionKey: 'SESSION-KEY'
+			});
+			mock.respondWithJson({});
+
+			const result = await authed.artist.addTags({
+				artist: 'Test Artist',
+				tags: ['rock', '90s', 'favorites']
+			});
+
+			const call = mock.lastCall();
+			expect(call.method).toBe('POST');
+			expect(call.url).toBe('https://ws.audioscrobbler.com/2.0/');
+			expect(call.headers['Content-Type']).toBe('application/x-www-form-urlencoded');
+			const body = parseFormBody(call.body);
+			expect(body.method).toBe('artist.addTags');
+			expect(body.api_key).toBe(API_KEY);
+			expect(body.artist).toBe('Test Artist');
+			expect(body.tags).toBe('rock,90s,favorites');
+			expect(body.sk).toBe('SESSION-KEY');
+			expect(body.api_sig).toMatch(/^[a-f0-9]{32}$/);
+			expect(body.format).toBe('json');
+			expect(result).toBeUndefined();
+		});
+
+		test('per-request sk overrides config.sessionKey', async () => {
+			const authed = new LastFmClient({
+				apiKey: API_KEY,
+				sharedSecret: 'test-shared-secret',
+				sessionKey: 'CONFIG-SK'
+			});
+			mock.respondWithJson({});
+
+			await authed.artist.addTags({
+				artist: 'A',
+				tags: ['t1'],
+				sk: 'REQUEST-SK'
+			});
+
+			const body = parseFormBody(mock.lastCall().body);
+			expect(body.sk).toBe('REQUEST-SK');
+		});
+
+		test('fails before fetch when no session key is available, with a clear sanitized error', async () => {
+			const noSession = new LastFmClient({ apiKey: API_KEY, sharedSecret: 'test-shared-secret' });
+
+			let caught: unknown;
+			try {
+				await noSession.artist.addTags({ artist: 'A', tags: ['t1'] });
+			} catch (err) {
+				caught = err;
+			}
+			expect(caught).toBeInstanceOf(LastFmApiError);
+			const e = caught as LastFmApiError;
+			expect(e.httpStatus).toBe(0);
+			expect(e.message).toContain('session key');
+			expect(mock.calls).toHaveLength(0);
+		});
+
+		test('rejects more than 10 tags in the request schema', () => {
+			const result = artistSchemas.artistAddTagsRequestSchema.safeParse({
+				artist: 'A',
+				tags: Array.from({ length: 11 }, (_, i) => `t${i}`)
+			});
+			expect(result.success).toBe(false);
+		});
+	});
+
+	describe('removeTag', () => {
+		test('routes to artist.removeTag via signed POST with sk and single tag, returns void', async () => {
+			const authed = new LastFmClient({
+				apiKey: API_KEY,
+				sharedSecret: 'test-shared-secret',
+				sessionKey: 'SESSION-KEY'
+			});
+			mock.respondWithJson({});
+
+			const result = await authed.artist.removeTag({
+				artist: 'Test Artist',
+				tag: 'favorites'
+			});
+
+			const call = mock.lastCall();
+			expect(call.method).toBe('POST');
+			const body = parseFormBody(call.body);
+			expect(body.method).toBe('artist.removeTag');
+			expect(body.artist).toBe('Test Artist');
+			expect(body.tag).toBe('favorites');
+			expect(body.sk).toBe('SESSION-KEY');
+			expect(body.api_sig).toMatch(/^[a-f0-9]{32}$/);
+			expect(result).toBeUndefined();
+		});
+
+		test('fails before fetch when no session key is available', async () => {
+			const noSession = new LastFmClient({ apiKey: API_KEY, sharedSecret: 'test-shared-secret' });
+
+			let caught: unknown;
+			try {
+				await noSession.artist.removeTag({ artist: 'A', tag: 't' });
+			} catch (err) {
+				caught = err;
+			}
+			expect(caught).toBeInstanceOf(LastFmApiError);
+			expect(mock.calls).toHaveLength(0);
+		});
+	});
+
 	describe('import coverage', () => {
 		test('artist service is exposed from root, artist entrypoint, and artist.schemas entrypoint', () => {
 			const c = createClient({ apiKey: API_KEY });
@@ -274,17 +385,23 @@ describe('artist service', () => {
 			expect(typeof c.artist.getTopTracks).toBe('function');
 			expect(typeof c.artist.search).toBe('function');
 			expect(typeof c.artist.getCorrection).toBe('function');
+			expect(typeof c.artist.addTags).toBe('function');
+			expect(typeof c.artist.removeTag).toBe('function');
 
 			const svc: ArtistService = createArtistService({ apiKey: API_KEY });
 			expect(typeof svc.getInfo).toBe('function');
 			expect(typeof svc.search).toBe('function');
 			expect(typeof svc.getCorrection).toBe('function');
+			expect(typeof svc.addTags).toBe('function');
+			expect(typeof svc.removeTag).toBe('function');
 
 			expect(artistSchemas.artistGetInfoRequestSchema).toBeDefined();
 			expect(artistSchemas.artistSearchRequestSchema).toBeDefined();
 			expect(artistSchemas.artistGetCorrectionRequestSchema).toBeDefined();
 			expect(artistSchemas.artistGetCorrectionResponseSchema).toBeDefined();
 			expect(artistSchemas.artistCorrectionSchema).toBeDefined();
+			expect(artistSchemas.artistAddTagsRequestSchema).toBeDefined();
+			expect(artistSchemas.artistRemoveTagRequestSchema).toBeDefined();
 		});
 	});
 });
