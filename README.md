@@ -14,6 +14,7 @@ A universal Last.fm API client for Node.js and Browser, written in TypeScript.
 ## Features
 
 - ✅ **Universal**: Works in Node.js (≥20.0.0) and Browser
+- ✅ **Complete coverage**: All 57 canonical Last.fm API methods across 9 namespaces
 - ✅ **TypeScript**: Full type safety with comprehensive type definitions
 - ✅ **Zod Schemas**: Runtime validation schemas for all types
 - ✅ **ESM**: Modern ES modules with tree-shaking support
@@ -128,6 +129,31 @@ const libraryArtists = await client.library.getArtists({ user: 'ansango' });
 
 // Auth service (for scrobbling and authenticated methods)
 const session = await client.auth.getSession({ token: 'AUTH_TOKEN' });
+// Request an auth token (signed GET, no sk)
+const { token } = await client.auth.getToken();
+// Username/password login (signed POST, no sk) — server-side / trusted only
+const { session: mobileSession } = await client.auth.getMobileSession({
+  username: 'someone',
+  password: process.env.LASTFM_PASSWORD!
+});
+
+// Now-playing and tag/love mutations (all require an authenticated session)
+await client.track.updateNowPlaying({
+  artist: 'Cher',
+  track: 'Believe',
+  album: 'Believe',
+  duration: 240
+});
+
+await client.track.addTags({
+  artist: 'Cher',
+  track: 'Believe',
+  tags: ['favorites', '90s']
+});
+await client.track.love({ artist: 'Cher', track: 'Believe' });
+
+await client.album.addTags({ artist: 'Cher', album: 'Believe', tags: ['favorites'] });
+await client.artist.addTags({ artist: 'Cher', tags: ['favorites'] });
 ```
 
 ### Using Global Configuration
@@ -282,7 +308,17 @@ const client = new LastFmClient({
 
 ## Authentication & Scrobbling
 
-Methods that mutate user state (`track.scrobble`, `track.scrobbleMany`, plus future write methods) require an authenticated session. Get one with `client.auth.getSession({ token })` after the user authorizes the token in a browser. Once you have a session key, pass it as `sessionKey` in your config — the client injects it into every authenticated call.
+Methods that mutate user state require an authenticated session. The full list of write methods is:
+
+- `auth.getSession`, `auth.getToken`, `auth.getMobileSession`
+- `track.scrobble`, `track.updateNowPlaying`
+- `track.addTags`, `track.removeTag`, `track.love`, `track.unlove`
+- `album.addTags`, `album.removeTag`
+- `artist.addTags`, `artist.removeTag`
+
+For browser flows, get a session with `client.auth.getSession({ token })` after the user authorizes the token in a browser. For server-side / trusted environments, `client.auth.getMobileSession({ username, password })` issues a session directly. Once you have a session key, pass it as `sessionKey` in your config — the client injects it into every authenticated call. The mobile-session method always uses HTTPS; a custom `baseUrl` over plain HTTP is rejected before any network call.
+
+`auth.getToken` is a signed GET that does not require an existing session; it is the first step of the browser auth flow.
 
 ```typescript
 import { LastFmClient } from '@ansango/lastfm-api';
@@ -367,17 +403,19 @@ function resetGlobalConfig(): void;
 
 ### Services
 
-Each service provides methods for interacting with specific Last.fm API endpoints:
+The package covers all 57 canonical Last.fm API methods across 9 namespaces. See [docs/api-coverage.md](docs/api-coverage.md) for the full table.
 
-- **UserService**: User-related methods (getInfo, getTopArtists, getRecentTracks, etc.)
-- **AlbumService**: Album methods (getInfo, search, getTags, etc.)
-- **ArtistService**: Artist methods (getInfo, getSimilar, getTopAlbums, etc.)
-- **TrackService**: Track methods (getInfo, search, scrobble, scrobbleMany, etc.)
-- **TagService**: Tag methods (getInfo, getTopArtists, getTopTracks, etc.)
-- **ChartService**: Chart methods (getTopArtists, getTopTracks, etc.)
-- **GeoService**: Geographic methods (getTopArtists, getTopTracks by country)
-- **LibraryService**: Library methods (getArtists, etc.)
-- **AuthService**: Authentication methods (getSession, etc.)
+- **UserService**: 13 methods — `getInfo`, `getFriends`, `getLovedTracks`, `getRecentTracks`, `getTopAlbums`, `getTopArtists`, `getTopTags`, `getTopTracks`, `getWeeklyAlbumChart`, `getWeeklyArtistChart`, `getWeeklyChartList`, `getWeeklyTrackChart`, `getPersonalTags`
+- **AlbumService**: 6 methods — `getInfo`, `getTags`, `getTopTags`, `search`, `addTags`¹, `removeTag`¹
+- **ArtistService**: 10 methods — `getInfo`, `getTags`, `getSimilar`, `getTopTags`, `getTopAlbums`, `getTopTracks`, `search`, `getCorrection`, `addTags`¹, `removeTag`¹
+- **TrackService**: 12 methods — `getInfo`, `getSimilar`, `getTags`, `getTopTags`, `search`, `scrobble`¹, `getCorrection`, `addTags`¹, `removeTag`¹, `love`¹, `unlove`¹, `updateNowPlaying`¹
+- **TagService**: 7 methods — `getInfo`, `getSimilar`, `getTopAlbums`, `getTopArtists`, `getTopTags`, `getTopTracks`, `getWeeklyChartList`
+- **ChartService**: 3 methods — `getTopArtists`, `getTopTags`, `getTopTracks`
+- **GeoService**: 2 methods — `getTopArtists`, `getTopTracks`
+- **LibraryService**: 1 method — `getArtists`
+- **AuthService**: 3 methods — `getSession`, `getToken`, `getMobileSession`¹
+
+¹ Requires an authenticated session.
 
 ## TypeScript Support
 
@@ -448,7 +486,7 @@ The test suite is split into two layers:
 
 The `bun test` alias points to the deterministic suite, so a normal `bun test` is safe to run anywhere.
 
-An `inventory.test.ts` file asserts the 43/43 canonical-method baseline. The exact 57/57 inventory assertion will move here when the parent epic (#67) and its children close.
+An `inventory.test.ts` file asserts the **57/57 canonical-method baseline** — every namespace.method pair listed in the official Last.fm API index is exposed on the `LastFmClient` and callable. The per-namespace breakdown is mirrored in [docs/api-coverage.md](docs/api-coverage.md) and stays in sync with the inventory test.
 
 ### Release Process
 
