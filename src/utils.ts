@@ -44,7 +44,7 @@ export async function parseLastFmResponse(response: Response): Promise<unknown> 
 	}
 
 	if (body && body.error) {
-		const code = typeof body.error === 'number' ? body.error : undefined;
+		const code = typeof body?.error === 'number' ? body.error : undefined;
 		throw new LastFmApiError(
 			`Last.fm API Error ${body.error}: ${body.message ?? ''}`.trim(),
 			httpStatus,
@@ -142,27 +142,147 @@ export function buildAuthUrl(
 	return `${baseUrl}?${urlParams.toString()}`;
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Signed POST transport (issue #68)
+//
+// One reusable signed POST path used by every authenticated write. Services are
+// responsible only for the domain-specific param shape (e.g. indexed keys for
+// batch scrobble). Everything else — session resolution, signature, body
+// encoding, error routing — lives here.
+//
+// Internal on purpose. Do not re-export through the public `exports` map of
+// `package.json`. The issue explicitly requires that this helper is not
+// promoted to a public API of the package.
+// ─────────────────────────────────────────────────────────────────────────────
+
+/** Last.fm wire fields that the transport always owns. */
+const RESERVED_FIELDS = ['method', 'api_key', 'api_sig', 'format'] as const;
+
+export interface SignedRequestOptions {
+	/** Functional parameters (artist, track, timestamp, sk, ...). Values are stringified. */
+	params: Record<string, string | number | undefined>;
+	/**
+	 * Whether this method requires a session key. When true, `sk` is resolved
+	 * from `params.sk` (request) or `config.sessionKey` and is included in
+	 * the signature and the body. When false, the transport signs and sends
+	 * without an `sk` (used by `auth.getToken` and `auth.getMobileSession`).
+	 * @default true
+	 */
+	requiresSession?: boolean;
+	/**
+	 * Caller-provided `RequestInit`. `signal` and safe, non-conflicting
+	 * headers are preserved. `method`, `body`, and `Content-Type` are
+	 * always overridden by the transport.
+	 */
+	init?: RequestInit;
+}
+
 /**
- * Realiza una petición POST con body URL-encoded
+ * Send a signed POST to the Last.fm API and return the parsed JSON body.
+ *
+ * Behaviour:
+ *
+ * - Reserved fields (`method`, `api_key`, `api_sig`, `format`) are always
+ *   generated internally; any caller-supplied values are silently ignored.
+ * - Signature input is the sorted concatenation of `method`, `api_key`,
+ *   functional params, and `sk` (when required). `format` and `api_sig`
+ *   are never part of the signature input.
+ * - The body is `application/x-www-form-urlencoded` and contains `method`,
+ *   `api_key`, every functional param, optional `sk`, `api_sig`, and
+ *   `format=json`. Nothing goes in the URL.
+ * - Missing `sharedSecret` or required `sk` fail with a sanitized
+ *   `LastFmApiError` (no request values in the message) before any
+ *   `fetch` is issued.
+ * - The response is routed through `parseLastFmResponse`, so HTTP
+ *   failures and Last.fm error envelopes both surface as `LastFmApiError`.
+ *   An empty or non-JSON success body is returned as-is, not as an error.
  */
-export async function postFetcher<T>(url: string, body: string): Promise<T> {
-	const response = await fetch(url, {
+export async function signedPost<T = unknown>(
+	config: LastFmConfig,
+	method: string,
+	options: SignedRequestOptions
+): Promise<T> {
+	const requiresSession = options.requiresSession ?? true;
+
+	// 1. Shared secret must exist before we touch anything.
+	if (!config.sharedSecret) {
+		throw new LastFmApiError(
+			'A `sharedSecret` is required for signed methods. Pass `sharedSecret` in the LastFmConfig.',
+			0
+		);
+	}
+
+	// 2. Coerce params to string and drop undefined/null.
+	const cleanParams: Record<string, string> = {};
+	for (const [k, v] of Object.entries(options.params)) {
+		if (v !== undefined && v !== null) {
+			cleanParams[k] = String(v);
+		}
+	}
+
+	// 3. Resolve `sk` for session-required methods.
+	if (requiresSession) {
+		const requestSk = cleanParams.sk;
+		const resolvedSk = requestSk ?? config.sessionKey;
+		if (!resolvedSk) {
+			throw new LastFmApiError(
+				'A session key (`sk`) is required for this method. Pass `sk` in the request or set `sessionKey` on the LastFmConfig.',
+				0
+			);
+		}
+		cleanParams.sk = resolvedSk;
+	}
+
+	// 4. Drop any reserved field the caller tried to inject. The transport
+	//    owns these — they will be set to canonical values below.
+	for (const reserved of RESERVED_FIELDS) {
+		delete cleanParams[reserved];
+	}
+
+	// 5. Build signature input. Note: `format` and `api_sig` are never part
+	//    of the signature input per the Last.fm contract.
+	const sigInput: Record<string, string> = {
+		method,
+		api_key: config.apiKey,
+		...cleanParams
+	};
+	const sigString = Object.keys(sigInput)
+		.sort()
+		.map((k) => `${k}${sigInput[k]}`)
+		.join('');
+	const api_sig = md5(sigString + config.sharedSecret);
+
+	// 6. Build body. Order: method, api_key, functional params (incl. sk if
+	//    present), api_sig, format=json. URLSearchParams handles encoding.
+	const body = new URLSearchParams();
+	body.set('method', method);
+	body.set('api_key', config.apiKey);
+	for (const [k, v] of Object.entries(cleanParams)) {
+		body.set(k, v);
+	}
+	body.set('api_sig', api_sig);
+	body.set('format', 'json');
+
+	// 7. Merge caller `init` safely. The transport owns method, body, and
+	//    Content-Type; signal and other safe headers pass through. Caller
+	//    headers go first so the canonical Content-Type always wins.
+	const callerHeaders = (options.init?.headers ?? {}) as Record<string, string>;
+	const finalHeaders: Record<string, string> = {
+		...callerHeaders,
+		'Content-Type': 'application/x-www-form-urlencoded'
+	};
+	const finalInit: RequestInit = {
+		...options.init,
 		method: 'POST',
-		headers: {
-			'Content-Type': 'application/x-www-form-urlencoded'
-		},
-		body
-	});
-
-	if (!response.ok) {
-		throw new Error(`HTTP Error: ${response.status} ${response.statusText}`);
+		headers: finalHeaders,
+		body: body.toString()
+	};
+	if (options.init?.signal) {
+		finalInit.signal = options.init.signal;
 	}
 
-	const data = await response.json();
-
-	if (data.error) {
-		throw new Error(`Last.fm API Error ${data.error}: ${data.message}`);
-	}
-
-	return data as T;
+	// 8. Send.
+	const baseUrl = config.baseUrl ?? DEFAULT_BASE_URL;
+	const response = await fetch(baseUrl, finalInit);
+	return (await parseLastFmResponse(response)) as T;
 }

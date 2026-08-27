@@ -13,10 +13,10 @@ import type {
 	TrackSearchRequest,
 	TrackSearchResponse
 } from './track.schemas.js';
-import { fetcher, buildUrl } from '../utils.js';
+import { fetcher, buildUrl, signedPost } from '../utils.js';
 import type { LastFmConfig } from '../config.js';
 
-import { batchFetcher, parsePostParamsBatchTrack, parsePostParamsTrack } from './track.utils.js';
+import { buildBatchScrobbleParams, buildScrobbleParams } from './track.utils.js';
 
 export interface TrackService {
 	/**
@@ -87,36 +87,36 @@ export interface TrackService {
 	 * Scrobble a batch of tracks. Submits a batch of track plays to the Last.fm.
 	 * Canonical Last.fm method name: `track.scrobble`.
 	 * @param {BatchTracksScrobbleRequest} params
+	 * @param {RequestInit} init
 	 * @returns {Promise<TrackScrobbleResponse>}
 	 * https://www.last.fm/api/show/track.scrobble
 	 * */
-	scrobbleMany: (params: BatchTracksScrobbleRequest) => Promise<TrackScrobbleResponse>;
+	scrobbleMany: (
+		params: BatchTracksScrobbleRequest,
+		init?: RequestInit
+	) => Promise<TrackScrobbleResponse>;
 	/**
 	 * @deprecated Use `scrobbleMany` instead. Renamed to match the canonical
 	 * Last.fm method name (`track.scrobble`). Kept as an alias for backwards
 	 * compatibility.
 	 */
-	postBatchTrackScrobble: (params: BatchTracksScrobbleRequest) => Promise<TrackScrobbleResponse>;
+	postBatchTrackScrobble: (
+		params: BatchTracksScrobbleRequest,
+		init?: RequestInit
+	) => Promise<TrackScrobbleResponse>;
 }
 
 export function createTrackService(config: LastFmConfig): TrackService {
-	const scrobbleImpl = (
-		{ artist, sk, timestamp, track, album }: TrackScrobbleRequest,
-		init?: RequestInit
-	) =>
-		fetcher<TrackScrobbleResponse>(
-			buildUrl(config, 'track.scrobble', {
-				...parsePostParamsTrack(config, { artist, sk, timestamp, track, album })
-			}),
-			{
-				...init,
-				method: 'POST'
-			}
-		);
+	const scrobbleImpl = (params: TrackScrobbleRequest, init?: RequestInit) =>
+		signedPost<TrackScrobbleResponse>(config, 'track.scrobble', {
+			params: buildScrobbleParams(config, params),
+			init
+		});
 
-	const scrobbleManyImpl = ({ tracks, sk }: BatchTracksScrobbleRequest) =>
-		batchFetcher<TrackScrobbleResponse>(config, {
-			body: parsePostParamsBatchTrack(config, { tracks, sk })
+	const scrobbleManyImpl = (params: BatchTracksScrobbleRequest, init?: RequestInit) =>
+		signedPost<TrackScrobbleResponse>(config, 'track.scrobble', {
+			params: buildBatchScrobbleParams(config, params),
+			init
 		});
 
 	return {

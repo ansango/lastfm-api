@@ -1,14 +1,13 @@
-import { fetcher, buildUrl } from '../utils.js';
-import { batchFetcher, parsePostParamsBatchTrack, parsePostParamsTrack } from './track.utils.js';
+import { fetcher, buildUrl, signedPost } from '../utils.js';
+import { buildBatchScrobbleParams, buildScrobbleParams } from './track.utils.js';
 export function createTrackService(config) {
-    const scrobbleImpl = ({ artist, sk, timestamp, track, album }, init) => fetcher(buildUrl(config, 'track.scrobble', {
-        ...parsePostParamsTrack(config, { artist, sk, timestamp, track, album })
-    }), {
-        ...init,
-        method: 'POST'
+    const scrobbleImpl = (params, init) => signedPost(config, 'track.scrobble', {
+        params: buildScrobbleParams(config, params),
+        init
     });
-    const scrobbleManyImpl = ({ tracks, sk }) => batchFetcher(config, {
-        body: parsePostParamsBatchTrack(config, { tracks, sk })
+    const scrobbleManyImpl = (params, init) => signedPost(config, 'track.scrobble', {
+        params: buildBatchScrobbleParams(config, params),
+        init
     });
     return {
         getInfo: (params, init) => fetcher(buildUrl(config, 'track.getInfo', params), init),
