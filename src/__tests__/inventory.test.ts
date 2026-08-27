@@ -4,18 +4,21 @@ import { LastFmClient } from '../client.js';
 /**
  * Inventory of canonical Last.fm methods implemented by this package.
  *
- * This list is the source of truth for the "43/57" baseline declared in
- * the parent epic (#67). It will be tightened to 57/57 when the remaining
- * 14 child issues (#69–#76) land.
+ * This list is the source of truth for the "57/57" coverage declared
+ * in the parent epic (#67) and re-audited in #77.
  *
  * Rules:
  * - Only canonical Last.fm namespace.method pairs go here.
  * - Wrapper/alias methods (e.g. `scrobbleMany`, `postTrackScrobble`,
  *   `postBatchTrackScrobble`) are excluded because they all target the
- *   same canonical endpoint (`track.scrobble`) and must not be double-counted.
+ *   same canonical endpoint (`track.scrobble`) and must not be
+ *   double-counted.
+ * - The 14 methods added under #69–#76 close the gap from the
+ *   previous 43/57 baseline. The audit at docs/api-coverage.md is
+ *   the human-readable companion to this list.
  */
 const CANONICAL_METHODS: readonly string[] = [
-	// artist (7)
+	// artist (10) — added getCorrection (#69), addTags, removeTag (#74)
 	'artist.getInfo',
 	'artist.getTags',
 	'artist.getSimilar',
@@ -23,20 +26,31 @@ const CANONICAL_METHODS: readonly string[] = [
 	'artist.getTopAlbums',
 	'artist.getTopTracks',
 	'artist.search',
-	// album (4)
+	'artist.getCorrection',
+	'artist.addTags',
+	'artist.removeTag',
+	// album (6) — added addTags, removeTag (#73)
 	'album.getInfo',
 	'album.getTags',
 	'album.getTopTags',
 	'album.search',
-	// track reads (5)
+	'album.addTags',
+	'album.removeTag',
+	// track (12) — added getCorrection (#70), addTags, removeTag, love,
+	// unlove, updateNowPlaying (the last 5 from #75/#76)
 	'track.getInfo',
 	'track.getSimilar',
 	'track.getTags',
 	'track.getTopTags',
 	'track.search',
-	// track writes (1)
+	'track.getCorrection',
+	'track.addTags',
+	'track.removeTag',
+	'track.love',
+	'track.unlove',
+	'track.updateNowPlaying',
 	'track.scrobble',
-	// user (12)
+	// user (13) — added getPersonalTags (#71)
 	'user.getInfo',
 	'user.getFriends',
 	'user.getLovedTracks',
@@ -49,6 +63,7 @@ const CANONICAL_METHODS: readonly string[] = [
 	'user.getWeeklyArtistChart',
 	'user.getWeeklyChartList',
 	'user.getWeeklyTrackChart',
+	'user.getPersonalTags',
 	// tag (7)
 	'tag.getInfo',
 	'tag.getSimilar',
@@ -66,13 +81,15 @@ const CANONICAL_METHODS: readonly string[] = [
 	'geo.getTopTracks',
 	// library (1)
 	'library.getArtists',
-	// auth (1)
-	'auth.getSession'
+	// auth (3) — added getToken, getMobileSession (#72)
+	'auth.getSession',
+	'auth.getToken',
+	'auth.getMobileSession'
 ];
 
-describe('inventory: 43/43 canonical Last.fm methods', () => {
-	test('the inventory list itself contains exactly 43 entries', () => {
-		expect(CANONICAL_METHODS.length).toBe(43);
+describe('inventory: 57/57 canonical Last.fm methods', () => {
+	test('the inventory list itself contains exactly 57 entries', () => {
+		expect(CANONICAL_METHODS.length).toBe(57);
 	});
 
 	test('all canonical methods exist on the LastFmClient as callable functions', () => {
@@ -107,5 +124,25 @@ describe('inventory: 43/43 canonical Last.fm methods', () => {
 		for (const canonical of CANONICAL_METHODS) {
 			expect(canonical).toMatch(/^[a-z]+\.[a-zA-Z]+$/);
 		}
+	});
+
+	test('per-namespace breakdown matches the docs/api-coverage.md audit', () => {
+		const expected: Record<string, number> = {
+			artist: 10,
+			album: 6,
+			track: 12,
+			user: 13,
+			tag: 7,
+			chart: 3,
+			geo: 2,
+			library: 1,
+			auth: 3
+		};
+		const actual: Record<string, number> = {};
+		for (const canonical of CANONICAL_METHODS) {
+			const [ns] = canonical.split('.');
+			actual[ns] = (actual[ns] ?? 0) + 1;
+		}
+		expect(actual).toEqual(expected);
 	});
 });

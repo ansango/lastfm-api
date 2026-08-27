@@ -16,7 +16,9 @@ import type {
 	TrackScrobbleRequest,
 	TrackScrobbleResponse,
 	TrackSearchRequest,
-	TrackSearchResponse
+	TrackSearchResponse,
+	TrackUpdateNowPlayingRequest,
+	TrackUpdateNowPlayingResponse
 } from './track.schemas.js';
 import { fetcher, buildUrl, signedPost, LastFmApiError } from '../utils.js';
 import type { LastFmConfig } from '../config.js';
@@ -178,6 +180,32 @@ export interface TrackService {
 	 * https://www.last.fm/api/show/track.unlove
 	 */
 	unlove: (params: TrackLoveRequest, init?: RequestInit) => Promise<void>;
+	/**
+	 * Announce the track the user is currently listening to on Last.fm.
+	 * Requires an authenticated session.
+	 *
+	 * Optional fields (`album`, `trackNumber`, `context`, `mbid`,
+	 * `duration`, `albumArtist`) are only included in the body and
+	 * signature when they are defined; the shared `signedPost`
+	 * transport strips `undefined` values before signing. Note that
+	 * `trackNumber` and `albumArtist` keep their exact wire casing.
+	 *
+	 * This endpoint does not accept a `timestamp` parameter — Last.fm
+	 * derives now-playing state from server time. Use
+	 * `track.scrobble` for completed plays.
+	 *
+	 * The `context` field is honoured only for API keys that Last.fm
+	 * has whitelisted; other API keys receive an ignored-message code.
+	 *
+	 * @param {TrackUpdateNowPlayingRequest} params
+	 * @param {RequestInit} init
+	 * @returns {Promise<TrackUpdateNowPlayingResponse>}
+	 * https://www.last.fm/api/show/track.updateNowPlaying
+	 */
+	updateNowPlaying: (
+		params: TrackUpdateNowPlayingRequest,
+		init?: RequestInit
+	) => Promise<TrackUpdateNowPlayingResponse>;
 }
 
 function resolveSessionKeyForTrackMutation(
@@ -189,6 +217,20 @@ function resolveSessionKeyForTrackMutation(
 	if (!sk) {
 		throw new LastFmApiError(
 			`A session key (\`sk\`) is required to track.${action}. Pass \`sk\` in the request params or set \`sessionKey\` on the LastFmConfig.`,
+			0
+		);
+	}
+	return sk;
+}
+
+function resolveSessionKeyForNowPlaying(
+	config: LastFmConfig,
+	requestSk: string | undefined
+): string {
+	const sk = requestSk ?? config.sessionKey;
+	if (!sk) {
+		throw new LastFmApiError(
+			'A session key (`sk`) is required to track.updateNowPlaying. Pass `sk` in the request params or set `sessionKey` on the LastFmConfig.',
 			0
 		);
 	}
@@ -265,6 +307,23 @@ export function createTrackService(config: LastFmConfig): TrackService {
 				params: { artist: params.artist, track: params.track, sk },
 				init
 			}).then(() => undefined);
+		},
+		updateNowPlaying: (params, init) => {
+			const sk = resolveSessionKeyForNowPlaying(config, params.sk);
+			return signedPost<TrackUpdateNowPlayingResponse>(config, 'track.updateNowPlaying', {
+				params: {
+					artist: params.artist,
+					track: params.track,
+					album: params.album,
+					trackNumber: params.trackNumber,
+					context: params.context,
+					mbid: params.mbid,
+					duration: params.duration,
+					albumArtist: params.albumArtist,
+					sk
+				},
+				init
+			});
 		}
 	};
 }
