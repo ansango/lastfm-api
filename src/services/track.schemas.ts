@@ -190,6 +190,51 @@ export const trackSearchResponseSchema = z.object({
     })
 });
 
+/**
+ * Track correction entry returned by `track.getCorrection`.
+ *
+ * Each entry carries the canonical track and artist identities
+ * (`name`, `mbid`, `url`) and per-field "corrected" flags plus a
+ * positional `index` attribute indicating which input this correction
+ * maps to.
+ *
+ * The `corrected` flags and the `index` are sent by Last.fm as JSON
+ * strings ("0" / "1") — we accept them as strings.
+ * https://www.last.fm/api/show/track.getCorrection
+ */
+export const trackCorrectionSchema = z.object({
+    track: z.object({
+        name: trackNameSchema,
+        mbid: mbidSchema,
+        url: urlSchema
+    }),
+    artist: z.object({
+        name: artistNameSchema,
+        mbid: mbidSchema,
+        url: urlSchema
+    }),
+    artistcorrected: z.string().optional(),
+    trackcorrected: z.string().optional(),
+    "@attr": z.object({
+        index: z.string()
+    }).optional()
+});
+
+export const trackGetCorrectionRequestSchema = z.object({
+    artist: artistNameSchema,
+    track: trackNameSchema
+});
+
+export const trackGetCorrectionResponseSchema = z.object({
+    corrections: z.object({
+        correction: z.array(trackCorrectionSchema),
+        "@attr": z.object({
+            artist: artistNameSchema,
+            track: trackNameSchema
+        }).optional()
+    })
+});
+
 export const trackScrobbleRequestSchema = z.object({
     artist: artistNameSchema,
     track: trackNameSchema,
@@ -250,6 +295,9 @@ export type TrackGetTopTagsRequest = z.infer<typeof trackGetTopTagsRequestSchema
 export type TrackGetTopTagsResponse = z.infer<typeof trackGetTopTagsResponseSchema>;
 export type TrackSearchRequest = z.infer<typeof trackSearchRequestSchema>;
 export type TrackSearchResponse = z.infer<typeof trackSearchResponseSchema>;
+export type TrackCorrection = z.infer<typeof trackCorrectionSchema>;
+export type TrackGetCorrectionRequest = z.infer<typeof trackGetCorrectionRequestSchema>;
+export type TrackGetCorrectionResponse = z.infer<typeof trackGetCorrectionResponseSchema>;
 export type TrackScrobbleRequest = z.infer<typeof trackScrobbleRequestSchema>;
 export type TrackScrobbleResponse = z.infer<typeof trackScrobbleResponseSchema>;
 export type BatchTracksScrobbleRequest = z.infer<typeof batchTracksScrobbleRequestSchema>;

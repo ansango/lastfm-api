@@ -135,6 +135,88 @@ describe('track service', () => {
 		});
 	});
 
+	describe('getCorrection', () => {
+		test('routes to track.getCorrection unsigned with artist+track, returns the corrected identities', async () => {
+			mock.respondWithJson({
+				corrections: {
+					correction: [
+						{
+							track: {
+								name: 'Believe',
+								mbid: '11111111-1111-1111-1111-111111111111',
+								url: 'https://www.last.fm/music/Cher/Believe'
+							},
+							artist: {
+								name: 'Cher',
+								mbid: 'bfcc6d75-a6a5-4bc6-8afc-4ac2b8271c25',
+								url: 'https://www.last.fm/music/Cher'
+							},
+							artistcorrected: '1',
+							trackcorrected: '1',
+							'@attr': { index: '0' }
+						}
+					],
+					'@attr': { artist: 'cher', track: 'belive' }
+				}
+			});
+
+			const result = await client.track.getCorrection({ artist: 'cher', track: 'belive' });
+
+			const call = mock.lastCall();
+			const { params, base } = parseUrl(call.url);
+			expect(params.method).toBe('track.getCorrection');
+			expect(params.api_key).toBe(API_KEY);
+			expect(params.format).toBe('json');
+			expect(params.artist).toBe('cher');
+			expect(params.track).toBe('belive');
+			// Unsigned GET — no signature, no session.
+			expect(params.api_sig).toBeUndefined();
+			expect(params.sk).toBeUndefined();
+			expect(call.method).toBe('GET');
+			expect(call.body).toBeUndefined();
+			expect(base).toBe('https://ws.audioscrobbler.com/2.0/');
+
+			expect(result.corrections.correction).toHaveLength(1);
+			const c = result.corrections.correction[0];
+			expect(c.track.name).toBe('Believe');
+			expect(c.artist.name).toBe('Cher');
+			expect(c.artistcorrected).toBe('1');
+			expect(c.trackcorrected).toBe('1');
+			expect(c['@attr']?.index).toBe('0');
+		});
+
+		test('parses a no-correction response (empty correction list)', async () => {
+			mock.respondWithJson({
+				corrections: {
+					correction: [],
+					'@attr': { artist: 'X', track: 'Y' }
+				}
+			});
+
+			const result = await client.track.getCorrection({ artist: 'X', track: 'Y' });
+			expect(result.corrections.correction).toEqual([]);
+		});
+
+		test('accepts absent optional corrected flags and @attr', async () => {
+			mock.respondWithJson({
+				corrections: {
+					correction: [
+						{
+							track: { name: 'T', mbid: 'm', url: 'u' },
+							artist: { name: 'A', mbid: 'm', url: 'u' }
+							// no artistcorrected/trackcorrected/@attr
+						}
+					]
+				}
+			});
+
+			const result = await client.track.getCorrection({ artist: 'A', track: 'T' });
+			expect(result.corrections.correction[0].track.name).toBe('T');
+			expect(result.corrections.correction[0].artistcorrected).toBeUndefined();
+			expect(result.corrections.correction[0]['@attr']).toBeUndefined();
+		});
+	});
+
 	describe('scrobble (smoke through the service; transport behavior is in transport.test.ts)', () => {
 		test('scrobble succeeds end-to-end when session is on the config', async () => {
 			const scrobbleClient = new LastFmClient({
@@ -229,6 +311,7 @@ describe('track service', () => {
 			expect(typeof c.track.search).toBe('function');
 			expect(typeof c.track.scrobble).toBe('function');
 			expect(typeof c.track.scrobbleMany).toBe('function');
+			expect(typeof c.track.getCorrection).toBe('function');
 
 			const svc: TrackService = createTrackService({ apiKey: API_KEY, sharedSecret: SHARED_SECRET });
 			expect(typeof svc.getInfo).toBe('function');
@@ -240,6 +323,9 @@ describe('track service', () => {
 
 			expect(trackSchemas.trackGetInfoRequestSchema).toBeDefined();
 			expect(trackSchemas.trackScrobbleRequestSchema).toBeDefined();
+			expect(trackSchemas.trackGetCorrectionRequestSchema).toBeDefined();
+			expect(trackSchemas.trackGetCorrectionResponseSchema).toBeDefined();
+			expect(trackSchemas.trackCorrectionSchema).toBeDefined();
 		});
 	});
 });
