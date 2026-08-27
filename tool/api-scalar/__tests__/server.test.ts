@@ -124,4 +124,92 @@ describe('createApp: write methods hit the package with a signed POST', () => {
 		expect(captured!.body).toContain('api_sig=');
 		expect(captured!.body).toContain('method=track.love');
 	});
+
+	test('track.love accepts sk via the x-lastfm-sk header (no body field needed)', async () => {
+		let captured: { body: string; url: string } | null = null;
+		globalThis.fetch = (async (input: string | URL | Request, init?: RequestInit) => {
+			captured = {
+				url: String(input),
+				body: typeof init?.body === 'string' ? init.body : ''
+			};
+			return new Response(JSON.stringify({ ok: true }), { status: 200 });
+		}) as unknown as typeof fetch;
+
+		const app = createApp({ apiKey: 'test-key', sharedSecret: 'test-secret' });
+		const res = await app.request('/track/love', {
+			method: 'POST',
+			headers: {
+				'content-type': 'application/json',
+				'x-lastfm-sk': 'header-session-key'
+			},
+			// Note: sk is NOT in the body — only the header.
+			body: JSON.stringify({ artist: 'Cher', track: 'Believe' })
+		});
+
+		expect(res.status).toBe(200);
+		expect(captured).not.toBeNull();
+		// The package still receives the session key (via the merged
+		// call params) and signs the request.
+		expect(captured!.body).toContain('sk=header-session-key');
+		expect(captured!.body).toContain('api_sig=');
+		expect(captured!.body).toContain('method=track.love');
+	});
+
+	test('header sk wins over body sk (header is the canonical Scalar path)', async () => {
+		let captured: { body: string } | null = null;
+		globalThis.fetch = (async (_input: string | URL | Request, init?: RequestInit) => {
+			captured = { body: typeof init?.body === 'string' ? init.body : '' };
+			return new Response(JSON.stringify({ ok: true }), { status: 200 });
+		}) as unknown as typeof fetch;
+
+		const app = createApp({ apiKey: 'test-key', sharedSecret: 'test-secret' });
+		await app.request('/track/love', {
+			method: 'POST',
+			headers: {
+				'content-type': 'application/json',
+				'x-lastfm-sk': 'header-wins'
+			},
+			body: JSON.stringify({ artist: 'Cher', track: 'Believe', sk: 'body-loses' })
+		});
+
+		expect(captured!.body).toContain('sk=header-wins');
+		expect(captured!.body).not.toContain('body-loses');
+	});
+});
+
+describe('createApp: OpenAPI doc exposes the auth flow', () => {
+	test('/doc includes the auth tag with the mobile-flow description', async () => {
+		const app = createFullApp({ apiKey: 'test-key' });
+		const res = await app.request('/doc');
+		const body = (await res.json()) as {
+			tags?: Array<{ name: string; description?: string }>;
+		};
+		const authTag = body.tags?.find((t) => t.name === 'auth');
+		expect(authTag, 'auth tag must exist in /doc tags').toBeDefined();
+		expect(authTag?.description).toContain('mobile flow');
+		expect(authTag?.description).toContain('x-lastfm-sk');
+		expect(authTag?.description).toContain('No persistence');
+	});
+
+	test('/doc exposes the x-lastfm-sk header on write methods only', async () => {
+		const app = createFullApp({ apiKey: 'test-key' });
+		const res = await app.request('/doc');
+		const body = (await res.json()) as {
+			paths: Record<
+				string,
+				Record<string, { parameters?: Array<{ name: string; in: string }> }>
+			>;
+		};
+		const hasHeader = (
+			op: { parameters?: Array<{ name: string; in: string }> } | undefined,
+			name: string
+		) => op?.parameters?.some((p) => p.name === name && p.in === 'header') ?? false;
+
+		// track.love requires session → x-lastfm-sk header must be present
+		expect(hasHeader(body.paths['/track/love']?.['post'], 'x-lastfm-sk'), 'track.love must advertise x-lastfm-sk header').toBe(true);
+		// artist.getInfo is unsigned, no session → header must NOT be present
+		expect(hasHeader(body.paths['/artist/get-info']?.['get'], 'x-lastfm-sk'), 'artist.getInfo must NOT advertise x-lastfm-sk header').toBe(false);
+		// GET methods (auth.getToken, auth.getSession) do not require a session
+		expect(hasHeader(body.paths['/auth/get-token']?.['get'], 'x-lastfm-sk'), 'auth.getToken must NOT advertise x-lastfm-sk header').toBe(false);
+	});
 });
