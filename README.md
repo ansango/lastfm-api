@@ -473,9 +473,32 @@ bun run test:unit
 # Run live integration (requires Last.fm credentials in .env)
 bun run test:integration:live
 
+# Run the local interactive docs server (Hono + Scalar, see #92)
+bun run tool:dev
+
 # Clean build artifacts
 bun run clean
 ```
+
+## Interactive API Explorer
+
+The repo ships with a local Hono + Scalar server under `tool/api-scalar/`
+that turns the package into a fully interactive OpenAPI explorer. All 57
+canonical Last.fm methods are wired declaratively from the package's own
+Zod schemas and service functions — no method is hand-written, no schema
+is duplicated.
+
+```sh
+bun install --cwd tool/api-scalar
+cp tool/api-scalar/.env.example .env   # fill in LASTFM_API_KEY and LASTFM_SHARED_SECRET
+bun run tool:dev
+```
+
+Then open <http://localhost:3000>. "Try it" calls the real Last.fm API
+through the package; the shared secret and session key live in env vars,
+never in the browser. See [`tool/api-scalar/README.md`](./tool/api-scalar/README.md)
+for the full guide and [`#92`](https://github.com/ansango/lastfm-api/issues/92)
+for the design notes.
 
 ### Testing
 
