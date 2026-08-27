@@ -100,7 +100,10 @@
     "build": "rimraf dist && tsc",
     "clean": "rimraf dist",
     "dev": "bun run clean && tsc --watch --project tsconfig.dev.json",
-    "test": "bun test-real.ts",
+    "typecheck": "tsc --noEmit -p tsconfig.test.json",
+    "test": "bun run test:unit",
+    "test:unit": "bun test src/__tests__",
+    "test:integration:live": "bun test-real.ts",
     "prepublishOnly": "bun run build",
     "changelog": "bun scripts/changelog.ts",
     "release": "bun scripts/release.ts",
@@ -143,6 +146,7 @@
     "zod": "4.1.12"
   },
   "devDependencies": {
+    "@types/bun": "^1.4.0",
     "@types/node": "^24.10.0",
     "dotenv": "^17.2.3",
     "rimraf": "^6.1.0",

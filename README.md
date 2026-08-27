@@ -426,12 +426,29 @@ bun run dev
 # Build the project
 bun run build
 
-# Run tests
-bun test
+# Typecheck (no emit)
+bun run typecheck
+
+# Run deterministic unit tests (no network, mocked fetch)
+bun run test:unit
+
+# Run live integration (requires Last.fm credentials in .env)
+bun run test:integration:live
 
 # Clean build artifacts
 bun run clean
 ```
+
+### Testing
+
+The test suite is split into two layers:
+
+- **`bun run test:unit`** — deterministic tests with mocked `globalThis.fetch`. They cover every canonical Last.fm method that the package implements, assert the correct `namespace.method` routing, validate that `api_key`/`format=json` are present, and verify that Last.fm error envelopes surface as `LastFmApiError`. They do not require an API key or any network access, and they run as part of CI on every push and pull request.
+- **`bun run test:integration:live`** — runs `test-real.ts` against the real Last.fm API. It is **not** part of CI and must be invoked manually by a developer with valid credentials in `.env`.
+
+The `bun test` alias points to the deterministic suite, so a normal `bun test` is safe to run anywhere.
+
+An `inventory.test.ts` file asserts the 43/43 canonical-method baseline. The exact 57/57 inventory assertion will move here when the parent epic (#67) and its children close.
 
 ### Release Process
 
