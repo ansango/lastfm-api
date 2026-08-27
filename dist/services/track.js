@@ -14,6 +14,7 @@ export function createTrackService(config) {
         getSimilar: (params, init) => fetcher(buildUrl(config, 'track.getSimilar', params), init),
         getTags: (params, init) => fetcher(buildUrl(config, 'track.getTags', params), init),
         getTopTags: (params, init) => fetcher(buildUrl(config, 'track.getTopTags', params), init),
+        getCorrection: (params, init) => fetcher(buildUrl(config, 'track.getCorrection', params), init),
         search: (params, init) => fetcher(buildUrl(config, 'track.search', params), init),
         scrobble: scrobbleImpl,
         postTrackScrobble: scrobbleImpl,

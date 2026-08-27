@@ -1,5 +1,7 @@
 import type {
 	BatchTracksScrobbleRequest,
+	TrackGetCorrectionRequest,
+	TrackGetCorrectionResponse,
 	TrackGetInfoRequest,
 	TrackGetInfoResponse,
 	TrackGetSimilarRequest,
@@ -57,6 +59,22 @@ export interface TrackService {
 		params: TrackGetTopTagsRequest,
 		init?: RequestInit
 	) => Promise<TrackGetTopTagsResponse>;
+	/**
+	 * Get the canonical correction for a misspelled or noncanonical
+	 * track (with its artist). Returns the list of corrections Last.fm
+	 * would apply to the provided input, including the corrected track
+	 * and artist identities plus per-field "corrected" flags and a
+	 * positional `index` attribute. Unsigned GET — no `sk` or
+	 * `api_sig` are sent.
+	 * @param {TrackGetCorrectionRequest} params
+	 * @param {RequestInit} init
+	 * @returns {Promise<TrackGetCorrectionResponse>}
+	 * https://www.last.fm/api/show/track.getCorrection
+	 */
+	getCorrection: (
+		params: TrackGetCorrectionRequest,
+		init?: RequestInit
+	) => Promise<TrackGetCorrectionResponse>;
 	/**
 	 * Search for a track by track name. Returns track matches sorted by relevance.
 	 * @param {TrackSearchRequest} params
@@ -128,6 +146,11 @@ export function createTrackService(config: LastFmConfig): TrackService {
 			fetcher<TrackGetTagsResponse>(buildUrl(config, 'track.getTags', params), init),
 		getTopTags: (params, init) =>
 			fetcher<TrackGetTopTagsResponse>(buildUrl(config, 'track.getTopTags', params), init),
+		getCorrection: (params, init) =>
+			fetcher<TrackGetCorrectionResponse>(
+				buildUrl(config, 'track.getCorrection', params),
+				init
+			),
 		search: (params, init) =>
 			fetcher<TrackSearchResponse>(buildUrl(config, 'track.search', params), init),
 		scrobble: scrobbleImpl,
