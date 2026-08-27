@@ -62,6 +62,19 @@ jobs:
           python3 - <<'PY'
           import os, re, json, sys, urllib.request, urllib.error
 
+          # ── Debug: print what we're matching against ────────────────────
+          try:
+              with open("test-output.log", "rb") as fh:
+                  raw = fh.read()
+              print(f"DEBUG: file size = {len(raw)} bytes")
+              print(f"DEBUG: first 300 bytes (repr) = {raw[:300]!r}")
+              print(f"DEBUG: contains b'src/__tests__/' = {b'src/__tests__/' in raw}")
+              print(f"DEBUG: contains b'##[group]' = {b'##[group]' in raw}")
+              print(f"DEBUG: contains b'(pass)' = {b'(pass)' in raw}")
+          except FileNotFoundError:
+              print("DEBUG: file missing")
+              sys.exit(0)
+
           MARKER = "<!-- Mavis-test-summary -->"
           EMOJI = {"pass": "✅", "fail": "❌", "skip": "⏭️"}
           TEXT = {"pass": "pass", "fail": "FAIL", "skip": "skip"}
