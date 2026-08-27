@@ -69,7 +69,10 @@ jobs:
               print("test-output.log not found; skipping summary")
               sys.exit(0)
 
-          file_re = re.compile(r"^(src/__tests__/.+\.test\.ts):\s*$")
+          # bun:test wraps each file header with `##[group]…##[endgroup]`
+          # workflow commands when GITHUB_ACTIONS is set, so the lines written
+          # to disk via `tee` carry that prefix. Accept both.
+          file_re = re.compile(r"^(?:##\[group\])?(src/__tests__/.+\.test\.ts):\s*$")
           result_re = re.compile(r"^\((pass|fail|skip)\)\s+(.+?)\s+\[([\d.]+)ms\]\s*$")
 
           current_file = None
