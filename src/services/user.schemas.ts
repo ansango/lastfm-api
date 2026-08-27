@@ -389,6 +389,126 @@ export const userGetWeeklyTrackChartResponseSchema = z.object({
     weeklytrackchart: weeklyTrackChartSchema
 });
 
+/**
+ * Tagging type accepted by `user.getPersonalTags`.
+ * https://www.last.fm/api/show/user.getPersonalTags
+ */
+export const personalTaggingTypeSchema = z.union([
+    z.literal("artist"),
+    z.literal("album"),
+    z.literal("track")
+]);
+
+export type PersonalTaggingType = z.infer<typeof personalTaggingTypeSchema>;
+
+/**
+ * Pagination metadata returned inside the `taggings` envelope for
+ * `user.getPersonalTags`. Last.fm sends all four fields as JSON
+ * strings (consistent with the rest of the public API).
+ */
+export const personalTaggingsAttrSchema = z.object({
+    page: z.string(),
+    perPage: z.string(),
+    totalPages: z.string(),
+    total: z.string()
+});
+
+/**
+ * Common metadata inside the `taggings` envelope: the user, the tag,
+ * and the pagination `@attr`.
+ */
+export const personalTaggingsMetadataSchema = z.object({
+    user: userNameSchema,
+    tag: z.string(),
+    "@attr": personalTaggingsAttrSchema
+});
+
+export const personalTaggedArtistSchema = z.object({
+    name: artistNameSchema,
+    mbid: mbidSchema,
+    url: urlSchema
+});
+
+export const personalTaggedAlbumSchema = z.object({
+    name: albumNameSchema,
+    mbid: mbidSchema,
+    url: urlSchema,
+    artist: z.object({
+        name: artistNameSchema,
+        mbid: mbidSchema,
+        url: urlSchema
+    }).optional(),
+    image: z.array(imageSchema).optional()
+});
+
+export const personalTaggedTrackSchema = z.object({
+    name: trackNameSchema,
+    mbid: mbidSchema,
+    url: urlSchema,
+    artist: z.object({
+        name: artistNameSchema,
+        mbid: mbidSchema,
+        url: urlSchema
+    }).optional(),
+    image: z.array(imageSchema).optional()
+});
+
+/**
+ * Response of `user.getPersonalTags` when `taggingtype = "artist"`.
+ */
+export const userGetPersonalTagsArtistResponseSchema = z.object({
+    taggings: personalTaggingsMetadataSchema.extend({
+        artists: z.object({
+            artist: z.array(personalTaggedArtistSchema)
+        })
+    })
+});
+
+/**
+ * Response of `user.getPersonalTags` when `taggingtype = "album"`.
+ */
+export const userGetPersonalTagsAlbumResponseSchema = z.object({
+    taggings: personalTaggingsMetadataSchema.extend({
+        albums: z.object({
+            album: z.array(personalTaggedAlbumSchema)
+        })
+    })
+});
+
+/**
+ * Response of `user.getPersonalTags` when `taggingtype = "track"`.
+ */
+export const userGetPersonalTagsTrackResponseSchema = z.object({
+    taggings: personalTaggingsMetadataSchema.extend({
+        tracks: z.object({
+            track: z.array(personalTaggedTrackSchema)
+        })
+    })
+});
+
+/**
+ * Union response accepted at runtime. A literal `taggingtype` request
+ * is narrowed to one of the three variants at the type level via
+ * `UserGetPersonalTagsResponse<T>`.
+ */
+export const userGetPersonalTagsResponseSchema = z.union([
+    userGetPersonalTagsArtistResponseSchema,
+    userGetPersonalTagsAlbumResponseSchema,
+    userGetPersonalTagsTrackResponseSchema
+]);
+
+/**
+ * Request shape for `user.getPersonalTags`. `T` widens the literal
+ * `taggingtype` so the response can be narrowed.
+ */
+export const userGetPersonalTagsRequestSchema = z.object({
+    user: userNameSchema,
+    tag: z.string(),
+    taggingtype: personalTaggingTypeSchema,
+    limit: z.union([z.string(), z.number()]).optional(),
+    page: z.union([z.string(), z.number()]).optional()
+});
+
 // Inferred types
 export type UserGetFriendsRequest = z.infer<typeof userGetFriendsRequestSchema>;
 export type UserGetFriendsResponse = z.infer<typeof userGetFriendsResponseSchema>;
@@ -426,3 +546,31 @@ export type UserGetWeeklyChartListResponse = z.infer<typeof userGetWeeklyChartLi
 export type UserGetWeeklyTrackChartRequest = z.infer<typeof userGetWeeklyTrackChartRequestSchema>;
 export type WeeklyTrackChart = z.infer<typeof weeklyTrackChartSchema>;
 export type UserGetWeeklyTrackChartResponse = z.infer<typeof userGetWeeklyTrackChartResponseSchema>;
+
+// Personal tags types
+export type UserGetPersonalTagsRequest<T extends string> = {
+    user: string;
+    tag: string;
+    taggingtype: T;
+    limit?: number | string;
+    page?: number | string;
+};
+export type PersonalTaggedArtist = z.infer<typeof personalTaggedArtistSchema>;
+export type PersonalTaggedAlbum = z.infer<typeof personalTaggedAlbumSchema>;
+export type PersonalTaggedTrack = z.infer<typeof personalTaggedTrackSchema>;
+export type PersonalTaggingsAttr = z.infer<typeof personalTaggingsAttrSchema>;
+export type PersonalTaggingsMetadata = z.infer<typeof personalTaggingsMetadataSchema>;
+export type UserGetPersonalTagsArtistResponse = z.infer<typeof userGetPersonalTagsArtistResponseSchema>;
+export type UserGetPersonalTagsAlbumResponse = z.infer<typeof userGetPersonalTagsAlbumResponseSchema>;
+export type UserGetPersonalTagsTrackResponse = z.infer<typeof userGetPersonalTagsTrackResponseSchema>;
+export type UserGetPersonalTagsUnionResponse = z.infer<typeof userGetPersonalTagsResponseSchema>;
+
+/**
+ * Conditional response mapping: a literal `taggingtype` narrows the
+ * response to the matching variant; a wider type yields the union.
+ */
+export type UserGetPersonalTagsResponse<T extends string> =
+    T extends "artist" ? UserGetPersonalTagsArtistResponse :
+    T extends "album" ? UserGetPersonalTagsAlbumResponse :
+    T extends "track" ? UserGetPersonalTagsTrackResponse :
+    UserGetPersonalTagsUnionResponse;
