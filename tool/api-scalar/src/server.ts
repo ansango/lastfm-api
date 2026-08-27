@@ -6,9 +6,9 @@
  * from the method registry with their Hono route + handler.
  */
 import { OpenAPIHono } from '@hono/zod-openapi';
-import { createClient, type LastFmClient } from '../../src/client.js';
+import { createClient, type LastFmClient } from '../../../src/client.js';
 
-import { allMethods, type MethodMeta } from '../../src/method-registry.js';
+import { allMethods, type MethodMeta } from '../../../src/method-registry.js';
 import { buildRoute, buildHandler } from './build-route.js';
 
 export interface AppOptions {
@@ -40,8 +40,10 @@ export function createApp(opts: AppOptions = {}): OpenAPIHono {
 
 	const app = new OpenAPIHono();
 
-	app.notFound((c) => c.json({ message: 'Not Found', path: new URL(c.req.url).pathname }, 404));
-	app.onError((err, c) => {
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	app.notFound((c: any) => c.json({ message: 'Not Found', path: new URL(c.req.url).pathname }, 404));
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	app.onError((err: unknown, c: any) => {
 		const message = err instanceof Error ? err.message : 'Internal Server Error';
 		return c.json({ message }, 500);
 	});

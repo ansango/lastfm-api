@@ -11,8 +11,8 @@ import { createRoute, type RouteConfig } from '@hono/zod-openapi';
 import type { Context } from 'hono';
 import { z } from 'zod';
 
-import type { MethodMeta } from '../../src/method-registry.js';
-import type { LastFmClient } from '../../src/client.js';
+import type { MethodMeta } from '../../../src/method-registry.js';
+import type { LastFmClient } from '../../../src/client.js';
 
 const ERROR_SCHEMA = z.object({ message: z.string() }).openapi('LastFmError');
 

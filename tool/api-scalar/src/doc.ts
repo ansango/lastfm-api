@@ -6,7 +6,7 @@
  *  - `GET /`     — Scalar API reference UI
  */
 import { Scalar } from '@scalar/hono-api-reference';
-import { name as pkgName, version as pkgVersion } from '../../package.json' with { type: 'json' };
+import { name as pkgName, version as pkgVersion } from '../../../package.json' with { type: 'json' };
 import type { OpenAPIHono } from '@hono/zod-openapi';
 
 const PKG_NAME = typeof pkgName === 'string' ? pkgName : '@ansango/lastfm-api';

@@ -34,13 +34,13 @@ jobs:
         run: bun install --frozen-lockfile
 
       - name: Install tool dependencies (#92)
-        run: bun install --cwd tool --frozen-lockfile
+        run: bun install --cwd tool/api-scalar --frozen-lockfile
 
       - name: Typecheck
         run: bun run typecheck
 
       - name: Typecheck tool (#92)
-        run: bun run --cwd tool typecheck
+        run: bun run --cwd tool/api-scalar typecheck
 
       - name: Run unit tests
         id: tests
@@ -61,7 +61,7 @@ jobs:
           fi
 
       - name: Run tool tests (#92)
-        run: bun run --cwd tool test
+        run: bun run --cwd tool/api-scalar test
 
       - name: Post test summary to PR
         if: github.event_name == 'pull_request' && always()
