@@ -1,4 +1,4 @@
-import type { BatchTracksScrobbleRequest, TrackGetCorrectionRequest, TrackGetCorrectionResponse, TrackGetInfoRequest, TrackGetInfoResponse, TrackGetSimilarRequest, TrackGetSimilarResponse, TrackGetTagsRequest, TrackGetTagsResponse, TrackGetTopTagsRequest, TrackGetTopTagsResponse, TrackScrobbleRequest, TrackScrobbleResponse, TrackSearchRequest, TrackSearchResponse, TrackUpdateNowPlayingRequest, TrackUpdateNowPlayingResponse } from './track.schemas.js';
+import type { BatchTracksScrobbleRequest, TrackAddTagsRequest, TrackGetCorrectionRequest, TrackGetCorrectionResponse, TrackGetInfoRequest, TrackGetInfoResponse, TrackLoveRequest, TrackRemoveTagRequest, TrackGetSimilarRequest, TrackGetSimilarResponse, TrackGetTagsRequest, TrackGetTagsResponse, TrackGetTopTagsRequest, TrackGetTopTagsResponse, TrackScrobbleRequest, TrackScrobbleResponse, TrackSearchRequest, TrackSearchResponse, TrackUpdateNowPlayingRequest, TrackUpdateNowPlayingResponse } from './track.schemas.js';
 import type { LastFmConfig } from '../config.js';
 export interface TrackService {
     /**
@@ -83,6 +83,59 @@ export interface TrackService {
      * compatibility.
      */
     postBatchTrackScrobble: (params: BatchTracksScrobbleRequest, init?: RequestInit) => Promise<TrackScrobbleResponse>;
+    /**
+     * Add one or more personal tags to a track. Requires an
+     * authenticated session.
+     *
+     * The `tags` array is sent on the wire as a comma-separated string
+     * (Last.fm convention). Returns when the call has been accepted by
+     * Last.fm.
+     *
+     * Idempotency is not guaranteed by Last.fm.
+     *
+     * @param {TrackAddTagsRequest} params
+     * @param {RequestInit} init
+     * @returns {Promise<void>}
+     * https://www.last.fm/api/show/track.addTags
+     */
+    addTags: (params: TrackAddTagsRequest, init?: RequestInit) => Promise<void>;
+    /**
+     * Remove a single personal tag from a track. Requires an
+     * authenticated session.
+     *
+     * Last.fm does not document idempotency for `track.removeTag`.
+     *
+     * @param {TrackRemoveTagRequest} params
+     * @param {RequestInit} init
+     * @returns {Promise<void>}
+     * https://www.last.fm/api/show/track.removeTag
+     */
+    removeTag: (params: TrackRemoveTagRequest, init?: RequestInit) => Promise<void>;
+    /**
+     * Mark a track as loved on the user's Last.fm account. Requires an
+     * authenticated session.
+     *
+     * Last.fm does not document idempotency for `track.love`; calling
+     * twice is a server-side concern.
+     *
+     * @param {TrackLoveRequest} params
+     * @param {RequestInit} init
+     * @returns {Promise<void>}
+     * https://www.last.fm/api/show/track.love
+     */
+    love: (params: TrackLoveRequest, init?: RequestInit) => Promise<void>;
+    /**
+     * Remove a track from the user's loved list on Last.fm. Requires an
+     * authenticated session.
+     *
+     * Last.fm does not document idempotency for `track.unlove`.
+     *
+     * @param {TrackUnloveRequest} params
+     * @param {RequestInit} init
+     * @returns {Promise<void>}
+     * https://www.last.fm/api/show/track.unlove
+     */
+    unlove: (params: TrackLoveRequest, init?: RequestInit) => Promise<void>;
     /**
      * Announce the track the user is currently listening to on Last.fm.
      * Requires an authenticated session.

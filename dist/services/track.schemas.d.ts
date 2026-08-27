@@ -321,32 +321,54 @@ export declare const batchTracksScrobbleRequestSchema: z.ZodObject<{
     }, z.core.$strip>>;
     sk: z.ZodOptional<z.ZodString>;
 }, z.core.$strip>;
-export type TrackArtist = z.infer<typeof trackArtistSchema>;
-export type TrackAlbum = z.infer<typeof trackAlbumSchema>;
-export type TrackTopTag = z.infer<typeof trackTopTagSchema>;
-export type TrackWiki = z.infer<typeof trackWikiSchema>;
-export type Track = z.infer<typeof trackSchema>;
-export type TrackGetInfoRequest = z.infer<typeof trackGetInfoRequestSchema>;
-export type TrackGetInfoResponse = z.infer<typeof trackGetInfoResponseSchema>;
-export type TrackGetSimilarRequest = z.infer<typeof trackGetSimilarRequestSchema>;
-export type TrackGetSimilarResponse = z.infer<typeof trackGetSimilarResponseSchema>;
-export type TrackGetTagsRequest = z.infer<typeof trackGetTagsRequestSchema>;
-export type TrackGetTagsResponse = z.infer<typeof trackGetTagsResponseSchema>;
-export type TrackGetTopTagsRequest = z.infer<typeof trackGetTopTagsRequestSchema>;
-export type TrackGetTopTagsResponse = z.infer<typeof trackGetTopTagsResponseSchema>;
-export type TrackSearchRequest = z.infer<typeof trackSearchRequestSchema>;
-export type TrackSearchResponse = z.infer<typeof trackSearchResponseSchema>;
-export type TrackCorrection = z.infer<typeof trackCorrectionSchema>;
-export type TrackGetCorrectionRequest = z.infer<typeof trackGetCorrectionRequestSchema>;
-export type TrackGetCorrectionResponse = z.infer<typeof trackGetCorrectionResponseSchema>;
-export type TrackScrobbleRequest = z.infer<typeof trackScrobbleRequestSchema>;
-export type TrackScrobbleResponse = z.infer<typeof trackScrobbleResponseSchema>;
-export type BatchTracksScrobbleRequest = z.infer<typeof batchTracksScrobbleRequestSchema>;
-export type TrackUpdateNowPlayingRequest = z.infer<typeof trackUpdateNowPlayingRequestSchema>;
-export type CorrectedTextField = z.infer<typeof correctedTextFieldSchema>;
-export type CorrectedFlagOnlyField = z.infer<typeof correctedFlagOnlyFieldSchema>;
-export type NowPlayingIgnoredMessage = z.infer<typeof nowPlayingIgnoredMessageSchema>;
-export type TrackUpdateNowPlayingResponse = z.infer<typeof trackUpdateNowPlayingResponseSchema>;
+/**
+ * Maximum number of tags accepted by `track.addTags` per the Last.fm
+ * API documentation.
+ */
+export declare const MAX_TRACK_TAGS_PER_ADD = 10;
+/**
+ * Request shape for `track.addTags`. The `tags` array is sent on the
+ * wire as a comma-separated string and validated to at most
+ * `MAX_TRACK_TAGS_PER_ADD` entries.
+ * https://www.last.fm/api/show/track.addTags
+ */
+export declare const trackAddTagsRequestSchema: z.ZodObject<{
+    artist: z.ZodString;
+    track: z.ZodString;
+    tags: z.ZodArray<z.ZodString>;
+    sk: z.ZodOptional<z.ZodString>;
+}, z.core.$strip>;
+/**
+ * Request shape for `track.removeTag`. A single tag is removed per
+ * call.
+ * https://www.last.fm/api/show/track.removeTag
+ */
+export declare const trackRemoveTagRequestSchema: z.ZodObject<{
+    artist: z.ZodString;
+    track: z.ZodString;
+    tag: z.ZodString;
+    sk: z.ZodOptional<z.ZodString>;
+}, z.core.$strip>;
+/**
+ * Request shape for `track.love` / `track.unlove`. Both share the
+ * same body — only the method name changes.
+ * https://www.last.fm/api/show/track.love
+ * https://www.last.fm/api/show/track.unlove
+ */
+export declare const trackLoveRequestSchema: z.ZodObject<{
+    artist: z.ZodString;
+    track: z.ZodString;
+    sk: z.ZodOptional<z.ZodString>;
+}, z.core.$strip>;
+export declare const trackUnloveRequestSchema: z.ZodObject<{
+    artist: z.ZodString;
+    track: z.ZodString;
+    sk: z.ZodOptional<z.ZodString>;
+}, z.core.$strip>;
+/**
+ * Empty success payload for the void tag/love mutations.
+ */
+export declare const trackMutationResponseSchema: z.ZodUnknown;
 /**
  * Request shape for `track.updateNowPlaying`. Optional fields are
  * omitted from both the body and the signature when undefined.
@@ -416,4 +438,35 @@ export declare const trackUpdateNowPlayingResponseSchema: z.ZodObject<{
         }, z.core.$strip>;
     }, z.core.$strip>;
 }, z.core.$strip>;
+export type TrackArtist = z.infer<typeof trackArtistSchema>;
+export type TrackAlbum = z.infer<typeof trackAlbumSchema>;
+export type TrackTopTag = z.infer<typeof trackTopTagSchema>;
+export type TrackWiki = z.infer<typeof trackWikiSchema>;
+export type Track = z.infer<typeof trackSchema>;
+export type TrackGetInfoRequest = z.infer<typeof trackGetInfoRequestSchema>;
+export type TrackGetInfoResponse = z.infer<typeof trackGetInfoResponseSchema>;
+export type TrackGetSimilarRequest = z.infer<typeof trackGetSimilarRequestSchema>;
+export type TrackGetSimilarResponse = z.infer<typeof trackGetSimilarResponseSchema>;
+export type TrackGetTagsRequest = z.infer<typeof trackGetTagsRequestSchema>;
+export type TrackGetTagsResponse = z.infer<typeof trackGetTagsResponseSchema>;
+export type TrackGetTopTagsRequest = z.infer<typeof trackGetTopTagsRequestSchema>;
+export type TrackGetTopTagsResponse = z.infer<typeof trackGetTopTagsResponseSchema>;
+export type TrackSearchRequest = z.infer<typeof trackSearchRequestSchema>;
+export type TrackSearchResponse = z.infer<typeof trackSearchResponseSchema>;
+export type TrackCorrection = z.infer<typeof trackCorrectionSchema>;
+export type TrackGetCorrectionRequest = z.infer<typeof trackGetCorrectionRequestSchema>;
+export type TrackGetCorrectionResponse = z.infer<typeof trackGetCorrectionResponseSchema>;
+export type TrackScrobbleRequest = z.infer<typeof trackScrobbleRequestSchema>;
+export type TrackScrobbleResponse = z.infer<typeof trackScrobbleResponseSchema>;
+export type BatchTracksScrobbleRequest = z.infer<typeof batchTracksScrobbleRequestSchema>;
+export type TrackAddTagsRequest = z.infer<typeof trackAddTagsRequestSchema>;
+export type TrackRemoveTagRequest = z.infer<typeof trackRemoveTagRequestSchema>;
+export type TrackLoveRequest = z.infer<typeof trackLoveRequestSchema>;
+export type TrackUnloveRequest = TrackLoveRequest;
+export type TrackMutationResponse = z.infer<typeof trackMutationResponseSchema>;
+export type TrackUpdateNowPlayingRequest = z.infer<typeof trackUpdateNowPlayingRequestSchema>;
+export type CorrectedTextField = z.infer<typeof correctedTextFieldSchema>;
+export type CorrectedFlagOnlyField = z.infer<typeof correctedFlagOnlyFieldSchema>;
+export type NowPlayingIgnoredMessage = z.infer<typeof nowPlayingIgnoredMessageSchema>;
+export type TrackUpdateNowPlayingResponse = z.infer<typeof trackUpdateNowPlayingResponseSchema>;
 //# sourceMappingURL=track.schemas.d.ts.map

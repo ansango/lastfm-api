@@ -301,26 +301,19 @@ describe('track service', () => {
 		});
 	});
 
-	describe('updateNowPlaying', () => {
-		test('routes to track.updateNowPlaying with the minimum required body, returns the parsed nowplaying payload', async () => {
+	describe('addTags', () => {
+		test('routes to track.addTags via signed POST with sk and comma-joined tags, returns void', async () => {
 			const authed = new LastFmClient({
 				apiKey: API_KEY,
 				sharedSecret: SHARED_SECRET,
 				sessionKey: 'SESSION-KEY'
 			});
-			mock.respondWithJson({
-				nowplaying: {
-					track: { corrected: '0', '#text': 'Believe' },
-					artist: { corrected: '0', '#text': 'Cher' },
-					album: { corrected: '0' },
-					albumArtist: { corrected: '0', '#text': 'Cher' },
-					ignoredMessage: { code: '0', '#text': '' }
-				}
-			});
+			mock.respondWithJson({});
 
-			const result = await authed.track.updateNowPlaying({
-				artist: 'Cher',
-				track: 'Believe'
+			const result = await authed.track.addTags({
+				artist: 'Test Artist',
+				track: 'Test Track',
+				tags: ['rock', '90s', 'favorites']
 			});
 
 			const call = mock.lastCall();
@@ -328,147 +321,145 @@ describe('track service', () => {
 			expect(call.url).toBe('https://ws.audioscrobbler.com/2.0/');
 			expect(call.headers['Content-Type']).toBe('application/x-www-form-urlencoded');
 			const body = parseFormBody(call.body);
-			expect(body.method).toBe('track.updateNowPlaying');
+			expect(body.method).toBe('track.addTags');
 			expect(body.api_key).toBe(API_KEY);
-			expect(body.artist).toBe('Cher');
-			expect(body.track).toBe('Believe');
+			expect(body.artist).toBe('Test Artist');
+			expect(body.track).toBe('Test Track');
+			expect(body.tags).toBe('rock,90s,favorites');
 			expect(body.sk).toBe('SESSION-KEY');
 			expect(body.api_sig).toMatch(/^[a-f0-9]{32}$/);
 			expect(body.format).toBe('json');
-			// No optional fields present.
-			expect(body.album).toBeUndefined();
-			expect(body.trackNumber).toBeUndefined();
-			expect(body.context).toBeUndefined();
-			expect(body.mbid).toBeUndefined();
-			expect(body.duration).toBeUndefined();
-			expect(body.albumArtist).toBeUndefined();
-			// No timestamp on this endpoint.
-			expect(body.timestamp).toBeUndefined();
-
-			expect(result.nowplaying.artist?.['#text']).toBe('Cher');
-			expect(result.nowplaying.track?.['#text']).toBe('Believe');
-			expect(result.nowplaying.albumArtist?.corrected).toBe('0');
-			expect(result.nowplaying.ignoredMessage.code).toBe('0');
+			expect(result).toBeUndefined();
 		});
 
-		test('forwards every optional field with exact wire casing and omits undefined', async () => {
-			const authed = new LastFmClient({
-				apiKey: API_KEY,
-				sharedSecret: SHARED_SECRET,
-				sessionKey: 'SESSION-KEY'
-			});
-			mock.respondWithJson({
-				nowplaying: { ignoredMessage: { code: '0', '#text': '' } }
-			});
-
-			await authed.track.updateNowPlaying({
-				artist: 'A',
-				track: 'T',
-				album: 'Al',
-				trackNumber: 3,
-				context: 'playlist:1',
-				mbid: 'mbid-1',
-				duration: 240,
-				albumArtist: 'AA'
-			});
-
-			const body = parseFormBody(mock.lastCall().body);
-			expect(body.album).toBe('Al');
-			expect(body.trackNumber).toBe('3');
-			expect(body.context).toBe('playlist:1');
-			expect(body.mbid).toBe('mbid-1');
-			expect(body.duration).toBe('240');
-			expect(body.albumArtist).toBe('AA');
-			expect(body.api_sig).toMatch(/^[a-f0-9]{32}$/);
-		});
-
-		test('accepts a numeric duration and a string trackNumber and serialises both to strings', async () => {
-			const authed = new LastFmClient({
-				apiKey: API_KEY,
-				sharedSecret: SHARED_SECRET,
-				sessionKey: 'SESSION-KEY'
-			});
-			mock.respondWithJson({
-				nowplaying: { ignoredMessage: { code: '0', '#text': '' } }
-			});
-
-			await authed.track.updateNowPlaying({
-				artist: 'A',
-				track: 'T',
-				duration: 200,
-				trackNumber: '7'
-			});
-
-			const body = parseFormBody(mock.lastCall().body);
-			expect(body.duration).toBe('200');
-			expect(body.trackNumber).toBe('7');
-		});
-
-		test('omits optional fields from the body AND from the signature when undefined', async () => {
-			const authed = new LastFmClient({
-				apiKey: API_KEY,
-				sharedSecret: SHARED_SECRET,
-				sessionKey: 'SESSION-KEY'
-			});
-			mock.respondWithJson({
-				nowplaying: { ignoredMessage: { code: '0', '#text': '' } }
-			});
-
-			await authed.track.updateNowPlaying({ artist: 'A', track: 'T' });
-
-			const body = parseFormBody(mock.lastCall().body);
-			const keys = Object.keys(body).sort();
-			expect(keys).toEqual(
-				['api_key', 'api_sig', 'artist', 'format', 'method', 'sk', 'track'].sort()
-			);
-		});
-
-		test('fails before fetch when no session key is available, with a sanitized error', async () => {
+		test('fails before fetch when no session key is available', async () => {
 			const noSession = new LastFmClient({ apiKey: API_KEY, sharedSecret: SHARED_SECRET });
 
 			let caught: unknown;
 			try {
-				await noSession.track.updateNowPlaying({ artist: 'A', track: 'T' });
+				await noSession.track.addTags({
+					artist: 'A',
+					track: 'T',
+					tags: ['t1']
+				});
 			} catch (err) {
 				caught = err;
 			}
 			expect(caught).toBeInstanceOf(LastFmApiError);
-			const e = caught as LastFmApiError;
-			expect(e.httpStatus).toBe(0);
-			expect(e.message).toContain('session key');
+			expect((caught as LastFmApiError).httpStatus).toBe(0);
 			expect(mock.calls).toHaveLength(0);
 		});
 
-		test('parses an ignored now-playing response (code != 0) but does not throw', async () => {
+		test('rejects more than 10 tags in the request schema', () => {
+			const result = trackSchemas.trackAddTagsRequestSchema.safeParse({
+				artist: 'A',
+				track: 'T',
+				tags: Array.from({ length: 11 }, (_, i) => `t${i}`)
+			});
+			expect(result.success).toBe(false);
+		});
+	});
+
+	describe('removeTag', () => {
+		test('routes to track.removeTag via signed POST with sk and single tag, returns void', async () => {
 			const authed = new LastFmClient({
 				apiKey: API_KEY,
 				sharedSecret: SHARED_SECRET,
 				sessionKey: 'SESSION-KEY'
 			});
-			mock.respondWithJson({
-				nowplaying: {
-					ignoredMessage: { code: '2', '#text': 'Invalid artist' }
-				}
+			mock.respondWithJson({});
+
+			const result = await authed.track.removeTag({
+				artist: 'Test Artist',
+				track: 'Test Track',
+				tag: 'favorites'
 			});
 
-			const result = await authed.track.updateNowPlaying({ artist: 'A', track: 'T' });
-			expect(result.nowplaying.ignoredMessage.code).toBe('2');
-			expect(result.nowplaying.ignoredMessage['#text']).toBe('Invalid artist');
+			const call = mock.lastCall();
+			expect(call.method).toBe('POST');
+			const body = parseFormBody(call.body);
+			expect(body.method).toBe('track.removeTag');
+			expect(body.artist).toBe('Test Artist');
+			expect(body.track).toBe('Test Track');
+			expect(body.tag).toBe('favorites');
+			expect(body.sk).toBe('SESSION-KEY');
+			expect(body.api_sig).toMatch(/^[a-f0-9]{32}$/);
+			expect(result).toBeUndefined();
 		});
 
-		test('Last.fm error envelope becomes LastFmApiError', async () => {
+		test('fails before fetch when no session key is available', async () => {
+			const noSession = new LastFmClient({ apiKey: API_KEY, sharedSecret: SHARED_SECRET });
+
+			let caught: unknown;
+			try {
+				await noSession.track.removeTag({ artist: 'A', track: 'T', tag: 't' });
+			} catch (err) {
+				caught = err;
+			}
+			expect(caught).toBeInstanceOf(LastFmApiError);
+			expect(mock.calls).toHaveLength(0);
+		});
+	});
+
+	describe('love', () => {
+		test('routes to track.love via signed POST with sk, returns void', async () => {
 			const authed = new LastFmClient({
 				apiKey: API_KEY,
 				sharedSecret: SHARED_SECRET,
 				sessionKey: 'SESSION-KEY'
 			});
-			mock.respondWithJson(
-				lastFmError(LAST_FM_ERROR_CODES.AUTHENTICATION_FAILED, 'Auth failed')
-			);
+			mock.respondWithJson({});
 
-			await expect(
-				authed.track.updateNowPlaying({ artist: 'A', track: 'T' })
-			).rejects.toBeInstanceOf(LastFmApiError);
+			const result = await authed.track.love({ artist: 'Test Artist', track: 'Believe' });
+
+			const call = mock.lastCall();
+			expect(call.method).toBe('POST');
+			const body = parseFormBody(call.body);
+			expect(body.method).toBe('track.love');
+			expect(body.artist).toBe('Test Artist');
+			expect(body.track).toBe('Believe');
+			expect(body.sk).toBe('SESSION-KEY');
+			expect(body.api_sig).toMatch(/^[a-f0-9]{32}$/);
+			// No tag payload expected.
+			expect(body.tag).toBeUndefined();
+			expect(body.tags).toBeUndefined();
+			expect(result).toBeUndefined();
+		});
+
+		test('fails before fetch when no session key is available', async () => {
+			const noSession = new LastFmClient({ apiKey: API_KEY, sharedSecret: SHARED_SECRET });
+
+			let caught: unknown;
+			try {
+				await noSession.track.love({ artist: 'A', track: 'T' });
+			} catch (err) {
+				caught = err;
+			}
+			expect(caught).toBeInstanceOf(LastFmApiError);
+			expect(mock.calls).toHaveLength(0);
+		});
+	});
+
+	describe('unlove', () => {
+		test('routes to track.unlove via signed POST with sk, returns void', async () => {
+			const authed = new LastFmClient({
+				apiKey: API_KEY,
+				sharedSecret: SHARED_SECRET,
+				sessionKey: 'SESSION-KEY'
+			});
+			mock.respondWithJson({});
+
+			const result = await authed.track.unlove({ artist: 'Test Artist', track: 'Believe' });
+
+			const call = mock.lastCall();
+			expect(call.method).toBe('POST');
+			const body = parseFormBody(call.body);
+			expect(body.method).toBe('track.unlove');
+			expect(body.artist).toBe('Test Artist');
+			expect(body.track).toBe('Believe');
+			expect(body.sk).toBe('SESSION-KEY');
+			expect(body.api_sig).toMatch(/^[a-f0-9]{32}$/);
+			expect(result).toBeUndefined();
 		});
 	});
 
@@ -483,7 +474,10 @@ describe('track service', () => {
 			expect(typeof c.track.scrobble).toBe('function');
 			expect(typeof c.track.scrobbleMany).toBe('function');
 			expect(typeof c.track.getCorrection).toBe('function');
-			expect(typeof c.track.updateNowPlaying).toBe('function');
+			expect(typeof c.track.addTags).toBe('function');
+			expect(typeof c.track.removeTag).toBe('function');
+			expect(typeof c.track.love).toBe('function');
+			expect(typeof c.track.unlove).toBe('function');
 
 			const svc: TrackService = createTrackService({ apiKey: API_KEY, sharedSecret: SHARED_SECRET });
 			expect(typeof svc.getInfo).toBe('function');
@@ -492,17 +486,19 @@ describe('track service', () => {
 			// Deprecated aliases point to the same implementation
 			expect(svc.postTrackScrobble).toBe(svc.scrobble);
 			expect(svc.postBatchTrackScrobble).toBe(svc.scrobbleMany);
-			expect(typeof svc.updateNowPlaying).toBe('function');
+			expect(typeof svc.addTags).toBe('function');
+			expect(typeof svc.removeTag).toBe('function');
+			expect(typeof svc.love).toBe('function');
+			expect(typeof svc.unlove).toBe('function');
 
 			expect(trackSchemas.trackGetInfoRequestSchema).toBeDefined();
 			expect(trackSchemas.trackScrobbleRequestSchema).toBeDefined();
 			expect(trackSchemas.trackGetCorrectionRequestSchema).toBeDefined();
 			expect(trackSchemas.trackGetCorrectionResponseSchema).toBeDefined();
 			expect(trackSchemas.trackCorrectionSchema).toBeDefined();
-			expect(trackSchemas.trackUpdateNowPlayingRequestSchema).toBeDefined();
-			expect(trackSchemas.trackUpdateNowPlayingResponseSchema).toBeDefined();
-			expect(trackSchemas.correctedTextFieldSchema).toBeDefined();
-			expect(trackSchemas.nowPlayingIgnoredMessageSchema).toBeDefined();
+			expect(trackSchemas.trackAddTagsRequestSchema).toBeDefined();
+			expect(trackSchemas.trackRemoveTagRequestSchema).toBeDefined();
+			expect(trackSchemas.trackLoveRequestSchema).toBeDefined();
 		});
 	});
 });

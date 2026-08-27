@@ -1,0 +1,26 @@
+import { z } from "zod";
+export declare const ageSchema: z.ZodString;
+export declare const subscriberSchema: z.ZodString;
+export declare const realNameSchema: z.ZodString;
+export declare const bootstrapSchema: z.ZodString;
+export declare const genderSchema: z.ZodString;
+export declare const typeSchema: z.ZodString;
+export declare const countrySchema: z.ZodString;
+export declare const playlistsSchema: z.ZodString;
+export declare const artistCountSchema: z.ZodString;
+export declare const albumCountSchema: z.ZodString;
+export declare const trackCountSchema: z.ZodString;
+export declare const rankSchema: z.ZodString;
+export type Age = z.infer<typeof ageSchema>;
+export type Subscriber = z.infer<typeof subscriberSchema>;
+export type RealName = z.infer<typeof realNameSchema>;
+export type Bootstrap = z.infer<typeof bootstrapSchema>;
+export type Gender = z.infer<typeof genderSchema>;
+export type Type = z.infer<typeof typeSchema>;
+export type Country = z.infer<typeof countrySchema>;
+export type Playlists = z.infer<typeof playlistsSchema>;
+export type ArtistCount = z.infer<typeof artistCountSchema>;
+export type AlbumCount = z.infer<typeof albumCountSchema>;
+export type TrackCount = z.infer<typeof trackCountSchema>;
+export type Rank = z.infer<typeof rankSchema>;
+//# sourceMappingURL=base.metadata.schemas.d.ts.map
