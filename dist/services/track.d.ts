@@ -1,4 +1,4 @@
-import type { BatchTracksScrobbleRequest, TrackAddTagsRequest, TrackGetCorrectionRequest, TrackGetCorrectionResponse, TrackGetInfoRequest, TrackGetInfoResponse, TrackLoveRequest, TrackRemoveTagRequest, TrackGetSimilarRequest, TrackGetSimilarResponse, TrackGetTagsRequest, TrackGetTagsResponse, TrackGetTopTagsRequest, TrackGetTopTagsResponse, TrackScrobbleRequest, TrackScrobbleResponse, TrackSearchRequest, TrackSearchResponse } from './track.schemas.js';
+import type { BatchTracksScrobbleRequest, TrackAddTagsRequest, TrackGetCorrectionRequest, TrackGetCorrectionResponse, TrackGetInfoRequest, TrackGetInfoResponse, TrackLoveRequest, TrackRemoveTagRequest, TrackGetSimilarRequest, TrackGetSimilarResponse, TrackGetTagsRequest, TrackGetTagsResponse, TrackGetTopTagsRequest, TrackGetTopTagsResponse, TrackScrobbleRequest, TrackScrobbleResponse, TrackSearchRequest, TrackSearchResponse, TrackUpdateNowPlayingRequest, TrackUpdateNowPlayingResponse } from './track.schemas.js';
 import type { LastFmConfig } from '../config.js';
 export interface TrackService {
     /**
@@ -136,6 +136,29 @@ export interface TrackService {
      * https://www.last.fm/api/show/track.unlove
      */
     unlove: (params: TrackLoveRequest, init?: RequestInit) => Promise<void>;
+    /**
+     * Announce the track the user is currently listening to on Last.fm.
+     * Requires an authenticated session.
+     *
+     * Optional fields (`album`, `trackNumber`, `context`, `mbid`,
+     * `duration`, `albumArtist`) are only included in the body and
+     * signature when they are defined; the shared `signedPost`
+     * transport strips `undefined` values before signing. Note that
+     * `trackNumber` and `albumArtist` keep their exact wire casing.
+     *
+     * This endpoint does not accept a `timestamp` parameter — Last.fm
+     * derives now-playing state from server time. Use
+     * `track.scrobble` for completed plays.
+     *
+     * The `context` field is honoured only for API keys that Last.fm
+     * has whitelisted; other API keys receive an ignored-message code.
+     *
+     * @param {TrackUpdateNowPlayingRequest} params
+     * @param {RequestInit} init
+     * @returns {Promise<TrackUpdateNowPlayingResponse>}
+     * https://www.last.fm/api/show/track.updateNowPlaying
+     */
+    updateNowPlaying: (params: TrackUpdateNowPlayingRequest, init?: RequestInit) => Promise<TrackUpdateNowPlayingResponse>;
 }
 export declare function createTrackService(config: LastFmConfig): TrackService;
 //# sourceMappingURL=track.d.ts.map

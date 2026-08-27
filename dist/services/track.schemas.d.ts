@@ -369,6 +369,75 @@ export declare const trackUnloveRequestSchema: z.ZodObject<{
  * Empty success payload for the void tag/love mutations.
  */
 export declare const trackMutationResponseSchema: z.ZodUnknown;
+/**
+ * Request shape for `track.updateNowPlaying`. Optional fields are
+ * omitted from both the body and the signature when undefined.
+ * https://www.last.fm/api/show/track.updateNowPlaying
+ */
+export declare const trackUpdateNowPlayingRequestSchema: z.ZodObject<{
+    artist: z.ZodString;
+    track: z.ZodString;
+    album: z.ZodOptional<z.ZodString>;
+    trackNumber: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodNumber]>>;
+    context: z.ZodOptional<z.ZodString>;
+    mbid: z.ZodOptional<z.ZodString>;
+    duration: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodNumber]>>;
+    albumArtist: z.ZodOptional<z.ZodString>;
+    sk: z.ZodOptional<z.ZodString>;
+}, z.core.$strip>;
+/**
+ * `{ corrected, "#text" }` payload returned for the textual fields of
+ * a now-playing announcement. `corrected` is sent by Last.fm as a
+ * JSON string ("0" / "1").
+ */
+export declare const correctedTextFieldSchema: z.ZodObject<{
+    corrected: z.ZodString;
+    "#text": z.ZodString;
+}, z.core.$strip>;
+/**
+ * `{ corrected }` payload for fields that don't carry a `#text`
+ * value (e.g. `album` in the now-playing response).
+ */
+export declare const correctedFlagOnlyFieldSchema: z.ZodObject<{
+    corrected: z.ZodString;
+}, z.core.$strip>;
+/**
+ * `ignoredMessage` block returned by the now-playing endpoint when
+ * the request is accepted but partially or fully ignored.
+ */
+export declare const nowPlayingIgnoredMessageSchema: z.ZodObject<{
+    code: z.ZodString;
+    "#text": z.ZodString;
+}, z.core.$strip>;
+/**
+ * Response root for `track.updateNowPlaying`. The `nowplaying` block
+ * carries the corrected identities and the ignored-message code; all
+ * inner fields are optional because Last.fm only echoes the parts
+ * that were actually processed.
+ */
+export declare const trackUpdateNowPlayingResponseSchema: z.ZodObject<{
+    nowplaying: z.ZodObject<{
+        track: z.ZodOptional<z.ZodObject<{
+            corrected: z.ZodString;
+            "#text": z.ZodString;
+        }, z.core.$strip>>;
+        artist: z.ZodOptional<z.ZodObject<{
+            corrected: z.ZodString;
+            "#text": z.ZodString;
+        }, z.core.$strip>>;
+        album: z.ZodOptional<z.ZodObject<{
+            corrected: z.ZodString;
+        }, z.core.$strip>>;
+        albumArtist: z.ZodOptional<z.ZodObject<{
+            corrected: z.ZodString;
+            "#text": z.ZodString;
+        }, z.core.$strip>>;
+        ignoredMessage: z.ZodObject<{
+            code: z.ZodString;
+            "#text": z.ZodString;
+        }, z.core.$strip>;
+    }, z.core.$strip>;
+}, z.core.$strip>;
 export type TrackArtist = z.infer<typeof trackArtistSchema>;
 export type TrackAlbum = z.infer<typeof trackAlbumSchema>;
 export type TrackTopTag = z.infer<typeof trackTopTagSchema>;
@@ -395,4 +464,9 @@ export type TrackRemoveTagRequest = z.infer<typeof trackRemoveTagRequestSchema>;
 export type TrackLoveRequest = z.infer<typeof trackLoveRequestSchema>;
 export type TrackUnloveRequest = TrackLoveRequest;
 export type TrackMutationResponse = z.infer<typeof trackMutationResponseSchema>;
+export type TrackUpdateNowPlayingRequest = z.infer<typeof trackUpdateNowPlayingRequestSchema>;
+export type CorrectedTextField = z.infer<typeof correctedTextFieldSchema>;
+export type CorrectedFlagOnlyField = z.infer<typeof correctedFlagOnlyFieldSchema>;
+export type NowPlayingIgnoredMessage = z.infer<typeof nowPlayingIgnoredMessageSchema>;
+export type TrackUpdateNowPlayingResponse = z.infer<typeof trackUpdateNowPlayingResponseSchema>;
 //# sourceMappingURL=track.schemas.d.ts.map

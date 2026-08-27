@@ -7,6 +7,13 @@ function resolveSessionKeyForTrackMutation(config, requestSk, action) {
     }
     return sk;
 }
+function resolveSessionKeyForNowPlaying(config, requestSk) {
+    const sk = requestSk ?? config.sessionKey;
+    if (!sk) {
+        throw new LastFmApiError('A session key (`sk`) is required to track.updateNowPlaying. Pass `sk` in the request params or set `sessionKey` on the LastFmConfig.', 0);
+    }
+    return sk;
+}
 export function createTrackService(config) {
     const scrobbleImpl = (params, init) => signedPost(config, 'track.scrobble', {
         params: buildScrobbleParams(config, params),
@@ -64,6 +71,23 @@ export function createTrackService(config) {
                 params: { artist: params.artist, track: params.track, sk },
                 init
             }).then(() => undefined);
+        },
+        updateNowPlaying: (params, init) => {
+            const sk = resolveSessionKeyForNowPlaying(config, params.sk);
+            return signedPost(config, 'track.updateNowPlaying', {
+                params: {
+                    artist: params.artist,
+                    track: params.track,
+                    album: params.album,
+                    trackNumber: params.trackNumber,
+                    context: params.context,
+                    mbid: params.mbid,
+                    duration: params.duration,
+                    albumArtist: params.albumArtist,
+                    sk
+                },
+                init
+            });
         }
     };
 }
