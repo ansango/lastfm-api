@@ -7,6 +7,6 @@
     "sourceMap": false,
     "rootDir": "."
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "tool/**/*"],
   "exclude": ["node_modules", "dist"]
 }
