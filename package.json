@@ -112,7 +112,11 @@
     "release:major": "bun scripts/release.ts major",
     "release:alpha": "bun scripts/release.ts alpha",
     "release:beta": "bun scripts/release.ts beta",
-    "gh:release": "bun scripts/github-release.ts"
+    "gh:release": "bun scripts/github-release.ts",
+    "tool:dev": "bun install --cwd tool && bun run --cwd tool dev",
+    "tool:start": "bun install --cwd tool && bun run --cwd tool start",
+    "tool:test": "bun install --cwd tool && bun run --cwd tool test",
+    "tool:typecheck": "bun install --cwd tool && bun run --cwd tool typecheck"
   },
   "repository": {
     "type": "git",
