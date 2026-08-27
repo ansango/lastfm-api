@@ -1,4 +1,5 @@
 import type {
+	ArtistAddTagsRequest,
 	ArtistGetCorrectionRequest,
 	ArtistGetCorrectionResponse,
 	ArtistGetInfoRequest,
@@ -11,12 +12,13 @@ import type {
 	ArtistGetTopTagsResponse,
 	ArtistGetTopTracksRequest,
 	ArtistGetTopTracksResponse,
+	ArtistRemoveTagRequest,
 	ArtistSearchRequest,
 	ArtistSearchResponse,
 	ArtistGetSimilarRequest,
 	ArtistGetSimilarResponse
 } from './artist.schemas.js';
-import { fetcher, buildUrl } from '../utils.js';
+import { fetcher, buildUrl, signedPost, LastFmApiError } from '../utils.js';
 import type { LastFmConfig } from '../config.js';
 
 export interface ArtistService {
@@ -101,9 +103,76 @@ export interface ArtistService {
 		params: ArtistGetCorrectionRequest,
 		init?: RequestInit
 	) => Promise<ArtistGetCorrectionResponse>;
+	/**
+	 * Add one or more personal tags to an artist. Requires an
+	 * authenticated session.
+	 *
+	 * The `tags` array is sent on the wire as a comma-separated string
+	 * (Last.fm convention). Returns when the call has been accepted by
+	 * Last.fm.
+	 *
+	 * Idempotency is not guaranteed by Last.fm.
+	 *
+	 * @param {ArtistAddTagsRequest} params
+	 * @param {RequestInit} init
+	 * @returns {Promise<void>}
+	 * https://www.last.fm/api/show/artist.addTags
+	 */
+	addTags: (params: ArtistAddTagsRequest, init?: RequestInit) => Promise<void>;
+	/**
+	 * Remove a single personal tag from an artist. Requires an
+	 * authenticated session.
+	 *
+	 * Last.fm does not document idempotency for `artist.removeTag`.
+	 *
+	 * @param {ArtistRemoveTagRequest} params
+	 * @param {RequestInit} init
+	 * @returns {Promise<void>}
+	 * https://www.last.fm/api/show/artist.removeTag
+	 */
+	removeTag: (params: ArtistRemoveTagRequest, init?: RequestInit) => Promise<void>;
+}
+
+function resolveSessionKeyForArtistTagMutation(
+	config: LastFmConfig,
+	requestSk: string | undefined,
+	action: 'addTags' | 'removeTag'
+): string {
+	const sk = requestSk ?? config.sessionKey;
+	if (!sk) {
+		throw new LastFmApiError(
+			`A session key (\`sk\`) is required to artist.${action}. Pass \`sk\` in the request params or set \`sessionKey\` on the LastFmConfig.`,
+			0
+		);
+	}
+	return sk;
 }
 
 export function createArtistService(config: LastFmConfig): ArtistService {
+	const addTagsImpl = (params: ArtistAddTagsRequest, init?: RequestInit) => {
+		const sk = resolveSessionKeyForArtistTagMutation(config, params.sk, 'addTags');
+		return signedPost(config, 'artist.addTags', {
+			params: {
+				artist: params.artist,
+				tags: params.tags.join(','),
+				sk
+			},
+			init
+		}).then(() => undefined);
+	};
+
+	const removeTagImpl = (params: ArtistRemoveTagRequest, init?: RequestInit) => {
+		const sk = resolveSessionKeyForArtistTagMutation(config, params.sk, 'removeTag');
+		return signedPost(config, 'artist.removeTag', {
+			params: {
+				artist: params.artist,
+				tag: params.tag,
+				sk
+			},
+			init
+		}).then(() => undefined);
+	};
+
 	return {
 		getInfo: (params, init) =>
 			fetcher<ArtistGetInfoResponse>(buildUrl(config, 'artist.getInfo', params), init),
@@ -123,6 +192,8 @@ export function createArtistService(config: LastFmConfig): ArtistService {
 			fetcher<ArtistGetCorrectionResponse>(
 				buildUrl(config, 'artist.getCorrection', params),
 				init
-			)
+			),
+		addTags: addTagsImpl,
+		removeTag: removeTagImpl
 	};
 }
