@@ -12,7 +12,7 @@ import { afterEach, beforeEach, describe, expect, test } from 'bun:test';
 
 import { createApp } from '../src/server.js';
 import { mountOpenAPI } from '../src/doc.js';
-import { allMethods } from '../../src/method-registry.js';
+import { allMethods } from '../../../src/method-registry.js';
 
 /**
  * Build a complete app (with `/doc` and Scalar UI) for tests that

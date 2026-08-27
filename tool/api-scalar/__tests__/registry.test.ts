@@ -9,9 +9,9 @@
  *    namespace defaults (10 POST signed + 3 auth)
  */
 import { describe, test, expect } from 'bun:test';
-import { CANONICAL_METHODS } from '../../src/canonical-methods.js';
-import { allMethods, methodRegistry } from '../../src/method-registry.js';
-import { createClient } from '../../src/client.js';
+import { CANONICAL_METHODS } from '../../../src/canonical-methods.js';
+import { allMethods, methodRegistry } from '../../../src/method-registry.js';
+import { createClient } from '../../../src/client.js';
 
 describe('method-registry: shape', () => {
 	test('registry covers all 57 canonical methods', () => {
