@@ -28,7 +28,147 @@ jobs:
         run: bun run typecheck
 
       - name: Run unit tests
-        run: bun run test:unit
+        id: tests
+        # Capture both the streamed output (for parsing into the PR summary)
+        # and the exit code. `tee` lets the step fail naturally if tests fail.
+        run: |
+          set +e
+          bun test src/__tests__ 2>&1 | tee test-output.log
+          echo "exit=${PIPESTATUS[0]}" > tests.exit
+        # Re-implement the failure check so the step still fails on test errors.
+      - name: Assert tests passed
+        if: always()
+        run: |
+          exit_code=$(cat tests.exit | sed 's/exit=//')
+          if [ "$exit_code" != "0" ]; then
+            echo "Tests failed (exit code $exit_code)"
+            exit "$exit_code"
+          fi
+
+      - name: Post test summary to PR
+        if: github.event_name == 'pull_request' && always()
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          RUN_ID: ${{ github.run_id }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          python3 - <<'PY'
+          import os, re, json, sys, urllib.request, urllib.error
+
+          MARKER = "<!-- Mavis-test-summary -->"
+          EMOJI = {"pass": "✅", "fail": "❌", "skip": "⏭️"}
+          TEXT = {"pass": "pass", "fail": "FAIL", "skip": "skip"}
+          COLOR = {"pass": "🟢", "fail": "🔴", "skip": "⚪"}
+
+          # ── Parse bun test output ────────────────────────────────────────
+          try:
+              with open("test-output.log", encoding="utf-8") as fh:
+                  lines = fh.read().splitlines()
+          except FileNotFoundError:
+              print("test-output.log not found; skipping summary")
+              sys.exit(0)
+
+          file_re = re.compile(r"^(src/__tests__/.+\.test\.ts):\s*$")
+          result_re = re.compile(r"^\((pass|fail|skip)\)\s+(.+?)\s+\[([\d.]+)ms\]\s*$")
+
+          current_file = None
+          files = []            # [{name, passed, failed, skipped, tests: [(status, name, ms)]}]
+          totals = {"pass": 0, "fail": 0, "skip": 0}
+
+          for line in lines:
+              m = file_re.match(line)
+              if m:
+                  current_file = m.group(1)
+                  files.append({
+                      "name": current_file,
+                      "pass": 0, "fail": 0, "skip": 0,
+                      "tests": []
+                  })
+                  continue
+              m = result_re.match(line)
+              if m and current_file is not None:
+                  status, name, ms = m.group(1), m.group(2), float(m.group(3))
+                  files[-1][status] += 1
+                  files[-1]["tests"].append((status, name, ms))
+                  totals[status] += 1
+
+          if not files:
+              print("no test output parsed; skipping summary")
+              sys.exit(0)
+
+          # ── Build markdown ───────────────────────────────────────────────
+          if totals["fail"] > 0:
+              head_emoji = "❌"
+          elif totals["skip"] > 0:
+              head_emoji = "⚠️"
+          else:
+              head_emoji = "✅"
+
+          run_url = os.environ["RUN_URL"]
+          run_id = os.environ["RUN_ID"]
+
+          md = f"{MARKER}\n"
+          md += f"## {head_emoji} Test Summary\n\n"
+          md += f"**{totals['pass']} passed** · **{totals['fail']} failed** · **{totals['skip']} skipped**\n\n"
+          md += f"<sub>Run: [{run_id}]({run_url})</sub>\n\n"
+
+          # Per-file table
+          md += "| File | ✅ | ❌ | ⏭️ |\n"
+          md += "|---|---:|---:|---:|\n"
+          for f in files:
+              rel = f["name"].replace("src/__tests__/", "").replace(".test.ts", "")
+              md += f"| `{rel}` | {f['pass']} | {f['fail']} | {f['skip']} |\n"
+          md += f"| **Total** | **{totals['pass']}** | **{totals['fail']}** | **{totals['skip']}** |\n\n"
+
+          # Collapsible: every test name with its emoji
+          md += "<details><summary>All test names</summary>\n\n"
+          md += "| Status | Test | Time |\n"
+          md += "|---|---|---:|\n"
+          for f in files:
+              rel = f["name"].replace("src/__tests__/", "").replace(".test.ts", "")
+              for status, name, ms in f["tests"]:
+                  md += f"| {EMOJI[status]} | `{rel}` › {name} | {ms:.0f}ms |\n"
+          md += "\n</details>\n"
+
+          # ── Post (or update) the comment ────────────────────────────────
+          pr_number = os.environ["PR_NUMBER"]
+          token = os.environ["GITHUB_TOKEN"]
+          repo = os.environ.get("GITHUB_REPOSITORY", "ansango/lastfm-api")
+          api = "https://api.github.com"
+
+          def req(method, path, payload=None):
+              data = json.dumps(payload).encode() if payload is not None else None
+              r = urllib.request.Request(
+                  f"{api}{path}",
+                  data=data,
+                  headers={
+                      "Authorization": f"Bearer {token}",
+                      "Accept": "application/vnd.github+json",
+                      "Content-Type": "application/json",
+                      "User-Agent": "Mavis-CI",
+                      "X-GitHub-Api-Version": "2022-11-28",
+                  },
+                  method=method,
+              )
+              with urllib.request.urlopen(r, timeout=15) as resp:
+                  return resp.status, json.loads(resp.read())
+
+          # Look for an existing summary comment to update.
+          existing_id = None
+          status, comments = req("GET", f"/repos/{repo}/issues/{pr_number}/comments?per_page=100")
+          for c in comments:
+              if c.get("body", "").startswith(MARKER):
+                  existing_id = c["id"]
+                  break
+
+          if existing_id:
+              status, _ = req("PATCH", f"/repos/{repo}/issues/comments/{existing_id}", {"body": md})
+              print(f"updated comment {existing_id} (status {status})")
+          else:
+              status, posted = req("POST", f"/repos/{repo}/issues/{pr_number}/comments", {"body": md})
+              print(f"posted comment {posted.get('id')} (status {status})")
+          PY
 
       - name: Clean build
         run: bun run build
