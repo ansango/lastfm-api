@@ -301,3 +301,70 @@ export type TrackGetCorrectionResponse = z.infer<typeof trackGetCorrectionRespon
 export type TrackScrobbleRequest = z.infer<typeof trackScrobbleRequestSchema>;
 export type TrackScrobbleResponse = z.infer<typeof trackScrobbleResponseSchema>;
 export type BatchTracksScrobbleRequest = z.infer<typeof batchTracksScrobbleRequestSchema>;
+export type TrackUpdateNowPlayingRequest = z.infer<typeof trackUpdateNowPlayingRequestSchema>;
+export type CorrectedTextField = z.infer<typeof correctedTextFieldSchema>;
+export type CorrectedFlagOnlyField = z.infer<typeof correctedFlagOnlyFieldSchema>;
+export type NowPlayingIgnoredMessage = z.infer<typeof nowPlayingIgnoredMessageSchema>;
+export type TrackUpdateNowPlayingResponse = z.infer<typeof trackUpdateNowPlayingResponseSchema>;
+
+/**
+ * Request shape for `track.updateNowPlaying`. Optional fields are
+ * omitted from both the body and the signature when undefined.
+ * https://www.last.fm/api/show/track.updateNowPlaying
+ */
+export const trackUpdateNowPlayingRequestSchema = z.object({
+    artist: artistNameSchema,
+    track: trackNameSchema,
+    album: albumNameSchema.optional(),
+    // Wire casing preserved: `trackNumber` and `albumArtist`, not
+    // snake_case. The transport's `cleanParams` strips undefined.
+    trackNumber: z.union([z.string(), z.number()]).optional(),
+    context: z.string().optional(),
+    mbid: mbidSchema.optional(),
+    duration: z.union([z.string(), z.number()]).optional(),
+    albumArtist: artistNameSchema.optional(),
+    sk: z.string().optional()
+});
+
+/**
+ * `{ corrected, "#text" }` payload returned for the textual fields of
+ * a now-playing announcement. `corrected` is sent by Last.fm as a
+ * JSON string ("0" / "1").
+ */
+export const correctedTextFieldSchema = z.object({
+    corrected: z.string(),
+    "#text": z.string()
+});
+
+/**
+ * `{ corrected }` payload for fields that don't carry a `#text`
+ * value (e.g. `album` in the now-playing response).
+ */
+export const correctedFlagOnlyFieldSchema = z.object({
+    corrected: z.string()
+});
+
+/**
+ * `ignoredMessage` block returned by the now-playing endpoint when
+ * the request is accepted but partially or fully ignored.
+ */
+export const nowPlayingIgnoredMessageSchema = z.object({
+    code: z.string(),
+    "#text": z.string()
+});
+
+/**
+ * Response root for `track.updateNowPlaying`. The `nowplaying` block
+ * carries the corrected identities and the ignored-message code; all
+ * inner fields are optional because Last.fm only echoes the parts
+ * that were actually processed.
+ */
+export const trackUpdateNowPlayingResponseSchema = z.object({
+    nowplaying: z.object({
+        track: correctedTextFieldSchema.optional(),
+        artist: correctedTextFieldSchema.optional(),
+        album: correctedFlagOnlyFieldSchema.optional(),
+        albumArtist: correctedTextFieldSchema.optional(),
+        ignoredMessage: nowPlayingIgnoredMessageSchema
+    })
+});
