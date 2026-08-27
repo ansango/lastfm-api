@@ -59,16 +59,17 @@ export interface TrackService {
      * Scrobble a batch of tracks. Submits a batch of track plays to the Last.fm.
      * Canonical Last.fm method name: `track.scrobble`.
      * @param {BatchTracksScrobbleRequest} params
+     * @param {RequestInit} init
      * @returns {Promise<TrackScrobbleResponse>}
      * https://www.last.fm/api/show/track.scrobble
      * */
-    scrobbleMany: (params: BatchTracksScrobbleRequest) => Promise<TrackScrobbleResponse>;
+    scrobbleMany: (params: BatchTracksScrobbleRequest, init?: RequestInit) => Promise<TrackScrobbleResponse>;
     /**
      * @deprecated Use `scrobbleMany` instead. Renamed to match the canonical
      * Last.fm method name (`track.scrobble`). Kept as an alias for backwards
      * compatibility.
      */
-    postBatchTrackScrobble: (params: BatchTracksScrobbleRequest) => Promise<TrackScrobbleResponse>;
+    postBatchTrackScrobble: (params: BatchTracksScrobbleRequest, init?: RequestInit) => Promise<TrackScrobbleResponse>;
 }
 export declare function createTrackService(config: LastFmConfig): TrackService;
 //# sourceMappingURL=track.d.ts.map

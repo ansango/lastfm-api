@@ -6,8 +6,7 @@ import {
 	fakeTag,
 	fakeTrack,
 	lastFmError,
-	LAST_FM_ERROR_CODES,
-	okAttr
+	LAST_FM_ERROR_CODES
 } from './fixtures/lastfm-responses.js';
 import { createClient } from '../index.js';
 import { createTrackService, type TrackService } from '../entrypoints/track.js';
@@ -136,11 +135,8 @@ describe('track service', () => {
 		});
 	});
 
-	describe('scrobble (read-side: signature behavior under the legacy buildAuthUrl path)', () => {
-		// Full transport migration for scrobble is in #68. Here we only assert
-		// that the current public method shape still works end-to-end and that
-		// the legacy buildAuthUrl signs and routes correctly.
-		test('scrobble routes to track.scrobble with api_sig when session is on the config', async () => {
+	describe('scrobble (smoke through the service; transport behavior is in transport.test.ts)', () => {
+		test('scrobble succeeds end-to-end when session is on the config', async () => {
 			const scrobbleClient = new LastFmClient({
 				apiKey: API_KEY,
 				sharedSecret: SHARED_SECRET,
@@ -163,81 +159,52 @@ describe('track service', () => {
 			const result = await scrobbleClient.track.scrobble({
 				artist: 'Test Artist',
 				track: 'Test Track',
-				timestamp: '1700000000'
+				timestamp: 1700000000
 			});
 
-			const { params, base } = parseUrl(mock.lastCall().url);
-			expect(base).toBe('https://ws.audioscrobbler.com/2.0/');
-			expect(params.method).toBe('track.scrobble');
-			expect(params.sk).toBe('SESSION-KEY-VALUE');
-			expect(params.api_sig).toMatch(/^[a-f0-9]{32}$/);
-			expect(params.format).toBe('json');
 			expect(result.scrobbles['@attr'].accepted).toBe(1);
+			// Transport behavior (URL safety, body, signature) is covered in
+			// transport.test.ts. Here we only verify the service wires through.
 		});
 
-		test('scrobble accepts timestamp as string (current schema is z.string())', async () => {
+		test('scrobbleMany accepts a numeric timestamp per the updated schema', async () => {
 			const c = new LastFmClient({
 				apiKey: API_KEY,
 				sharedSecret: SHARED_SECRET,
 				sessionKey: 'SESSION-KEY-VALUE'
 			});
 			mock.respondWithJson({
-				scrobbles: {
-					scrobble: {
-						artist: { corrected: '0', '#text': 'Test Artist' },
-						album: { corrected: '0' },
-						track: { corrected: '0', '#text': 'Test Track' },
-						ignoredMessage: { code: '0', '#text': '' },
-						albumArtist: { corrected: '0', '#text': 'Test Artist' },
-						timestamp: '1700000000'
-					},
-					'@attr': { accepted: 1, ignored: 0 }
-				}
+				scrobbles: { scrobble: {}, '@attr': { accepted: 1, ignored: 0 } }
 			});
 
-			await c.track.scrobble({
-				artist: 'Test Artist',
-				track: 'Test Track',
-				timestamp: '1700000000'
+			await c.track.scrobbleMany({
+				tracks: [{ artist: 'A', track: 'T', timestamp: 1700000000 }]
 			});
 
-			const { params } = parseUrl(mock.lastCall().url);
-			expect(params.timestamp).toBe('1700000000');
+			expect(mock.lastCall().method).toBe('POST');
 		});
 
-		test('scrobble fails with LastFmApiError on auth failure (with session key configured)', async () => {
-			const scrobbleClient = new LastFmClient({
+		test('scrobbleMany rejects more than 50 tracks with a clear error', async () => {
+			const c = new LastFmClient({
 				apiKey: API_KEY,
 				sharedSecret: SHARED_SECRET,
 				sessionKey: 'SESSION-KEY-VALUE'
 			});
-			mock.respondWithJson(
-				lastFmError(LAST_FM_ERROR_CODES.INVALID_SESSION_KEY, 'Invalid session key')
-			);
+			const tooMany = Array.from({ length: 51 }, (_, i) => ({
+				artist: `A${i}`,
+				track: `T${i}`,
+				timestamp: 1700000000 + i
+			}));
 
-			await expect(
-				scrobbleClient.track.scrobble({
-					artist: 'Test Artist',
-					track: 'Test Track',
-					timestamp: '1700000000'
-				})
-			).rejects.toBeInstanceOf(LastFmApiError);
-		});
-
-		test('scrobble without session key throws a clear error before fetch (no Last.fm network call)', async () => {
 			let caught: unknown;
 			try {
-				await client.track.scrobble({
-					artist: 'Test Artist',
-					track: 'Test Track',
-					timestamp: '1700000000'
-				});
+				await c.track.scrobbleMany({ tracks: tooMany });
 			} catch (err) {
 				caught = err;
 			}
 			expect(caught).toBeInstanceOf(Error);
-			expect((caught as Error).message.toLowerCase()).toContain('session key');
-			// No fetch should have been made.
+			expect((caught as Error).message).toMatch(/50/);
+			// No fetch was made.
 			expect(mock.calls).toHaveLength(0);
 		});
 	});

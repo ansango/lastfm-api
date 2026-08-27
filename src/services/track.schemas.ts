@@ -193,7 +193,7 @@ export const trackSearchResponseSchema = z.object({
 export const trackScrobbleRequestSchema = z.object({
     artist: artistNameSchema,
     track: trackNameSchema,
-    timestamp: z.string(),
+    timestamp: z.union([z.string(), z.number()]),
     sk: z.string().optional(),
     album: albumNameSchema.optional()
 });
