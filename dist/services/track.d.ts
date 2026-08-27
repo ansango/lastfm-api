@@ -1,4 +1,4 @@
-import type { BatchTracksScrobbleRequest, TrackGetInfoRequest, TrackGetInfoResponse, TrackGetSimilarRequest, TrackGetSimilarResponse, TrackGetTagsRequest, TrackGetTagsResponse, TrackGetTopTagsRequest, TrackGetTopTagsResponse, TrackScrobbleRequest, TrackScrobbleResponse, TrackSearchRequest, TrackSearchResponse } from './track.schemas.js';
+import type { BatchTracksScrobbleRequest, TrackGetCorrectionRequest, TrackGetCorrectionResponse, TrackGetInfoRequest, TrackGetInfoResponse, TrackGetSimilarRequest, TrackGetSimilarResponse, TrackGetTagsRequest, TrackGetTagsResponse, TrackGetTopTagsRequest, TrackGetTopTagsResponse, TrackScrobbleRequest, TrackScrobbleResponse, TrackSearchRequest, TrackSearchResponse } from './track.schemas.js';
 import type { LastFmConfig } from '../config.js';
 export interface TrackService {
     /**
@@ -33,6 +33,19 @@ export interface TrackService {
      * https://www.last.fm/api/show/track.getTopTags
      * */
     getTopTags: (params: TrackGetTopTagsRequest, init?: RequestInit) => Promise<TrackGetTopTagsResponse>;
+    /**
+     * Get the canonical correction for a misspelled or noncanonical
+     * track (with its artist). Returns the list of corrections Last.fm
+     * would apply to the provided input, including the corrected track
+     * and artist identities plus per-field "corrected" flags and a
+     * positional `index` attribute. Unsigned GET — no `sk` or
+     * `api_sig` are sent.
+     * @param {TrackGetCorrectionRequest} params
+     * @param {RequestInit} init
+     * @returns {Promise<TrackGetCorrectionResponse>}
+     * https://www.last.fm/api/show/track.getCorrection
+     */
+    getCorrection: (params: TrackGetCorrectionRequest, init?: RequestInit) => Promise<TrackGetCorrectionResponse>;
     /**
      * Search for a track by track name. Returns track matches sorted by relevance.
      * @param {TrackSearchRequest} params

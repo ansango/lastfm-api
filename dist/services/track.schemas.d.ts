@@ -217,6 +217,64 @@ export declare const trackSearchResponseSchema: z.ZodObject<{
         }, z.core.$strip>;
     }, z.core.$strip>;
 }, z.core.$strip>;
+/**
+ * Track correction entry returned by `track.getCorrection`.
+ *
+ * Each entry carries the canonical track and artist identities
+ * (`name`, `mbid`, `url`) and per-field "corrected" flags plus a
+ * positional `index` attribute indicating which input this correction
+ * maps to.
+ *
+ * The `corrected` flags and the `index` are sent by Last.fm as JSON
+ * strings ("0" / "1") — we accept them as strings.
+ * https://www.last.fm/api/show/track.getCorrection
+ */
+export declare const trackCorrectionSchema: z.ZodObject<{
+    track: z.ZodObject<{
+        name: z.ZodString;
+        mbid: z.ZodString;
+        url: z.ZodString;
+    }, z.core.$strip>;
+    artist: z.ZodObject<{
+        name: z.ZodString;
+        mbid: z.ZodString;
+        url: z.ZodString;
+    }, z.core.$strip>;
+    artistcorrected: z.ZodOptional<z.ZodString>;
+    trackcorrected: z.ZodOptional<z.ZodString>;
+    "@attr": z.ZodOptional<z.ZodObject<{
+        index: z.ZodString;
+    }, z.core.$strip>>;
+}, z.core.$strip>;
+export declare const trackGetCorrectionRequestSchema: z.ZodObject<{
+    artist: z.ZodString;
+    track: z.ZodString;
+}, z.core.$strip>;
+export declare const trackGetCorrectionResponseSchema: z.ZodObject<{
+    corrections: z.ZodObject<{
+        correction: z.ZodArray<z.ZodObject<{
+            track: z.ZodObject<{
+                name: z.ZodString;
+                mbid: z.ZodString;
+                url: z.ZodString;
+            }, z.core.$strip>;
+            artist: z.ZodObject<{
+                name: z.ZodString;
+                mbid: z.ZodString;
+                url: z.ZodString;
+            }, z.core.$strip>;
+            artistcorrected: z.ZodOptional<z.ZodString>;
+            trackcorrected: z.ZodOptional<z.ZodString>;
+            "@attr": z.ZodOptional<z.ZodObject<{
+                index: z.ZodString;
+            }, z.core.$strip>>;
+        }, z.core.$strip>>;
+        "@attr": z.ZodOptional<z.ZodObject<{
+            artist: z.ZodString;
+            track: z.ZodString;
+        }, z.core.$strip>>;
+    }, z.core.$strip>;
+}, z.core.$strip>;
 export declare const trackScrobbleRequestSchema: z.ZodObject<{
     artist: z.ZodString;
     track: z.ZodString;
@@ -278,6 +336,9 @@ export type TrackGetTopTagsRequest = z.infer<typeof trackGetTopTagsRequestSchema
 export type TrackGetTopTagsResponse = z.infer<typeof trackGetTopTagsResponseSchema>;
 export type TrackSearchRequest = z.infer<typeof trackSearchRequestSchema>;
 export type TrackSearchResponse = z.infer<typeof trackSearchResponseSchema>;
+export type TrackCorrection = z.infer<typeof trackCorrectionSchema>;
+export type TrackGetCorrectionRequest = z.infer<typeof trackGetCorrectionRequestSchema>;
+export type TrackGetCorrectionResponse = z.infer<typeof trackGetCorrectionResponseSchema>;
 export type TrackScrobbleRequest = z.infer<typeof trackScrobbleRequestSchema>;
 export type TrackScrobbleResponse = z.infer<typeof trackScrobbleResponseSchema>;
 export type BatchTracksScrobbleRequest = z.infer<typeof batchTracksScrobbleRequestSchema>;
