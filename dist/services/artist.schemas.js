@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { artistNameSchema, contentSchema, countSchema, forSchema, imageSchema, itemsPerPageSchema, langSchema, limitSchema, listenersSchema, matchSchema, mbidSchema, pageSchema, playcountSchema, publishedSchema, rankSchema, roleSchema, searchTermsSchema, startIndexSchema, startPageSchema, summarySchema, tagNameSchema, textSchema, totalPagesSchema, totalResultsSchema, totalSchema, urlSchema, userNameSchema, } from "./schemas/index.js";
+import { artistNameSchema, contentSchema, countSchema, forSchema, imageSchema, indexSchema, itemsPerPageSchema, langSchema, limitSchema, listenersSchema, matchSchema, mbidSchema, pageSchema, playcountSchema, publishedSchema, rankSchema, roleSchema, searchTermsSchema, startIndexSchema, startPageSchema, summarySchema, tagNameSchema, textSchema, totalPagesSchema, totalResultsSchema, totalSchema, urlSchema, userNameSchema, } from "./schemas/index.js";
 export const artistStatsSchema = z.object({
     listeners: listenersSchema,
     playcount: playcountSchema,
@@ -68,6 +68,35 @@ export const artistGetTagsResponseSchema = z.object({
         "@attr": z.object({
             artist: artistNameSchema
         })
+    })
+});
+/**
+ * Artist correction entry returned by `artist.getCorrection`.
+ *
+ * Last.fm returns a list of corrections. Each entry carries the
+ * canonical artist identity (`name`, `mbid`, `url`) and a positional
+ * `index` attribute indicating which input this correction maps to.
+ * https://www.last.fm/api/show/artist.getCorrection
+ */
+export const artistCorrectionSchema = z.object({
+    artist: z.object({
+        name: artistNameSchema,
+        mbid: mbidSchema,
+        url: urlSchema
+    }),
+    "@attr": z.object({
+        index: indexSchema
+    }).optional()
+});
+export const artistGetCorrectionRequestSchema = z.object({
+    artist: artistNameSchema
+});
+export const artistGetCorrectionResponseSchema = z.object({
+    corrections: z.object({
+        correction: z.array(artistCorrectionSchema),
+        "@attr": z.object({
+            artist: artistNameSchema
+        }).optional()
     })
 });
 export const artistGetSimilarRequestSchema = z.object({

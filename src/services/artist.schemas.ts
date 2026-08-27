@@ -5,6 +5,7 @@ import {
 	countSchema,
 	forSchema,
 	imageSchema,
+	indexSchema,
 	itemsPerPageSchema,
 	langSchema,
 	limitSchema,
@@ -105,6 +106,38 @@ export const artistGetTagsResponseSchema = z.object({
         "@attr": z.object({
             artist: artistNameSchema
         })
+    })
+});
+
+/**
+ * Artist correction entry returned by `artist.getCorrection`.
+ *
+ * Last.fm returns a list of corrections. Each entry carries the
+ * canonical artist identity (`name`, `mbid`, `url`) and a positional
+ * `index` attribute indicating which input this correction maps to.
+ * https://www.last.fm/api/show/artist.getCorrection
+ */
+export const artistCorrectionSchema = z.object({
+    artist: z.object({
+        name: artistNameSchema,
+        mbid: mbidSchema,
+        url: urlSchema
+    }),
+    "@attr": z.object({
+        index: indexSchema
+    }).optional()
+});
+
+export const artistGetCorrectionRequestSchema = z.object({
+    artist: artistNameSchema
+});
+
+export const artistGetCorrectionResponseSchema = z.object({
+    corrections: z.object({
+        correction: z.array(artistCorrectionSchema),
+        "@attr": z.object({
+            artist: artistNameSchema
+        }).optional()
     })
 });
 
@@ -254,6 +287,9 @@ export type ArtistGetInfoRequest = z.infer<typeof artistGetInfoRequestSchema>;
 export type ArtistGetInfoResponse = z.infer<typeof artistGetInfoResponseSchema>;
 export type ArtistGetTagsRequest = z.infer<typeof artistGetTagsRequestSchema>;
 export type ArtistGetTagsResponse = z.infer<typeof artistGetTagsResponseSchema>;
+export type ArtistCorrection = z.infer<typeof artistCorrectionSchema>;
+export type ArtistGetCorrectionRequest = z.infer<typeof artistGetCorrectionRequestSchema>;
+export type ArtistGetCorrectionResponse = z.infer<typeof artistGetCorrectionResponseSchema>;
 export type ArtistGetSimilarRequest = z.infer<typeof artistGetSimilarRequestSchema>;
 export type ArtistGetSimilarResponse = z.infer<typeof artistGetSimilarResponseSchema>;
 export type ArtistGetTopAlbumsRequest = z.infer<typeof artistGetTopAlbumsRequestSchema>;
