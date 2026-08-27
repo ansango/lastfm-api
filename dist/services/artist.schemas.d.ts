@@ -184,6 +184,36 @@ export declare const artistGetCorrectionResponseSchema: z.ZodObject<{
         }, z.core.$strip>>;
     }, z.core.$strip>;
 }, z.core.$strip>;
+/**
+ * Maximum number of tags accepted by `artist.addTags` per the Last.fm
+ * API documentation.
+ */
+export declare const MAX_ARTIST_TAGS_PER_ADD = 10;
+/**
+ * Request shape for `artist.addTags`. The `tags` array is sent on the
+ * wire as a comma-separated string and validated to at most
+ * `MAX_ARTIST_TAGS_PER_ADD` entries.
+ * https://www.last.fm/api/show/artist.addTags
+ */
+export declare const artistAddTagsRequestSchema: z.ZodObject<{
+    artist: z.ZodString;
+    tags: z.ZodArray<z.ZodString>;
+    sk: z.ZodOptional<z.ZodString>;
+}, z.core.$strip>;
+/**
+ * Request shape for `artist.removeTag`. A single tag is removed per
+ * call.
+ * https://www.last.fm/api/show/artist.removeTag
+ */
+export declare const artistRemoveTagRequestSchema: z.ZodObject<{
+    artist: z.ZodString;
+    tag: z.ZodString;
+    sk: z.ZodOptional<z.ZodString>;
+}, z.core.$strip>;
+/**
+ * Empty success payload for the void tag-mutation methods.
+ */
+export declare const artistTagMutationResponseSchema: z.ZodUnknown;
 export declare const artistGetSimilarRequestSchema: z.ZodObject<{
     artist: z.ZodString;
     mbid: z.ZodOptional<z.ZodString>;
@@ -334,6 +364,9 @@ export type ArtistGetTagsResponse = z.infer<typeof artistGetTagsResponseSchema>;
 export type ArtistCorrection = z.infer<typeof artistCorrectionSchema>;
 export type ArtistGetCorrectionRequest = z.infer<typeof artistGetCorrectionRequestSchema>;
 export type ArtistGetCorrectionResponse = z.infer<typeof artistGetCorrectionResponseSchema>;
+export type ArtistAddTagsRequest = z.infer<typeof artistAddTagsRequestSchema>;
+export type ArtistRemoveTagRequest = z.infer<typeof artistRemoveTagRequestSchema>;
+export type ArtistTagMutationResponse = z.infer<typeof artistTagMutationResponseSchema>;
 export type ArtistGetSimilarRequest = z.infer<typeof artistGetSimilarRequestSchema>;
 export type ArtistGetSimilarResponse = z.infer<typeof artistGetSimilarResponseSchema>;
 export type ArtistGetTopAlbumsRequest = z.infer<typeof artistGetTopAlbumsRequestSchema>;

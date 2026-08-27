@@ -99,6 +99,38 @@ export const artistGetCorrectionResponseSchema = z.object({
         }).optional()
     })
 });
+/**
+ * Maximum number of tags accepted by `artist.addTags` per the Last.fm
+ * API documentation.
+ */
+export const MAX_ARTIST_TAGS_PER_ADD = 10;
+/**
+ * Request shape for `artist.addTags`. The `tags` array is sent on the
+ * wire as a comma-separated string and validated to at most
+ * `MAX_ARTIST_TAGS_PER_ADD` entries.
+ * https://www.last.fm/api/show/artist.addTags
+ */
+export const artistAddTagsRequestSchema = z.object({
+    artist: artistNameSchema,
+    tags: z.array(tagNameSchema).max(MAX_ARTIST_TAGS_PER_ADD, {
+        message: `artist.addTags accepts at most ${MAX_ARTIST_TAGS_PER_ADD} tags per request`
+    }),
+    sk: z.string().optional()
+});
+/**
+ * Request shape for `artist.removeTag`. A single tag is removed per
+ * call.
+ * https://www.last.fm/api/show/artist.removeTag
+ */
+export const artistRemoveTagRequestSchema = z.object({
+    artist: artistNameSchema,
+    tag: tagNameSchema,
+    sk: z.string().optional()
+});
+/**
+ * Empty success payload for the void tag-mutation methods.
+ */
+export const artistTagMutationResponseSchema = z.unknown();
 export const artistGetSimilarRequestSchema = z.object({
     artist: artistNameSchema,
     mbid: mbidSchema.optional(),
