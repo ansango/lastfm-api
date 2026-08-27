@@ -570,6 +570,243 @@ export declare const userGetWeeklyTrackChartResponseSchema: z.ZodObject<{
         }, z.core.$strip>;
     }, z.core.$strip>;
 }, z.core.$strip>;
+/**
+ * Tagging type accepted by `user.getPersonalTags`.
+ * https://www.last.fm/api/show/user.getPersonalTags
+ */
+export declare const personalTaggingTypeSchema: z.ZodUnion<readonly [z.ZodLiteral<"artist">, z.ZodLiteral<"album">, z.ZodLiteral<"track">]>;
+export type PersonalTaggingType = z.infer<typeof personalTaggingTypeSchema>;
+/**
+ * Pagination metadata returned inside the `taggings` envelope for
+ * `user.getPersonalTags`. Last.fm sends all four fields as JSON
+ * strings (consistent with the rest of the public API).
+ */
+export declare const personalTaggingsAttrSchema: z.ZodObject<{
+    page: z.ZodString;
+    perPage: z.ZodString;
+    totalPages: z.ZodString;
+    total: z.ZodString;
+}, z.core.$strip>;
+/**
+ * Common metadata inside the `taggings` envelope: the user, the tag,
+ * and the pagination `@attr`.
+ */
+export declare const personalTaggingsMetadataSchema: z.ZodObject<{
+    user: z.ZodString;
+    tag: z.ZodString;
+    "@attr": z.ZodObject<{
+        page: z.ZodString;
+        perPage: z.ZodString;
+        totalPages: z.ZodString;
+        total: z.ZodString;
+    }, z.core.$strip>;
+}, z.core.$strip>;
+export declare const personalTaggedArtistSchema: z.ZodObject<{
+    name: z.ZodString;
+    mbid: z.ZodString;
+    url: z.ZodString;
+}, z.core.$strip>;
+export declare const personalTaggedAlbumSchema: z.ZodObject<{
+    name: z.ZodString;
+    mbid: z.ZodString;
+    url: z.ZodString;
+    artist: z.ZodOptional<z.ZodObject<{
+        name: z.ZodString;
+        mbid: z.ZodString;
+        url: z.ZodString;
+    }, z.core.$strip>>;
+    image: z.ZodOptional<z.ZodArray<z.ZodObject<{
+        "#text": z.ZodString;
+        size: z.ZodUnion<readonly [z.ZodLiteral<"small">, z.ZodLiteral<"medium">, z.ZodLiteral<"large">, z.ZodLiteral<"extralarge">, z.ZodLiteral<"mega">]>;
+    }, z.core.$strip>>>;
+}, z.core.$strip>;
+export declare const personalTaggedTrackSchema: z.ZodObject<{
+    name: z.ZodString;
+    mbid: z.ZodString;
+    url: z.ZodString;
+    artist: z.ZodOptional<z.ZodObject<{
+        name: z.ZodString;
+        mbid: z.ZodString;
+        url: z.ZodString;
+    }, z.core.$strip>>;
+    image: z.ZodOptional<z.ZodArray<z.ZodObject<{
+        "#text": z.ZodString;
+        size: z.ZodUnion<readonly [z.ZodLiteral<"small">, z.ZodLiteral<"medium">, z.ZodLiteral<"large">, z.ZodLiteral<"extralarge">, z.ZodLiteral<"mega">]>;
+    }, z.core.$strip>>>;
+}, z.core.$strip>;
+/**
+ * Response of `user.getPersonalTags` when `taggingtype = "artist"`.
+ */
+export declare const userGetPersonalTagsArtistResponseSchema: z.ZodObject<{
+    taggings: z.ZodObject<{
+        user: z.ZodString;
+        tag: z.ZodString;
+        "@attr": z.ZodObject<{
+            page: z.ZodString;
+            perPage: z.ZodString;
+            totalPages: z.ZodString;
+            total: z.ZodString;
+        }, z.core.$strip>;
+        artists: z.ZodObject<{
+            artist: z.ZodArray<z.ZodObject<{
+                name: z.ZodString;
+                mbid: z.ZodString;
+                url: z.ZodString;
+            }, z.core.$strip>>;
+        }, z.core.$strip>;
+    }, z.core.$strip>;
+}, z.core.$strip>;
+/**
+ * Response of `user.getPersonalTags` when `taggingtype = "album"`.
+ */
+export declare const userGetPersonalTagsAlbumResponseSchema: z.ZodObject<{
+    taggings: z.ZodObject<{
+        user: z.ZodString;
+        tag: z.ZodString;
+        "@attr": z.ZodObject<{
+            page: z.ZodString;
+            perPage: z.ZodString;
+            totalPages: z.ZodString;
+            total: z.ZodString;
+        }, z.core.$strip>;
+        albums: z.ZodObject<{
+            album: z.ZodArray<z.ZodObject<{
+                name: z.ZodString;
+                mbid: z.ZodString;
+                url: z.ZodString;
+                artist: z.ZodOptional<z.ZodObject<{
+                    name: z.ZodString;
+                    mbid: z.ZodString;
+                    url: z.ZodString;
+                }, z.core.$strip>>;
+                image: z.ZodOptional<z.ZodArray<z.ZodObject<{
+                    "#text": z.ZodString;
+                    size: z.ZodUnion<readonly [z.ZodLiteral<"small">, z.ZodLiteral<"medium">, z.ZodLiteral<"large">, z.ZodLiteral<"extralarge">, z.ZodLiteral<"mega">]>;
+                }, z.core.$strip>>>;
+            }, z.core.$strip>>;
+        }, z.core.$strip>;
+    }, z.core.$strip>;
+}, z.core.$strip>;
+/**
+ * Response of `user.getPersonalTags` when `taggingtype = "track"`.
+ */
+export declare const userGetPersonalTagsTrackResponseSchema: z.ZodObject<{
+    taggings: z.ZodObject<{
+        user: z.ZodString;
+        tag: z.ZodString;
+        "@attr": z.ZodObject<{
+            page: z.ZodString;
+            perPage: z.ZodString;
+            totalPages: z.ZodString;
+            total: z.ZodString;
+        }, z.core.$strip>;
+        tracks: z.ZodObject<{
+            track: z.ZodArray<z.ZodObject<{
+                name: z.ZodString;
+                mbid: z.ZodString;
+                url: z.ZodString;
+                artist: z.ZodOptional<z.ZodObject<{
+                    name: z.ZodString;
+                    mbid: z.ZodString;
+                    url: z.ZodString;
+                }, z.core.$strip>>;
+                image: z.ZodOptional<z.ZodArray<z.ZodObject<{
+                    "#text": z.ZodString;
+                    size: z.ZodUnion<readonly [z.ZodLiteral<"small">, z.ZodLiteral<"medium">, z.ZodLiteral<"large">, z.ZodLiteral<"extralarge">, z.ZodLiteral<"mega">]>;
+                }, z.core.$strip>>>;
+            }, z.core.$strip>>;
+        }, z.core.$strip>;
+    }, z.core.$strip>;
+}, z.core.$strip>;
+/**
+ * Union response accepted at runtime. A literal `taggingtype` request
+ * is narrowed to one of the three variants at the type level via
+ * `UserGetPersonalTagsResponse<T>`.
+ */
+export declare const userGetPersonalTagsResponseSchema: z.ZodUnion<readonly [z.ZodObject<{
+    taggings: z.ZodObject<{
+        user: z.ZodString;
+        tag: z.ZodString;
+        "@attr": z.ZodObject<{
+            page: z.ZodString;
+            perPage: z.ZodString;
+            totalPages: z.ZodString;
+            total: z.ZodString;
+        }, z.core.$strip>;
+        artists: z.ZodObject<{
+            artist: z.ZodArray<z.ZodObject<{
+                name: z.ZodString;
+                mbid: z.ZodString;
+                url: z.ZodString;
+            }, z.core.$strip>>;
+        }, z.core.$strip>;
+    }, z.core.$strip>;
+}, z.core.$strip>, z.ZodObject<{
+    taggings: z.ZodObject<{
+        user: z.ZodString;
+        tag: z.ZodString;
+        "@attr": z.ZodObject<{
+            page: z.ZodString;
+            perPage: z.ZodString;
+            totalPages: z.ZodString;
+            total: z.ZodString;
+        }, z.core.$strip>;
+        albums: z.ZodObject<{
+            album: z.ZodArray<z.ZodObject<{
+                name: z.ZodString;
+                mbid: z.ZodString;
+                url: z.ZodString;
+                artist: z.ZodOptional<z.ZodObject<{
+                    name: z.ZodString;
+                    mbid: z.ZodString;
+                    url: z.ZodString;
+                }, z.core.$strip>>;
+                image: z.ZodOptional<z.ZodArray<z.ZodObject<{
+                    "#text": z.ZodString;
+                    size: z.ZodUnion<readonly [z.ZodLiteral<"small">, z.ZodLiteral<"medium">, z.ZodLiteral<"large">, z.ZodLiteral<"extralarge">, z.ZodLiteral<"mega">]>;
+                }, z.core.$strip>>>;
+            }, z.core.$strip>>;
+        }, z.core.$strip>;
+    }, z.core.$strip>;
+}, z.core.$strip>, z.ZodObject<{
+    taggings: z.ZodObject<{
+        user: z.ZodString;
+        tag: z.ZodString;
+        "@attr": z.ZodObject<{
+            page: z.ZodString;
+            perPage: z.ZodString;
+            totalPages: z.ZodString;
+            total: z.ZodString;
+        }, z.core.$strip>;
+        tracks: z.ZodObject<{
+            track: z.ZodArray<z.ZodObject<{
+                name: z.ZodString;
+                mbid: z.ZodString;
+                url: z.ZodString;
+                artist: z.ZodOptional<z.ZodObject<{
+                    name: z.ZodString;
+                    mbid: z.ZodString;
+                    url: z.ZodString;
+                }, z.core.$strip>>;
+                image: z.ZodOptional<z.ZodArray<z.ZodObject<{
+                    "#text": z.ZodString;
+                    size: z.ZodUnion<readonly [z.ZodLiteral<"small">, z.ZodLiteral<"medium">, z.ZodLiteral<"large">, z.ZodLiteral<"extralarge">, z.ZodLiteral<"mega">]>;
+                }, z.core.$strip>>>;
+            }, z.core.$strip>>;
+        }, z.core.$strip>;
+    }, z.core.$strip>;
+}, z.core.$strip>]>;
+/**
+ * Request shape for `user.getPersonalTags`. `T` widens the literal
+ * `taggingtype` so the response can be narrowed.
+ */
+export declare const userGetPersonalTagsRequestSchema: z.ZodObject<{
+    user: z.ZodString;
+    tag: z.ZodString;
+    taggingtype: z.ZodUnion<readonly [z.ZodLiteral<"artist">, z.ZodLiteral<"album">, z.ZodLiteral<"track">]>;
+    limit: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodNumber]>>;
+    page: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodNumber]>>;
+}, z.core.$strip>;
 export type UserGetFriendsRequest = z.infer<typeof userGetFriendsRequestSchema>;
 export type UserGetFriendsResponse = z.infer<typeof userGetFriendsResponseSchema>;
 export type UserGetInfoRequest = z.infer<typeof userGetInfoRequestSchema>;
@@ -606,4 +843,25 @@ export type UserGetWeeklyChartListResponse = z.infer<typeof userGetWeeklyChartLi
 export type UserGetWeeklyTrackChartRequest = z.infer<typeof userGetWeeklyTrackChartRequestSchema>;
 export type WeeklyTrackChart = z.infer<typeof weeklyTrackChartSchema>;
 export type UserGetWeeklyTrackChartResponse = z.infer<typeof userGetWeeklyTrackChartResponseSchema>;
+export type UserGetPersonalTagsRequest<T extends string> = {
+    user: string;
+    tag: string;
+    taggingtype: T;
+    limit?: number | string;
+    page?: number | string;
+};
+export type PersonalTaggedArtist = z.infer<typeof personalTaggedArtistSchema>;
+export type PersonalTaggedAlbum = z.infer<typeof personalTaggedAlbumSchema>;
+export type PersonalTaggedTrack = z.infer<typeof personalTaggedTrackSchema>;
+export type PersonalTaggingsAttr = z.infer<typeof personalTaggingsAttrSchema>;
+export type PersonalTaggingsMetadata = z.infer<typeof personalTaggingsMetadataSchema>;
+export type UserGetPersonalTagsArtistResponse = z.infer<typeof userGetPersonalTagsArtistResponseSchema>;
+export type UserGetPersonalTagsAlbumResponse = z.infer<typeof userGetPersonalTagsAlbumResponseSchema>;
+export type UserGetPersonalTagsTrackResponse = z.infer<typeof userGetPersonalTagsTrackResponseSchema>;
+export type UserGetPersonalTagsUnionResponse = z.infer<typeof userGetPersonalTagsResponseSchema>;
+/**
+ * Conditional response mapping: a literal `taggingtype` narrows the
+ * response to the matching variant; a wider type yields the union.
+ */
+export type UserGetPersonalTagsResponse<T extends string> = T extends "artist" ? UserGetPersonalTagsArtistResponse : T extends "album" ? UserGetPersonalTagsAlbumResponse : T extends "track" ? UserGetPersonalTagsTrackResponse : UserGetPersonalTagsUnionResponse;
 //# sourceMappingURL=user.schemas.d.ts.map

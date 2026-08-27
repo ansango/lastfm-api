@@ -309,6 +309,182 @@ describe('user service', () => {
 		});
 	});
 
+	describe('getPersonalTags', () => {
+		test('routes to user.getPersonalTags with user+tag+taggingtype, returns the artist variant', async () => {
+			mock.respondWithJson({
+				taggings: {
+					user: 'test_user',
+					tag: 'favorites',
+					'@attr': { page: '1', perPage: '50', totalPages: '1', total: '1' },
+					artists: {
+						artist: [{ name: 'Cher', mbid: 'cher-mbid', url: 'https://www.last.fm/music/Cher' }]
+					}
+				}
+			});
+
+			const result = await client.user.getPersonalTags({
+				user: 'test_user',
+				tag: 'favorites',
+				taggingtype: 'artist'
+			});
+
+			const call = mock.lastCall();
+			const { params, base } = parseUrl(call.url);
+			expect(params.method).toBe('user.getPersonalTags');
+			expect(params.api_key).toBe(API_KEY);
+			expect(params.format).toBe('json');
+			expect(params.user).toBe('test_user');
+			expect(params.tag).toBe('favorites');
+			expect(params.taggingtype).toBe('artist');
+			// Unsigned GET — no signature, no session.
+			expect(params.api_sig).toBeUndefined();
+			expect(params.sk).toBeUndefined();
+			expect(call.method).toBe('GET');
+			expect(call.body).toBeUndefined();
+			expect(base).toBe('https://ws.audioscrobbler.com/2.0/');
+
+			expect(result.taggings.user).toBe('test_user');
+			expect(result.taggings.tag).toBe('favorites');
+			expect(result.taggings['@attr'].total).toBe('1');
+			if ('artists' in result.taggings) {
+				expect(result.taggings.artists.artist[0].name).toBe('Cher');
+			} else {
+				throw new Error('expected artist variant');
+			}
+		});
+
+		test('routes for the album variant and parses the album entity', async () => {
+			mock.respondWithJson({
+				taggings: {
+					user: 'test_user',
+					tag: 'favorites',
+					'@attr': { page: '1', perPage: '50', totalPages: '1', total: '1' },
+					albums: {
+						album: [
+							{
+								name: 'Believe',
+								mbid: 'album-mbid',
+								url: 'https://www.last.fm/music/Cher/Believe',
+								artist: {
+									name: 'Cher',
+									mbid: 'cher-mbid',
+									url: 'https://www.last.fm/music/Cher'
+								}
+							}
+						]
+					}
+				}
+			});
+
+			const result = await client.user.getPersonalTags({
+				user: 'test_user',
+				tag: 'favorites',
+				taggingtype: 'album'
+			});
+
+			const { params } = parseUrl(mock.lastCall().url);
+			expect(params.taggingtype).toBe('album');
+			if ('albums' in result.taggings) {
+				expect(result.taggings.albums.album[0].name).toBe('Believe');
+				expect(result.taggings.albums.album[0].artist?.name).toBe('Cher');
+			} else {
+				throw new Error('expected album variant');
+			}
+		});
+
+		test('routes for the track variant and parses the track entity', async () => {
+			mock.respondWithJson({
+				taggings: {
+					user: 'test_user',
+					tag: 'favorites',
+					'@attr': { page: '1', perPage: '50', totalPages: '1', total: '1' },
+					tracks: {
+						track: [
+							{
+								name: 'Believe',
+								mbid: 'track-mbid',
+								url: 'https://www.last.fm/music/Cher/Believe',
+								artist: {
+									name: 'Cher',
+									mbid: 'cher-mbid',
+									url: 'https://www.last.fm/music/Cher'
+								}
+							}
+						]
+					}
+				}
+			});
+
+			const result = await client.user.getPersonalTags({
+				user: 'test_user',
+				tag: 'favorites',
+				taggingtype: 'track'
+			});
+
+			const { params } = parseUrl(mock.lastCall().url);
+			expect(params.taggingtype).toBe('track');
+			if ('tracks' in result.taggings) {
+				expect(result.taggings.tracks.track[0].name).toBe('Believe');
+			} else {
+				throw new Error('expected track variant');
+			}
+		});
+
+		test('passes limit and page when provided', async () => {
+			mock.respondWithJson({
+				taggings: {
+					user: 'u',
+					tag: 't',
+					'@attr': { page: '2', perPage: '5', totalPages: '1', total: '0' },
+					artists: { artist: [] }
+				}
+			});
+
+			await client.user.getPersonalTags({
+				user: 'u',
+				tag: 't',
+				taggingtype: 'artist',
+				limit: 5,
+				page: 2
+			});
+
+			const { params } = parseUrl(mock.lastCall().url);
+			expect(params.limit).toBe('5');
+			expect(params.page).toBe('2');
+		});
+
+		test('parses empty results (no personal tags)', async () => {
+			mock.respondWithJson({
+				taggings: {
+					user: 'u',
+					tag: 'unused',
+					'@attr': { page: '1', perPage: '50', totalPages: '0', total: '0' },
+					artists: { artist: [] }
+				}
+			});
+
+			const result = await client.user.getPersonalTags({
+				user: 'u',
+				tag: 'unused',
+				taggingtype: 'artist'
+			});
+			if ('artists' in result.taggings) {
+				expect(result.taggings.artists.artist).toEqual([]);
+			} else {
+				throw new Error('expected artist variant');
+			}
+		});
+
+		test('rejects an invalid taggingtype at the request schema', () => {
+			const result = userSchemas.userGetPersonalTagsRequestSchema.safeParse({
+				user: 'u',
+				tag: 't',
+				taggingtype: 'playlist'
+			});
+			expect(result.success).toBe(false);
+		});
+	});
+
 	describe('error handling', () => {
 		test('Last.fm error envelope becomes LastFmApiError', async () => {
 			mock.respondWithJson(lastFmError(LAST_FM_ERROR_CODES.INVALID_RESOURCE, 'No such user'));
@@ -332,13 +508,53 @@ describe('user service', () => {
 			expect(typeof c.user.getWeeklyArtistChart).toBe('function');
 			expect(typeof c.user.getWeeklyChartList).toBe('function');
 			expect(typeof c.user.getWeeklyTrackChart).toBe('function');
+			expect(typeof c.user.getPersonalTags).toBe('function');
 
 			const svc: UserService = createUserService({ apiKey: API_KEY });
 			expect(typeof svc.getInfo).toBe('function');
 			expect(typeof svc.getWeeklyTrackChart).toBe('function');
+			expect(typeof svc.getPersonalTags).toBe('function');
 
 			expect(userSchemas.userGetInfoRequestSchema).toBeDefined();
 			expect(userSchemas.userGetWeeklyTrackChartRequestSchema).toBeDefined();
+			expect(userSchemas.userGetPersonalTagsRequestSchema).toBeDefined();
+			expect(userSchemas.userGetPersonalTagsResponseSchema).toBeDefined();
+			expect(userSchemas.userGetPersonalTagsArtistResponseSchema).toBeDefined();
+			expect(userSchemas.userGetPersonalTagsAlbumResponseSchema).toBeDefined();
+			expect(userSchemas.userGetPersonalTagsTrackResponseSchema).toBeDefined();
+		});
+
+		test('generic narrowing: literal taggingtype resolves to the matching response', () => {
+			const c = createClient({ apiKey: API_KEY });
+			type ArtistRes = Awaited<
+				ReturnType<typeof c.user.getPersonalTags<'artist'>>
+			>;
+			type AlbumRes = Awaited<
+				ReturnType<typeof c.user.getPersonalTags<'album'>>
+			>;
+			type TrackRes = Awaited<
+				ReturnType<typeof c.user.getPersonalTags<'track'>>
+			>;
+
+			// Each variant carries the expected collection key.
+			const _artistHasArtists: ArtistRes['taggings'] extends { artists: unknown } ? true : false = true;
+			const _albumHasAlbums: AlbumRes['taggings'] extends { albums: unknown } ? true : false = true;
+			const _trackHasTracks: TrackRes['taggings'] extends { tracks: unknown } ? true : false = true;
+			expect(_artistHasArtists).toBe(true);
+			expect(_albumHasAlbums).toBe(true);
+			expect(_trackHasTracks).toBe(true);
+
+			// A wider type resolves to the union (no narrowing).
+			type Dynamic = Awaited<
+				ReturnType<typeof c.user.getPersonalTags<string>>
+			>;
+			const _dynamicIsUnion: Dynamic extends
+				| { taggings: { artists: unknown } }
+				| { taggings: { albums: unknown } }
+				| { taggings: { tracks: unknown } }
+				? true
+				: false = true;
+			expect(_dynamicIsUnion).toBe(true);
 		});
 	});
 });

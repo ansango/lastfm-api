@@ -5,6 +5,8 @@ import type {
 	UserGetInfoResponse,
 	UserGetLovedTracksRequest,
 	UserGetLovedTracksResponse,
+	UserGetPersonalTagsRequest,
+	UserGetPersonalTagsResponse,
 	UserGetRecentTracksRequest,
 	UserGetRecentTracksResponse,
 	UserGetTopAlbumsRequest,
@@ -22,7 +24,8 @@ import type {
 	UserGetWeeklyChartListRequest,
 	UserGetWeeklyChartListResponse,
 	UserGetWeeklyTrackChartRequest,
-	UserGetWeeklyTrackChartResponse
+	UserGetWeeklyTrackChartResponse,
+	PersonalTaggingType
 } from './user.schemas.js';
 import { fetcher, buildUrl } from '../utils.js';
 import type { LastFmConfig } from '../config.js';
@@ -158,6 +161,27 @@ export interface UserService {
 		params: UserGetWeeklyTrackChartRequest,
 		init?: RequestInit
 	) => Promise<UserGetWeeklyTrackChartResponse>;
+	/**
+	 * Get the personal tags a user has applied to artists, albums, or
+	 * tracks. The response is narrowed by the literal `taggingtype`:
+	 *
+	 *   - `taggingtype: "artist"` → response contains `taggings.artists`
+	 *   - `taggingtype: "album"`  → response contains `taggings.albums`
+	 *   - `taggingtype: "track"`  → response contains `taggings.tracks`
+	 *
+	 * Passing a wider type (e.g. a `string` variable) yields the
+	 * documented union response.
+	 *
+	 * Unsigned GET — no `sk` or `api_sig` are sent.
+	 * @param {UserGetPersonalTagsRequest<T>} params
+	 * @param {RequestInit} init
+	 * @returns {Promise<UserGetPersonalTagsResponse<T>>}
+	 * https://www.last.fm/api/show/user.getPersonalTags
+	 */
+	getPersonalTags: <T extends string>(
+		params: UserGetPersonalTagsRequest<T>,
+		init?: RequestInit
+	) => Promise<UserGetPersonalTagsResponse<T>>;
 }
 
 export function createUserService(config: LastFmConfig): UserService {
@@ -198,6 +222,14 @@ export function createUserService(config: LastFmConfig): UserService {
 		getWeeklyTrackChart: (params, init) =>
 			fetcher<UserGetWeeklyTrackChartResponse>(
 				buildUrl(config, 'user.getWeeklyTrackChart', params),
+				init
+			),
+		getPersonalTags: <T extends string>(
+			params: UserGetPersonalTagsRequest<T>,
+			init?: RequestInit
+		) =>
+			fetcher<UserGetPersonalTagsResponse<T>>(
+				buildUrl(config, 'user.getPersonalTags', params),
 				init
 			)
 	};

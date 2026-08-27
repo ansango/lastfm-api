@@ -1,4 +1,4 @@
-import type { UserGetFriendsRequest, UserGetFriendsResponse, UserGetInfoRequest, UserGetInfoResponse, UserGetLovedTracksRequest, UserGetLovedTracksResponse, UserGetRecentTracksRequest, UserGetRecentTracksResponse, UserGetTopAlbumsRequest, UserGetTopAlbumsResponse, UserGetTopArtistsRequest, UserGetTopArtistsResponse, UserGetTopTagsRequest, UserGetTopTagsResponse, UserGetTopTracksRequest, UserGetTopTracksResponse, UserGetWeeklyAlbumChartRequest, UserGetWeeklyAlbumChartResponse, UserGetWeeklyArtistChartRequest, UserGetWeeklyArtistChartResponse, UserGetWeeklyChartListRequest, UserGetWeeklyChartListResponse, UserGetWeeklyTrackChartRequest, UserGetWeeklyTrackChartResponse } from './user.schemas.js';
+import type { UserGetFriendsRequest, UserGetFriendsResponse, UserGetInfoRequest, UserGetInfoResponse, UserGetLovedTracksRequest, UserGetLovedTracksResponse, UserGetPersonalTagsRequest, UserGetPersonalTagsResponse, UserGetRecentTracksRequest, UserGetRecentTracksResponse, UserGetTopAlbumsRequest, UserGetTopAlbumsResponse, UserGetTopArtistsRequest, UserGetTopArtistsResponse, UserGetTopTagsRequest, UserGetTopTagsResponse, UserGetTopTracksRequest, UserGetTopTracksResponse, UserGetWeeklyAlbumChartRequest, UserGetWeeklyAlbumChartResponse, UserGetWeeklyArtistChartRequest, UserGetWeeklyArtistChartResponse, UserGetWeeklyChartListRequest, UserGetWeeklyChartListResponse, UserGetWeeklyTrackChartRequest, UserGetWeeklyTrackChartResponse } from './user.schemas.js';
 import type { LastFmConfig } from '../config.js';
 export interface UserService {
     /**
@@ -97,6 +97,24 @@ export interface UserService {
      * https://www.last.fm/api/show/user.getWeeklyTrackChart
      */
     getWeeklyTrackChart: (params: UserGetWeeklyTrackChartRequest, init?: RequestInit) => Promise<UserGetWeeklyTrackChartResponse>;
+    /**
+     * Get the personal tags a user has applied to artists, albums, or
+     * tracks. The response is narrowed by the literal `taggingtype`:
+     *
+     *   - `taggingtype: "artist"` → response contains `taggings.artists`
+     *   - `taggingtype: "album"`  → response contains `taggings.albums`
+     *   - `taggingtype: "track"`  → response contains `taggings.tracks`
+     *
+     * Passing a wider type (e.g. a `string` variable) yields the
+     * documented union response.
+     *
+     * Unsigned GET — no `sk` or `api_sig` are sent.
+     * @param {UserGetPersonalTagsRequest<T>} params
+     * @param {RequestInit} init
+     * @returns {Promise<UserGetPersonalTagsResponse<T>>}
+     * https://www.last.fm/api/show/user.getPersonalTags
+     */
+    getPersonalTags: <T extends string>(params: UserGetPersonalTagsRequest<T>, init?: RequestInit) => Promise<UserGetPersonalTagsResponse<T>>;
 }
 export declare function createUserService(config: LastFmConfig): UserService;
 //# sourceMappingURL=user.d.ts.map
