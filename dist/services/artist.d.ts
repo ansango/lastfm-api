@@ -1,4 +1,4 @@
-import type { ArtistGetCorrectionRequest, ArtistGetCorrectionResponse, ArtistGetInfoRequest, ArtistGetInfoResponse, ArtistGetTagsRequest, ArtistGetTagsResponse, ArtistGetTopAlbumsRequest, ArtistGetTopAlbumsResponse, ArtistGetTopTagsRequest, ArtistGetTopTagsResponse, ArtistGetTopTracksRequest, ArtistGetTopTracksResponse, ArtistSearchRequest, ArtistSearchResponse, ArtistGetSimilarRequest, ArtistGetSimilarResponse } from './artist.schemas.js';
+import type { ArtistAddTagsRequest, ArtistGetCorrectionRequest, ArtistGetCorrectionResponse, ArtistGetInfoRequest, ArtistGetInfoResponse, ArtistGetTagsRequest, ArtistGetTagsResponse, ArtistGetTopAlbumsRequest, ArtistGetTopAlbumsResponse, ArtistGetTopTagsRequest, ArtistGetTopTagsResponse, ArtistGetTopTracksRequest, ArtistGetTopTracksResponse, ArtistRemoveTagRequest, ArtistSearchRequest, ArtistSearchResponse, ArtistGetSimilarRequest, ArtistGetSimilarResponse } from './artist.schemas.js';
 import type { LastFmConfig } from '../config.js';
 export interface ArtistService {
     /**
@@ -67,6 +67,34 @@ export interface ArtistService {
      * https://www.last.fm/api/show/artist.getCorrection
      */
     getCorrection: (params: ArtistGetCorrectionRequest, init?: RequestInit) => Promise<ArtistGetCorrectionResponse>;
+    /**
+     * Add one or more personal tags to an artist. Requires an
+     * authenticated session.
+     *
+     * The `tags` array is sent on the wire as a comma-separated string
+     * (Last.fm convention). Returns when the call has been accepted by
+     * Last.fm.
+     *
+     * Idempotency is not guaranteed by Last.fm.
+     *
+     * @param {ArtistAddTagsRequest} params
+     * @param {RequestInit} init
+     * @returns {Promise<void>}
+     * https://www.last.fm/api/show/artist.addTags
+     */
+    addTags: (params: ArtistAddTagsRequest, init?: RequestInit) => Promise<void>;
+    /**
+     * Remove a single personal tag from an artist. Requires an
+     * authenticated session.
+     *
+     * Last.fm does not document idempotency for `artist.removeTag`.
+     *
+     * @param {ArtistRemoveTagRequest} params
+     * @param {RequestInit} init
+     * @returns {Promise<void>}
+     * https://www.last.fm/api/show/artist.removeTag
+     */
+    removeTag: (params: ArtistRemoveTagRequest, init?: RequestInit) => Promise<void>;
 }
 export declare function createArtistService(config: LastFmConfig): ArtistService;
 //# sourceMappingURL=artist.d.ts.map
