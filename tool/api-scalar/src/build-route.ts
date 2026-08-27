@@ -17,6 +17,23 @@ import type { LastFmClient } from '../../../src/client.js';
 const ERROR_SCHEMA = z.object({ message: z.string() }).openapi('LastFmError');
 
 /**
+ * Optional session-key header, surfaced in the OpenAPI spec for every
+ * write method (the 10 POST signed methods). The header is the only
+ * way to pass `sk` per-request in Scalar's "Try it" form; the value
+ * is not persisted by the tool.
+ */
+const SESSION_KEY_HEADER = z
+	.object({
+		'x-lastfm-sk': z
+			.string()
+			.optional()
+			.describe(
+				'Session key returned by `auth.getMobileSession`. Required for write methods. Not persisted — pass it on every request.'
+			)
+	})
+	.openapi('LastFmSessionKeyHeader');
+
+/**
  * Convert a method name like `getTopTags` to a path-friendly segment
  * like `get-top-tags`. Compound names are kebab-cased so the URLs read
  * naturally (`/track/get-top-tags` instead of `/track/getTopTags`).
@@ -38,10 +55,17 @@ export function buildRoute(meta: MethodMeta): RouteConfig {
 	const schema = meta.schema as any;
 	const response = meta.response as any;
 
-	const request =
+	const request: Record<string, unknown> =
 		meta.bodyKind === 'json'
 			? { body: { content: { 'application/json': { schema } } } }
 			: { query: schema };
+
+	// Surface the session-key header for write methods so Scalar's
+	// "Try it" form has an input for it. Read methods (no sk) skip this
+	// to keep the form clean.
+	if (meta.requiresSession) {
+		request['headers'] = SESSION_KEY_HEADER;
+	}
 
 	return createRoute({
 		method: meta.httpMethod.toLowerCase() as 'get' | 'post',
@@ -49,7 +73,7 @@ export function buildRoute(meta: MethodMeta): RouteConfig {
 		tags: [tag],
 		summary: `${meta.id} (Last.fm)`,
 		description: `Wire endpoint: \`/?method=${meta.id}\`. See https://www.last.fm/api/show/${meta.id}`,
-		request,
+		request: request as never,
 		responses: {
 			200: {
 				description: 'Last.fm response (validated against the Zod response schema)',
@@ -87,6 +111,16 @@ export function buildHandler(meta: MethodMeta, client: LastFmClient): any {
 			meta.bodyKind === 'json' ? req.valid('json') : req.valid('query')
 		) as Record<string, unknown>;
 
+		// Resolve the session key from the per-request `x-lastfm-sk`
+		// header (preferred), the request body, or the `LASTFM_SESSION_KEY`
+		// env var. Header wins because it's the only path Scalar's
+		// "Try it" form exposes for `sk` without restarting the tool.
+		// The tool never writes the key to disk.
+		const headerSk = (c.req.header('x-lastfm-sk') ?? '').trim();
+		const bodySk = typeof params['sk'] === 'string' ? (params['sk'] as string).trim() : '';
+		const envSk = (process.env['LASTFM_SESSION_KEY'] ?? '').trim();
+		const sk = headerSk || bodySk || envSk || undefined;
+
 		// Invoke the package method via the env-derived client. The
 		// package internally handles api_key, sharedSecret and sk —
 		// these are already baked into the client. `sk` in the params
@@ -94,7 +128,11 @@ export function buildHandler(meta: MethodMeta, client: LastFmClient): any {
 		// the config, but signedPost will throw if it's missing.
 		try {
 			const fn = meta.resolve(client);
-			const result = await fn(params, undefined);
+			// Build the params object with sk folded in for write methods
+			// (the package reads sk from the per-call config, not the
+			// method params). For read methods sk is ignored.
+			const callParams = meta.requiresSession ? { ...params, sk } : params;
+			const result = await fn(callParams, undefined);
 			return c.json(result, 200);
 		} catch (err) {
 			const message = err instanceof Error ? err.message : 'Unknown error';

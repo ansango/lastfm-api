@@ -17,14 +17,14 @@ functions — no method is hand-written, no schema is duplicated.
 - `POST /<ns>/<method>` — signed write methods, e.g. `POST /track/love`
 
 "Try it" works against the real Last.fm API. The shared secret and session
-key live in the local process; they are never exposed to the browser.
+key live in the local process; they are never exposed to the browser and
+**never persisted to disk by the tool**.
 
 ## Prerequisites
 
 - [Bun](https://bun.sh) ≥ 1.4
 - A Last.fm API key and shared secret: <https://www.last.fm/api/account/create>
-- (Optional) A session key for write methods — obtain via
-  `auth.getMobileSession` or the browser-based auth flow
+- (For write methods) a session key — see [Auth flow](#auth-flow)
 
 ## Quickstart
 
@@ -32,7 +32,7 @@ From the repo root:
 
 ```sh
 # Install the tool's own dependencies (one-time)
-bun install --cwd tool
+bun install --cwd tool/api-scalar
 
 # Run the server (hot-reload on file change)
 bun run tool:dev
@@ -43,18 +43,55 @@ spec is at `/doc`.
 
 ## Configuration
 
-Copy `tool/.env.example` to `tool/.env` (the server reads it from the repo
-root, not the tool directory — see the `dotenv` call in `src/index.ts`):
+The tool reads `.env` from the repo root (the `dotenv` call resolves
+`${import.meta.dir}/../../../.env`).
 
 ```sh
+# Required for any "Try it" call
 LASTFM_API_KEY=your-api-key
+
+# Required for signed methods (auth.getToken, auth.getSession, and all 10 write methods)
 LASTFM_SHARED_SECRET=your-shared-secret
-LASTFM_SESSION_KEY=    # only needed for write methods
-PORT=3000              # default
+
+# Optional — only as a fallback. Prefer the per-request `x-lastfm-sk` header
+# (see Auth flow below) so the key is never written to disk.
+LASTFM_SESSION_KEY=
 ```
 
 All variables can also be passed via the shell — the server falls back to
 `process.env` if the `.env` file is absent.
+
+## Auth flow
+
+The Scalar UI ships a brief auth guide in the `auth` tag's description.
+The full flow, end to end:
+
+**1. Get a session key** (one POST, no browser):
+
+- Open `POST /auth/get-mobile-session` in the Scalar UI
+- Fill `username` and `password` in the JSON body
+- Send → response contains `session.key` (e.g. `abcdef123456...`)
+- Copy it to your clipboard
+
+**2. Use it on write methods** (no persistence, per-request):
+
+- Open any POST endpoint (e.g. `POST /track/love`)
+- In the **Headers** section of the form, set:
+  ```
+  x-lastfm-sk: <the-key-you-copied>
+  ```
+- Fill the JSON body with the required fields
+- Send
+
+The session key is **never** written to disk. Closing the browser loses
+it — repeat step 1 to get a new one. The `LASTFM_API_KEY` and
+`LASTFM_SHARED_SECRET` env vars stay in your shell (they're not
+sensitive in the same way and they're needed on every call anyway).
+
+**Source order** (the handler reads `sk` from the first non-empty):
+1. `x-lastfm-sk` request header (the canonical Scalar path)
+2. `sk` field in the request body
+3. `LASTFM_SESSION_KEY` env var (fallback)
 
 ## How it works
 
