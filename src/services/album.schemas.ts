@@ -176,6 +176,48 @@ export const albumSearchResponseSchema = z.object({
 	}),
 });
 
+/**
+ * Maximum number of tags accepted by `album.addTags` per the Last.fm
+ * API. The docs are not explicit about the limit on `album.addTags`
+ * specifically, but it matches the documented `track.addTags` /
+ * `artist.addTags` cap.
+ */
+export const MAX_ALBUM_TAGS_PER_ADD = 10;
+
+/**
+ * Request shape for `album.addTags`. The `tags` array is sent on the
+ * wire as a comma-separated string and validated to at most
+ * `MAX_ALBUM_TAGS_PER_ADD` entries.
+ * https://www.last.fm/api/show/album.addTags
+ */
+export const albumAddTagsRequestSchema = z.object({
+    artist: artistNameSchema,
+    album: albumNameSchema,
+    tags: z.array(tagNameSchema).max(MAX_ALBUM_TAGS_PER_ADD, {
+        message: `album.addTags accepts at most ${MAX_ALBUM_TAGS_PER_ADD} tags per request`
+    }),
+    sk: z.string().optional()
+});
+
+/**
+ * Request shape for `album.removeTag`. A single tag is removed per
+ * call.
+ * https://www.last.fm/api/show/album.removeTag
+ */
+export const albumRemoveTagRequestSchema = z.object({
+    artist: artistNameSchema,
+    album: albumNameSchema,
+    tag: tagNameSchema,
+    sk: z.string().optional()
+});
+
+/**
+ * Empty success payload for the void tag-mutation methods. The Last.fm
+ * response has no useful domain content, so the schema accepts any
+ * shape and we expose the inferred type as `void` at the call site.
+ */
+export const albumTagMutationResponseSchema = z.unknown();
+
 // Inferred types
 export type Album = z.infer<typeof albumSchema>;
 export type AlbumGetInfoRequest = z.infer<typeof albumGetInfoRequestSchema>;
@@ -186,3 +228,6 @@ export type AlbumGetTopTagsRequest = z.infer<typeof albumGetTopTagsRequestSchema
 export type AlbumGetTopTagsResponse = z.infer<typeof albumGetTopTagsResponseSchema>;
 export type AlbumSearchRequest = z.infer<typeof albumSearchRequestSchema>;
 export type AlbumSearchResponse = z.infer<typeof albumSearchResponseSchema>;
+export type AlbumAddTagsRequest = z.infer<typeof albumAddTagsRequestSchema>;
+export type AlbumRemoveTagRequest = z.infer<typeof albumRemoveTagRequestSchema>;
+export type AlbumTagMutationResponse = z.infer<typeof albumTagMutationResponseSchema>;

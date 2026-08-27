@@ -1,7 +1,7 @@
 import { describe, test, expect, beforeEach, afterEach } from 'bun:test';
 import { LastFmClient } from '../client.js';
 import { LastFmApiError } from '../utils.js';
-import { installFetchMock, type FetchMock, parseUrl } from './helpers/fetch-mock.js';
+import { installFetchMock, type FetchMock, parseFormBody, parseUrl } from './helpers/fetch-mock.js';
 import {
 	fakeAlbum,
 	fakeTag,
@@ -154,6 +154,136 @@ describe('album service', () => {
 		});
 	});
 
+	describe('addTags', () => {
+		test('routes to album.addTags via signed POST with sk and comma-joined tags, returns void', async () => {
+			const authed = new LastFmClient({
+				apiKey: API_KEY,
+				sharedSecret: 'test-shared-secret',
+				sessionKey: 'SESSION-KEY'
+			});
+			mock.respondWithJson({});
+
+			const result = await authed.album.addTags({
+				artist: 'Test Artist',
+				album: 'Test Album',
+				tags: ['rock', '90s', 'favorites']
+			});
+
+			const call = mock.lastCall();
+			expect(call.method).toBe('POST');
+			expect(call.url).toBe('https://ws.audioscrobbler.com/2.0/');
+			expect(call.headers['Content-Type']).toBe('application/x-www-form-urlencoded');
+			const body = parseFormBody(call.body);
+			expect(body.method).toBe('album.addTags');
+			expect(body.api_key).toBe(API_KEY);
+			expect(body.artist).toBe('Test Artist');
+			expect(body.album).toBe('Test Album');
+			expect(body.tags).toBe('rock,90s,favorites');
+			expect(body.sk).toBe('SESSION-KEY');
+			expect(body.api_sig).toMatch(/^[a-f0-9]{32}$/);
+			expect(body.format).toBe('json');
+			expect(result).toBeUndefined();
+		});
+
+		test('per-request sk overrides config.sessionKey', async () => {
+			const authed = new LastFmClient({
+				apiKey: API_KEY,
+				sharedSecret: 'test-shared-secret',
+				sessionKey: 'CONFIG-SK'
+			});
+			mock.respondWithJson({});
+
+			await authed.album.addTags({
+				artist: 'A',
+				album: 'Al',
+				tags: ['t1'],
+				sk: 'REQUEST-SK'
+			});
+
+			const body = parseFormBody(mock.lastCall().body);
+			expect(body.sk).toBe('REQUEST-SK');
+		});
+
+		test('fails before fetch when no session key is available, with a clear sanitized error', async () => {
+			const noSession = new LastFmClient({ apiKey: API_KEY, sharedSecret: 'test-shared-secret' });
+
+			let caught: unknown;
+			try {
+				await noSession.album.addTags({ artist: 'A', album: 'Al', tags: ['t1'] });
+			} catch (err) {
+				caught = err;
+			}
+			expect(caught).toBeInstanceOf(LastFmApiError);
+			const e = caught as LastFmApiError;
+			expect(e.httpStatus).toBe(0);
+			expect(e.message).toContain('session key');
+			expect(mock.calls).toHaveLength(0);
+		});
+
+		test('rejects more than 10 tags in the request schema', () => {
+			const result = albumSchemas.albumAddTagsRequestSchema.safeParse({
+				artist: 'A',
+				album: 'Al',
+				tags: Array.from({ length: 11 }, (_, i) => `t${i}`)
+			});
+			expect(result.success).toBe(false);
+		});
+
+		test('Last.fm error envelope becomes LastFmApiError', async () => {
+			const authed = new LastFmClient({
+				apiKey: API_KEY,
+				sharedSecret: 'test-shared-secret',
+				sessionKey: 'SK'
+			});
+			mock.respondWithJson(lastFmError(LAST_FM_ERROR_CODES.AUTHENTICATION_FAILED, 'Auth failed'));
+
+			await expect(
+				authed.album.addTags({ artist: 'A', album: 'Al', tags: ['t'] })
+			).rejects.toBeInstanceOf(LastFmApiError);
+		});
+	});
+
+	describe('removeTag', () => {
+		test('routes to album.removeTag via signed POST with sk and single tag, returns void', async () => {
+			const authed = new LastFmClient({
+				apiKey: API_KEY,
+				sharedSecret: 'test-shared-secret',
+				sessionKey: 'SESSION-KEY'
+			});
+			mock.respondWithJson({});
+
+			const result = await authed.album.removeTag({
+				artist: 'Test Artist',
+				album: 'Test Album',
+				tag: 'favorites'
+			});
+
+			const call = mock.lastCall();
+			expect(call.method).toBe('POST');
+			const body = parseFormBody(call.body);
+			expect(body.method).toBe('album.removeTag');
+			expect(body.artist).toBe('Test Artist');
+			expect(body.album).toBe('Test Album');
+			expect(body.tag).toBe('favorites');
+			expect(body.sk).toBe('SESSION-KEY');
+			expect(body.api_sig).toMatch(/^[a-f0-9]{32}$/);
+			expect(result).toBeUndefined();
+		});
+
+		test('fails before fetch when no session key is available', async () => {
+			const noSession = new LastFmClient({ apiKey: API_KEY, sharedSecret: 'test-shared-secret' });
+
+			let caught: unknown;
+			try {
+				await noSession.album.removeTag({ artist: 'A', album: 'Al', tag: 't' });
+			} catch (err) {
+				caught = err;
+			}
+			expect(caught).toBeInstanceOf(LastFmApiError);
+			expect(mock.calls).toHaveLength(0);
+		});
+	});
+
 	describe('import coverage', () => {
 		test('album service is exposed from root, album entrypoint, and album.schemas entrypoint', () => {
 			const c = createClient({ apiKey: API_KEY });
@@ -161,13 +291,19 @@ describe('album service', () => {
 			expect(typeof c.album.getTags).toBe('function');
 			expect(typeof c.album.getTopTags).toBe('function');
 			expect(typeof c.album.search).toBe('function');
+			expect(typeof c.album.addTags).toBe('function');
+			expect(typeof c.album.removeTag).toBe('function');
 
 			const svc: AlbumService = createAlbumService({ apiKey: API_KEY });
 			expect(typeof svc.getInfo).toBe('function');
 			expect(typeof svc.search).toBe('function');
+			expect(typeof svc.addTags).toBe('function');
+			expect(typeof svc.removeTag).toBe('function');
 
 			expect(albumSchemas.albumGetInfoRequestSchema).toBeDefined();
 			expect(albumSchemas.albumSearchRequestSchema).toBeDefined();
+			expect(albumSchemas.albumAddTagsRequestSchema).toBeDefined();
+			expect(albumSchemas.albumRemoveTagRequestSchema).toBeDefined();
 		});
 	});
 });
