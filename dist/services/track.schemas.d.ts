@@ -220,7 +220,7 @@ export declare const trackSearchResponseSchema: z.ZodObject<{
 export declare const trackScrobbleRequestSchema: z.ZodObject<{
     artist: z.ZodString;
     track: z.ZodString;
-    timestamp: z.ZodString;
+    timestamp: z.ZodUnion<readonly [z.ZodString, z.ZodNumber]>;
     sk: z.ZodOptional<z.ZodString>;
     album: z.ZodOptional<z.ZodString>;
 }, z.core.$strip>;
@@ -259,7 +259,7 @@ export declare const batchTracksScrobbleRequestSchema: z.ZodObject<{
         track: z.ZodString;
         artist: z.ZodString;
         album: z.ZodOptional<z.ZodString>;
-        timestamp: z.ZodString;
+        timestamp: z.ZodUnion<readonly [z.ZodString, z.ZodNumber]>;
     }, z.core.$strip>>;
     sk: z.ZodOptional<z.ZodString>;
 }, z.core.$strip>;
