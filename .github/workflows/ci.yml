@@ -69,6 +69,7 @@ jobs:
               print(f"DEBUG: file size = {len(raw)} bytes")
               print(f"DEBUG: first 300 bytes (repr) = {raw[:300]!r}")
               print(f"DEBUG: contains b'src/__tests__/' = {b'src/__tests__/' in raw}")
+              print(f"DEBUG: contains b'::group::' = {b'::group::' in raw}")
               print(f"DEBUG: contains b'##[group]' = {b'##[group]' in raw}")
               print(f"DEBUG: contains b'(pass)' = {b'(pass)' in raw}")
           except FileNotFoundError:
@@ -88,10 +89,14 @@ jobs:
               print("test-output.log not found; skipping summary")
               sys.exit(0)
 
-          # bun:test wraps each file header with `##[group]…##[endgroup]`
-          # workflow commands when GITHUB_ACTIONS is set, so the lines written
-          # to disk via `tee` carry that prefix. Accept both.
-          file_re = re.compile(r"^(?:##\[group\])?(src/__tests__/.+\.test\.ts):\s*$")
+          # bun:test writes `::group::<title>::` workflow commands to its
+          # stdout when GITHUB_ACTIONS is set, so the lines written to disk
+          # via `tee` carry that prefix. The runner renders `::group::` as
+          # `##[group]` in the log viewer, but the actual bytes on disk are
+          # `::group::`. Accept both, plus a missing prefix.
+          file_re = re.compile(
+              r"^(?:##\[group\]|::group::)?(src/__tests__/.+\.test\.ts):\s*$"
+          )
           result_re = re.compile(r"^\((pass|fail|skip)\)\s+(.+?)\s+\[([\d.]+)ms\]\s*$")
 
           current_file = None
