@@ -12,7 +12,8 @@ export function createUserService(config) {
         getWeeklyAlbumChart: (params, init) => fetcher(buildUrl(config, 'user.getWeeklyAlbumChart', params), init),
         getWeeklyArtistChart: (params, init) => fetcher(buildUrl(config, 'user.getWeeklyArtistChart', params), init),
         getWeeklyChartList: (params, init) => fetcher(buildUrl(config, 'user.getWeeklyChartList', params), init),
-        getWeeklyTrackChart: (params, init) => fetcher(buildUrl(config, 'user.getWeeklyTrackChart', params), init)
+        getWeeklyTrackChart: (params, init) => fetcher(buildUrl(config, 'user.getWeeklyTrackChart', params), init),
+        getPersonalTags: (params, init) => fetcher(buildUrl(config, 'user.getPersonalTags', params), init)
     };
 }
 //# sourceMappingURL=user.js.map

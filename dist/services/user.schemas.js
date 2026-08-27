@@ -318,4 +318,111 @@ export const weeklyTrackChartSchema = z.object({
 export const userGetWeeklyTrackChartResponseSchema = z.object({
     weeklytrackchart: weeklyTrackChartSchema
 });
+/**
+ * Tagging type accepted by `user.getPersonalTags`.
+ * https://www.last.fm/api/show/user.getPersonalTags
+ */
+export const personalTaggingTypeSchema = z.union([
+    z.literal("artist"),
+    z.literal("album"),
+    z.literal("track")
+]);
+/**
+ * Pagination metadata returned inside the `taggings` envelope for
+ * `user.getPersonalTags`. Last.fm sends all four fields as JSON
+ * strings (consistent with the rest of the public API).
+ */
+export const personalTaggingsAttrSchema = z.object({
+    page: z.string(),
+    perPage: z.string(),
+    totalPages: z.string(),
+    total: z.string()
+});
+/**
+ * Common metadata inside the `taggings` envelope: the user, the tag,
+ * and the pagination `@attr`.
+ */
+export const personalTaggingsMetadataSchema = z.object({
+    user: userNameSchema,
+    tag: z.string(),
+    "@attr": personalTaggingsAttrSchema
+});
+export const personalTaggedArtistSchema = z.object({
+    name: artistNameSchema,
+    mbid: mbidSchema,
+    url: urlSchema
+});
+export const personalTaggedAlbumSchema = z.object({
+    name: albumNameSchema,
+    mbid: mbidSchema,
+    url: urlSchema,
+    artist: z.object({
+        name: artistNameSchema,
+        mbid: mbidSchema,
+        url: urlSchema
+    }).optional(),
+    image: z.array(imageSchema).optional()
+});
+export const personalTaggedTrackSchema = z.object({
+    name: trackNameSchema,
+    mbid: mbidSchema,
+    url: urlSchema,
+    artist: z.object({
+        name: artistNameSchema,
+        mbid: mbidSchema,
+        url: urlSchema
+    }).optional(),
+    image: z.array(imageSchema).optional()
+});
+/**
+ * Response of `user.getPersonalTags` when `taggingtype = "artist"`.
+ */
+export const userGetPersonalTagsArtistResponseSchema = z.object({
+    taggings: personalTaggingsMetadataSchema.extend({
+        artists: z.object({
+            artist: z.array(personalTaggedArtistSchema)
+        })
+    })
+});
+/**
+ * Response of `user.getPersonalTags` when `taggingtype = "album"`.
+ */
+export const userGetPersonalTagsAlbumResponseSchema = z.object({
+    taggings: personalTaggingsMetadataSchema.extend({
+        albums: z.object({
+            album: z.array(personalTaggedAlbumSchema)
+        })
+    })
+});
+/**
+ * Response of `user.getPersonalTags` when `taggingtype = "track"`.
+ */
+export const userGetPersonalTagsTrackResponseSchema = z.object({
+    taggings: personalTaggingsMetadataSchema.extend({
+        tracks: z.object({
+            track: z.array(personalTaggedTrackSchema)
+        })
+    })
+});
+/**
+ * Union response accepted at runtime. A literal `taggingtype` request
+ * is narrowed to one of the three variants at the type level via
+ * `UserGetPersonalTagsResponse<T>`.
+ */
+export const userGetPersonalTagsResponseSchema = z.union([
+    userGetPersonalTagsArtistResponseSchema,
+    userGetPersonalTagsAlbumResponseSchema,
+    userGetPersonalTagsTrackResponseSchema
+]);
+/**
+ * Request shape for `user.getPersonalTags`. `T` widens the literal
+ * `taggingtype` so the response can be narrowed.
+ */
+export const userGetPersonalTagsRequestSchema = z.object({
+    user: userNameSchema,
+    tag: z.string(),
+    taggingtype: personalTaggingTypeSchema,
+    limit: z.union([z.string(), z.number()]).optional(),
+    page: z.union([z.string(), z.number()]).optional()
+});
 //# sourceMappingURL=user.schemas.js.map
