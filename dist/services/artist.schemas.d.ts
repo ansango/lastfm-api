@@ -146,6 +146,44 @@ export declare const artistGetTagsResponseSchema: z.ZodObject<{
         }, z.core.$strip>;
     }, z.core.$strip>;
 }, z.core.$strip>;
+/**
+ * Artist correction entry returned by `artist.getCorrection`.
+ *
+ * Last.fm returns a list of corrections. Each entry carries the
+ * canonical artist identity (`name`, `mbid`, `url`) and a positional
+ * `index` attribute indicating which input this correction maps to.
+ * https://www.last.fm/api/show/artist.getCorrection
+ */
+export declare const artistCorrectionSchema: z.ZodObject<{
+    artist: z.ZodObject<{
+        name: z.ZodString;
+        mbid: z.ZodString;
+        url: z.ZodString;
+    }, z.core.$strip>;
+    "@attr": z.ZodOptional<z.ZodObject<{
+        index: z.ZodString;
+    }, z.core.$strip>>;
+}, z.core.$strip>;
+export declare const artistGetCorrectionRequestSchema: z.ZodObject<{
+    artist: z.ZodString;
+}, z.core.$strip>;
+export declare const artistGetCorrectionResponseSchema: z.ZodObject<{
+    corrections: z.ZodObject<{
+        correction: z.ZodArray<z.ZodObject<{
+            artist: z.ZodObject<{
+                name: z.ZodString;
+                mbid: z.ZodString;
+                url: z.ZodString;
+            }, z.core.$strip>;
+            "@attr": z.ZodOptional<z.ZodObject<{
+                index: z.ZodString;
+            }, z.core.$strip>>;
+        }, z.core.$strip>>;
+        "@attr": z.ZodOptional<z.ZodObject<{
+            artist: z.ZodString;
+        }, z.core.$strip>>;
+    }, z.core.$strip>;
+}, z.core.$strip>;
 export declare const artistGetSimilarRequestSchema: z.ZodObject<{
     artist: z.ZodString;
     mbid: z.ZodOptional<z.ZodString>;
@@ -293,6 +331,9 @@ export type ArtistGetInfoRequest = z.infer<typeof artistGetInfoRequestSchema>;
 export type ArtistGetInfoResponse = z.infer<typeof artistGetInfoResponseSchema>;
 export type ArtistGetTagsRequest = z.infer<typeof artistGetTagsRequestSchema>;
 export type ArtistGetTagsResponse = z.infer<typeof artistGetTagsResponseSchema>;
+export type ArtistCorrection = z.infer<typeof artistCorrectionSchema>;
+export type ArtistGetCorrectionRequest = z.infer<typeof artistGetCorrectionRequestSchema>;
+export type ArtistGetCorrectionResponse = z.infer<typeof artistGetCorrectionResponseSchema>;
 export type ArtistGetSimilarRequest = z.infer<typeof artistGetSimilarRequestSchema>;
 export type ArtistGetSimilarResponse = z.infer<typeof artistGetSimilarResponseSchema>;
 export type ArtistGetTopAlbumsRequest = z.infer<typeof artistGetTopAlbumsRequestSchema>;

@@ -184,6 +184,77 @@ describe('artist service', () => {
 		});
 	});
 
+	describe('getCorrection', () => {
+		test('routes to artist.getCorrection unsigned with artist, returns the corrected identity', async () => {
+			mock.respondWithJson({
+				corrections: {
+					correction: [
+						{
+							artist: {
+								name: 'Cher',
+								mbid: 'bfcc6d75-a6a5-4bc6-8afc-4ac2b8271c25',
+								url: 'https://www.last.fm/music/Cher'
+							},
+							'@attr': { index: '0' }
+						}
+					],
+					'@attr': { artist: 'Cher' }
+				}
+			});
+
+			const result = await client.artist.getCorrection({ artist: 'cher' });
+
+			const call = mock.lastCall();
+			const { params, base } = parseUrl(call.url);
+			expect(params.method).toBe('artist.getCorrection');
+			expect(params.api_key).toBe(API_KEY);
+			expect(params.format).toBe('json');
+			expect(params.artist).toBe('cher');
+			// Unsigned GET — no signature, no session.
+			expect(params.api_sig).toBeUndefined();
+			expect(params.sk).toBeUndefined();
+			expect(call.method).toBe('GET');
+			expect(call.body).toBeUndefined();
+			expect(base).toBe('https://ws.audioscrobbler.com/2.0/');
+			// The corrected identity is parsed.
+			expect(result.corrections.correction).toHaveLength(1);
+			expect(result.corrections.correction[0].artist.name).toBe('Cher');
+			expect(result.corrections.correction[0].artist.mbid).toBe(
+				'bfcc6d75-a6a5-4bc6-8afc-4ac2b8271c25'
+			);
+			expect(result.corrections['@attr']?.artist).toBe('Cher');
+		});
+
+		test('parses a no-correction response (empty correction list)', async () => {
+			mock.respondWithJson({
+				corrections: {
+					correction: [],
+					'@attr': { artist: 'Xyzzy' }
+				}
+			});
+
+			const result = await client.artist.getCorrection({ artist: 'Xyzzy' });
+			expect(result.corrections.correction).toEqual([]);
+		});
+
+		test('parses a response without optional @attr on the correction entry', async () => {
+			mock.respondWithJson({
+				corrections: {
+					correction: [
+						{
+							artist: { name: 'Cher', mbid: 'm', url: 'u' }
+							// no @attr.index
+						}
+					]
+				}
+			});
+
+			const result = await client.artist.getCorrection({ artist: 'cher' });
+			expect(result.corrections.correction[0].artist.name).toBe('Cher');
+			expect(result.corrections.correction[0]['@attr']).toBeUndefined();
+		});
+	});
+
 	describe('error handling', () => {
 		test('Last.fm error envelope becomes LastFmApiError', async () => {
 			mock.respondWithJson(lastFmError(LAST_FM_ERROR_CODES.INVALID_RESOURCE, 'No such artist'));
@@ -202,13 +273,18 @@ describe('artist service', () => {
 			expect(typeof c.artist.getTopAlbums).toBe('function');
 			expect(typeof c.artist.getTopTracks).toBe('function');
 			expect(typeof c.artist.search).toBe('function');
+			expect(typeof c.artist.getCorrection).toBe('function');
 
 			const svc: ArtistService = createArtistService({ apiKey: API_KEY });
 			expect(typeof svc.getInfo).toBe('function');
 			expect(typeof svc.search).toBe('function');
+			expect(typeof svc.getCorrection).toBe('function');
 
 			expect(artistSchemas.artistGetInfoRequestSchema).toBeDefined();
 			expect(artistSchemas.artistSearchRequestSchema).toBeDefined();
+			expect(artistSchemas.artistGetCorrectionRequestSchema).toBeDefined();
+			expect(artistSchemas.artistGetCorrectionResponseSchema).toBeDefined();
+			expect(artistSchemas.artistCorrectionSchema).toBeDefined();
 		});
 	});
 });

@@ -7,7 +7,8 @@ export function createArtistService(config) {
         getTopTags: (params, init) => fetcher(buildUrl(config, 'artist.getTopTags', params), init),
         getTopAlbums: (params, init) => fetcher(buildUrl(config, 'artist.getTopAlbums', params), init),
         getTopTracks: (params, init) => fetcher(buildUrl(config, 'artist.getTopTracks', params), init),
-        search: (params, init) => fetcher(buildUrl(config, 'artist.search', params), init)
+        search: (params, init) => fetcher(buildUrl(config, 'artist.search', params), init),
+        getCorrection: (params, init) => fetcher(buildUrl(config, 'artist.getCorrection', params), init)
     };
 }
 //# sourceMappingURL=artist.js.map

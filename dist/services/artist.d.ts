@@ -1,4 +1,4 @@
-import type { ArtistGetInfoRequest, ArtistGetInfoResponse, ArtistGetTagsRequest, ArtistGetTagsResponse, ArtistGetTopAlbumsRequest, ArtistGetTopAlbumsResponse, ArtistGetTopTagsRequest, ArtistGetTopTagsResponse, ArtistGetTopTracksRequest, ArtistGetTopTracksResponse, ArtistSearchRequest, ArtistSearchResponse, ArtistGetSimilarRequest, ArtistGetSimilarResponse } from './artist.schemas.js';
+import type { ArtistGetCorrectionRequest, ArtistGetCorrectionResponse, ArtistGetInfoRequest, ArtistGetInfoResponse, ArtistGetTagsRequest, ArtistGetTagsResponse, ArtistGetTopAlbumsRequest, ArtistGetTopAlbumsResponse, ArtistGetTopTagsRequest, ArtistGetTopTagsResponse, ArtistGetTopTracksRequest, ArtistGetTopTracksResponse, ArtistSearchRequest, ArtistSearchResponse, ArtistGetSimilarRequest, ArtistGetSimilarResponse } from './artist.schemas.js';
 import type { LastFmConfig } from '../config.js';
 export interface ArtistService {
     /**
@@ -57,6 +57,16 @@ export interface ArtistService {
      * https://www.last.fm/api/show/artist.search
      * */
     search: (params: ArtistSearchRequest, init?: RequestInit) => Promise<ArtistSearchResponse>;
+    /**
+     * Get the canonical correction for a misspelled or noncanonical artist
+     * name. Returns the list of corrections Last.fm would apply to the
+     * provided input. Unsigned GET — no `sk` or `api_sig` are sent.
+     * @param {ArtistGetCorrectionRequest} params
+     * @param {RequestInit} init
+     * @returns {Promise<ArtistGetCorrectionResponse>}
+     * https://www.last.fm/api/show/artist.getCorrection
+     */
+    getCorrection: (params: ArtistGetCorrectionRequest, init?: RequestInit) => Promise<ArtistGetCorrectionResponse>;
 }
 export declare function createArtistService(config: LastFmConfig): ArtistService;
 //# sourceMappingURL=artist.d.ts.map
