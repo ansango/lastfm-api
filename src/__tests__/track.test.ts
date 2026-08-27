@@ -1,7 +1,7 @@
 import { describe, test, expect, beforeEach, afterEach } from 'bun:test';
 import { LastFmClient } from '../client.js';
 import { LastFmApiError } from '../utils.js';
-import { installFetchMock, type FetchMock, parseUrl } from './helpers/fetch-mock.js';
+import { installFetchMock, type FetchMock, parseFormBody, parseUrl } from './helpers/fetch-mock.js';
 import {
 	fakeTag,
 	fakeTrack,
@@ -301,6 +301,168 @@ describe('track service', () => {
 		});
 	});
 
+	describe('addTags', () => {
+		test('routes to track.addTags via signed POST with sk and comma-joined tags, returns void', async () => {
+			const authed = new LastFmClient({
+				apiKey: API_KEY,
+				sharedSecret: SHARED_SECRET,
+				sessionKey: 'SESSION-KEY'
+			});
+			mock.respondWithJson({});
+
+			const result = await authed.track.addTags({
+				artist: 'Test Artist',
+				track: 'Test Track',
+				tags: ['rock', '90s', 'favorites']
+			});
+
+			const call = mock.lastCall();
+			expect(call.method).toBe('POST');
+			expect(call.url).toBe('https://ws.audioscrobbler.com/2.0/');
+			expect(call.headers['Content-Type']).toBe('application/x-www-form-urlencoded');
+			const body = parseFormBody(call.body);
+			expect(body.method).toBe('track.addTags');
+			expect(body.api_key).toBe(API_KEY);
+			expect(body.artist).toBe('Test Artist');
+			expect(body.track).toBe('Test Track');
+			expect(body.tags).toBe('rock,90s,favorites');
+			expect(body.sk).toBe('SESSION-KEY');
+			expect(body.api_sig).toMatch(/^[a-f0-9]{32}$/);
+			expect(body.format).toBe('json');
+			expect(result).toBeUndefined();
+		});
+
+		test('fails before fetch when no session key is available', async () => {
+			const noSession = new LastFmClient({ apiKey: API_KEY, sharedSecret: SHARED_SECRET });
+
+			let caught: unknown;
+			try {
+				await noSession.track.addTags({
+					artist: 'A',
+					track: 'T',
+					tags: ['t1']
+				});
+			} catch (err) {
+				caught = err;
+			}
+			expect(caught).toBeInstanceOf(LastFmApiError);
+			expect((caught as LastFmApiError).httpStatus).toBe(0);
+			expect(mock.calls).toHaveLength(0);
+		});
+
+		test('rejects more than 10 tags in the request schema', () => {
+			const result = trackSchemas.trackAddTagsRequestSchema.safeParse({
+				artist: 'A',
+				track: 'T',
+				tags: Array.from({ length: 11 }, (_, i) => `t${i}`)
+			});
+			expect(result.success).toBe(false);
+		});
+	});
+
+	describe('removeTag', () => {
+		test('routes to track.removeTag via signed POST with sk and single tag, returns void', async () => {
+			const authed = new LastFmClient({
+				apiKey: API_KEY,
+				sharedSecret: SHARED_SECRET,
+				sessionKey: 'SESSION-KEY'
+			});
+			mock.respondWithJson({});
+
+			const result = await authed.track.removeTag({
+				artist: 'Test Artist',
+				track: 'Test Track',
+				tag: 'favorites'
+			});
+
+			const call = mock.lastCall();
+			expect(call.method).toBe('POST');
+			const body = parseFormBody(call.body);
+			expect(body.method).toBe('track.removeTag');
+			expect(body.artist).toBe('Test Artist');
+			expect(body.track).toBe('Test Track');
+			expect(body.tag).toBe('favorites');
+			expect(body.sk).toBe('SESSION-KEY');
+			expect(body.api_sig).toMatch(/^[a-f0-9]{32}$/);
+			expect(result).toBeUndefined();
+		});
+
+		test('fails before fetch when no session key is available', async () => {
+			const noSession = new LastFmClient({ apiKey: API_KEY, sharedSecret: SHARED_SECRET });
+
+			let caught: unknown;
+			try {
+				await noSession.track.removeTag({ artist: 'A', track: 'T', tag: 't' });
+			} catch (err) {
+				caught = err;
+			}
+			expect(caught).toBeInstanceOf(LastFmApiError);
+			expect(mock.calls).toHaveLength(0);
+		});
+	});
+
+	describe('love', () => {
+		test('routes to track.love via signed POST with sk, returns void', async () => {
+			const authed = new LastFmClient({
+				apiKey: API_KEY,
+				sharedSecret: SHARED_SECRET,
+				sessionKey: 'SESSION-KEY'
+			});
+			mock.respondWithJson({});
+
+			const result = await authed.track.love({ artist: 'Test Artist', track: 'Believe' });
+
+			const call = mock.lastCall();
+			expect(call.method).toBe('POST');
+			const body = parseFormBody(call.body);
+			expect(body.method).toBe('track.love');
+			expect(body.artist).toBe('Test Artist');
+			expect(body.track).toBe('Believe');
+			expect(body.sk).toBe('SESSION-KEY');
+			expect(body.api_sig).toMatch(/^[a-f0-9]{32}$/);
+			// No tag payload expected.
+			expect(body.tag).toBeUndefined();
+			expect(body.tags).toBeUndefined();
+			expect(result).toBeUndefined();
+		});
+
+		test('fails before fetch when no session key is available', async () => {
+			const noSession = new LastFmClient({ apiKey: API_KEY, sharedSecret: SHARED_SECRET });
+
+			let caught: unknown;
+			try {
+				await noSession.track.love({ artist: 'A', track: 'T' });
+			} catch (err) {
+				caught = err;
+			}
+			expect(caught).toBeInstanceOf(LastFmApiError);
+			expect(mock.calls).toHaveLength(0);
+		});
+	});
+
+	describe('unlove', () => {
+		test('routes to track.unlove via signed POST with sk, returns void', async () => {
+			const authed = new LastFmClient({
+				apiKey: API_KEY,
+				sharedSecret: SHARED_SECRET,
+				sessionKey: 'SESSION-KEY'
+			});
+			mock.respondWithJson({});
+
+			const result = await authed.track.unlove({ artist: 'Test Artist', track: 'Believe' });
+
+			const call = mock.lastCall();
+			expect(call.method).toBe('POST');
+			const body = parseFormBody(call.body);
+			expect(body.method).toBe('track.unlove');
+			expect(body.artist).toBe('Test Artist');
+			expect(body.track).toBe('Believe');
+			expect(body.sk).toBe('SESSION-KEY');
+			expect(body.api_sig).toMatch(/^[a-f0-9]{32}$/);
+			expect(result).toBeUndefined();
+		});
+	});
+
 	describe('import coverage', () => {
 		test('track service is exposed from root, track entrypoint, and track.schemas entrypoint', () => {
 			const c = createClient({ apiKey: API_KEY });
@@ -312,6 +474,10 @@ describe('track service', () => {
 			expect(typeof c.track.scrobble).toBe('function');
 			expect(typeof c.track.scrobbleMany).toBe('function');
 			expect(typeof c.track.getCorrection).toBe('function');
+			expect(typeof c.track.addTags).toBe('function');
+			expect(typeof c.track.removeTag).toBe('function');
+			expect(typeof c.track.love).toBe('function');
+			expect(typeof c.track.unlove).toBe('function');
 
 			const svc: TrackService = createTrackService({ apiKey: API_KEY, sharedSecret: SHARED_SECRET });
 			expect(typeof svc.getInfo).toBe('function');
@@ -320,12 +486,19 @@ describe('track service', () => {
 			// Deprecated aliases point to the same implementation
 			expect(svc.postTrackScrobble).toBe(svc.scrobble);
 			expect(svc.postBatchTrackScrobble).toBe(svc.scrobbleMany);
+			expect(typeof svc.addTags).toBe('function');
+			expect(typeof svc.removeTag).toBe('function');
+			expect(typeof svc.love).toBe('function');
+			expect(typeof svc.unlove).toBe('function');
 
 			expect(trackSchemas.trackGetInfoRequestSchema).toBeDefined();
 			expect(trackSchemas.trackScrobbleRequestSchema).toBeDefined();
 			expect(trackSchemas.trackGetCorrectionRequestSchema).toBeDefined();
 			expect(trackSchemas.trackGetCorrectionResponseSchema).toBeDefined();
 			expect(trackSchemas.trackCorrectionSchema).toBeDefined();
+			expect(trackSchemas.trackAddTagsRequestSchema).toBeDefined();
+			expect(trackSchemas.trackRemoveTagRequestSchema).toBeDefined();
+			expect(trackSchemas.trackLoveRequestSchema).toBeDefined();
 		});
 	});
 });

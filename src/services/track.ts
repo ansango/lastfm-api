@@ -1,9 +1,12 @@
 import type {
 	BatchTracksScrobbleRequest,
+	TrackAddTagsRequest,
 	TrackGetCorrectionRequest,
 	TrackGetCorrectionResponse,
 	TrackGetInfoRequest,
 	TrackGetInfoResponse,
+	TrackLoveRequest,
+	TrackRemoveTagRequest,
 	TrackGetSimilarRequest,
 	TrackGetSimilarResponse,
 	TrackGetTagsRequest,
@@ -15,7 +18,7 @@ import type {
 	TrackSearchRequest,
 	TrackSearchResponse
 } from './track.schemas.js';
-import { fetcher, buildUrl, signedPost } from '../utils.js';
+import { fetcher, buildUrl, signedPost, LastFmApiError } from '../utils.js';
 import type { LastFmConfig } from '../config.js';
 
 import { buildBatchScrobbleParams, buildScrobbleParams } from './track.utils.js';
@@ -122,6 +125,74 @@ export interface TrackService {
 		params: BatchTracksScrobbleRequest,
 		init?: RequestInit
 	) => Promise<TrackScrobbleResponse>;
+	/**
+	 * Add one or more personal tags to a track. Requires an
+	 * authenticated session.
+	 *
+	 * The `tags` array is sent on the wire as a comma-separated string
+	 * (Last.fm convention). Returns when the call has been accepted by
+	 * Last.fm.
+	 *
+	 * Idempotency is not guaranteed by Last.fm.
+	 *
+	 * @param {TrackAddTagsRequest} params
+	 * @param {RequestInit} init
+	 * @returns {Promise<void>}
+	 * https://www.last.fm/api/show/track.addTags
+	 */
+	addTags: (params: TrackAddTagsRequest, init?: RequestInit) => Promise<void>;
+	/**
+	 * Remove a single personal tag from a track. Requires an
+	 * authenticated session.
+	 *
+	 * Last.fm does not document idempotency for `track.removeTag`.
+	 *
+	 * @param {TrackRemoveTagRequest} params
+	 * @param {RequestInit} init
+	 * @returns {Promise<void>}
+	 * https://www.last.fm/api/show/track.removeTag
+	 */
+	removeTag: (params: TrackRemoveTagRequest, init?: RequestInit) => Promise<void>;
+	/**
+	 * Mark a track as loved on the user's Last.fm account. Requires an
+	 * authenticated session.
+	 *
+	 * Last.fm does not document idempotency for `track.love`; calling
+	 * twice is a server-side concern.
+	 *
+	 * @param {TrackLoveRequest} params
+	 * @param {RequestInit} init
+	 * @returns {Promise<void>}
+	 * https://www.last.fm/api/show/track.love
+	 */
+	love: (params: TrackLoveRequest, init?: RequestInit) => Promise<void>;
+	/**
+	 * Remove a track from the user's loved list on Last.fm. Requires an
+	 * authenticated session.
+	 *
+	 * Last.fm does not document idempotency for `track.unlove`.
+	 *
+	 * @param {TrackUnloveRequest} params
+	 * @param {RequestInit} init
+	 * @returns {Promise<void>}
+	 * https://www.last.fm/api/show/track.unlove
+	 */
+	unlove: (params: TrackLoveRequest, init?: RequestInit) => Promise<void>;
+}
+
+function resolveSessionKeyForTrackMutation(
+	config: LastFmConfig,
+	requestSk: string | undefined,
+	action: 'addTags' | 'removeTag' | 'love' | 'unlove'
+): string {
+	const sk = requestSk ?? config.sessionKey;
+	if (!sk) {
+		throw new LastFmApiError(
+			`A session key (\`sk\`) is required to track.${action}. Pass \`sk\` in the request params or set \`sessionKey\` on the LastFmConfig.`,
+			0
+		);
+	}
+	return sk;
 }
 
 export function createTrackService(config: LastFmConfig): TrackService {
@@ -156,6 +227,44 @@ export function createTrackService(config: LastFmConfig): TrackService {
 		scrobble: scrobbleImpl,
 		postTrackScrobble: scrobbleImpl,
 		scrobbleMany: scrobbleManyImpl,
-		postBatchTrackScrobble: scrobbleManyImpl
+		postBatchTrackScrobble: scrobbleManyImpl,
+		addTags: (params, init) => {
+			const sk = resolveSessionKeyForTrackMutation(config, params.sk, 'addTags');
+			return signedPost(config, 'track.addTags', {
+				params: {
+					artist: params.artist,
+					track: params.track,
+					tags: params.tags.join(','),
+					sk
+				},
+				init
+			}).then(() => undefined);
+		},
+		removeTag: (params, init) => {
+			const sk = resolveSessionKeyForTrackMutation(config, params.sk, 'removeTag');
+			return signedPost(config, 'track.removeTag', {
+				params: {
+					artist: params.artist,
+					track: params.track,
+					tag: params.tag,
+					sk
+				},
+				init
+			}).then(() => undefined);
+		},
+		love: (params, init) => {
+			const sk = resolveSessionKeyForTrackMutation(config, params.sk, 'love');
+			return signedPost(config, 'track.love', {
+				params: { artist: params.artist, track: params.track, sk },
+				init
+			}).then(() => undefined);
+		},
+		unlove: (params, init) => {
+			const sk = resolveSessionKeyForTrackMutation(config, params.sk, 'unlove');
+			return signedPost(config, 'track.unlove', {
+				params: { artist: params.artist, track: params.track, sk },
+				init
+			}).then(() => undefined);
+		}
 	};
 }
