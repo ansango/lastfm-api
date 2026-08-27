@@ -53,6 +53,12 @@ jobs:
           RUN_ID: ${{ github.run_id }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
+          # Debug: dump the first 400 bytes of test-output.log so we can see
+          # exactly what the parser is up against. Remove once stable.
+          echo "=== test-output.log first 400 bytes (cat -A) ==="
+          cat -A test-output.log 2>/dev/null | head -10 || echo "(file missing)"
+          echo "=== file size: $(wc -c < test-output.log 2>/dev/null || echo missing) ==="
+
           python3 - <<'PY'
           import os, re, json, sys, urllib.request, urllib.error
 
