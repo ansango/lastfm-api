@@ -581,6 +581,49 @@ export const insightsBridgeArtistsResponseSchema = z.object({
 	bridgeArtists: z.array(insightBridgeArtistSchema),
 })
 
+// Taste Group schemas
+export const insightPairwiseAffinitySchema = z.object({
+	userA: userNameSchema,
+	userB: userNameSchema,
+	jaccard: z.number().nonnegative(),
+	compatibilityScore: z.number().int().nonnegative(),
+	sharedCount: z.number().int().nonnegative(),
+})
+
+export const insightConsensusArtistSchema = z.object({
+	name: artistNameSchema,
+	listenerCount: z.number().int().positive(),
+	listenerPercentage: z.number().nonnegative(),
+	listeners: z.array(userNameSchema),
+	totalPlays: z.number().int().nonnegative(),
+})
+
+export const insightsCompareTasteGroupRequestSchema = z.object({
+	users: z.array(userNameSchema).min(2).max(10),
+	period: insightsPeriodSchema.optional(),
+	limit: limitSchema.optional(),
+})
+
+export const insightsCompareTasteGroupResponseSchema = z.object({
+	users: z.array(userNameSchema),
+	period: z.string(),
+	groupAverageCompatibility: z.number().nonnegative(),
+	groupOutlier: z
+		.object({
+			user: userNameSchema,
+			averageCompatibility: z.number().nonnegative(),
+		})
+		.nullable(),
+	groupAnchor: z
+		.object({
+			user: userNameSchema,
+			averageCompatibility: z.number().nonnegative(),
+		})
+		.nullable(),
+	consensusArtists: z.array(insightConsensusArtistSchema),
+	pairwiseMatrix: z.array(insightPairwiseAffinitySchema),
+})
+
 // Schema naming convention aliases for registry lookup
 export const insightsGetSummaryRequestSchema = insightsSummaryRequestSchema
 export const insightsGetSummaryResponseSchema = insightsSummaryResponseSchema
@@ -626,6 +669,8 @@ export const insightsGetSmartRecommendationsRequestSchema = insightsRecommendati
 export const insightsGetSmartRecommendationsResponseSchema = insightsRecommendationsResponseSchema
 export const insightsGetBridgeArtistsRequestSchema = insightsBridgeArtistsRequestSchema
 export const insightsGetBridgeArtistsResponseSchema = insightsBridgeArtistsResponseSchema
+export const insightsGetCompareTasteGroupRequestSchema = insightsCompareTasteGroupRequestSchema
+export const insightsGetCompareTasteGroupResponseSchema = insightsCompareTasteGroupResponseSchema
 
 // Inferred types
 export type InsightsPeriod = z.infer<typeof insightsPeriodSchema>
@@ -732,3 +777,9 @@ export type InsightsBridgeArtistsRequest = z.infer<typeof insightsBridgeArtistsR
 export type InsightsBridgeArtistsResponse = z.infer<typeof insightsBridgeArtistsResponseSchema>
 export type InsightsGetBridgeArtistsRequest = InsightsBridgeArtistsRequest
 export type InsightsGetBridgeArtistsResponse = InsightsBridgeArtistsResponse
+export type InsightPairwiseAffinity = z.infer<typeof insightPairwiseAffinitySchema>
+export type InsightConsensusArtist = z.infer<typeof insightConsensusArtistSchema>
+export type InsightsCompareTasteGroupRequest = z.infer<typeof insightsCompareTasteGroupRequestSchema>
+export type InsightsCompareTasteGroupResponse = z.infer<typeof insightsCompareTasteGroupResponseSchema>
+export type InsightsGetCompareTasteGroupRequest = InsightsCompareTasteGroupRequest
+export type InsightsGetCompareTasteGroupResponse = InsightsCompareTasteGroupResponse
