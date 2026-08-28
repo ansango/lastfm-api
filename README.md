@@ -342,6 +342,21 @@ const { session } = await client.auth.getSession({ token });
 const sessionKey = session.key; // pass this to write methods
 ```
 
+### Callback URL setup (one-time, in your Last.fm account)
+
+Before the browser flow works end-to-end, set a callback URL on your API account at <https://www.last.fm/api/account>:
+
+1. Open <https://www.last.fm/api/account>, find your app, click **Edit**.
+2. In the **Callback URL** field, enter a URL.
+3. Save.
+
+**What to enter depends on how you'll consume the token:**
+
+- **Manual flow (default):** any URL works. Last.fm redirects there with `?token=<token>` in the URL bar; you copy the token by hand. Examples that are valid: `http://example.com/`, `http://localhost:3000/`, even `oops`. The URL is just a destination.
+- **Auto-catch flow (with a local server, e.g. `lastfm-cli`'s `--callback` flag):** set it to the URL where your local server listens. Default for the CLI is `http://127.0.0.1:8765/`. Use `127.0.0.1`, not `localhost` — Last.fm's redirect host matching is strict.
+
+If you skip this step, the redirect after **Allow access** lands on a Last.fm error page instead of your URL, and the token is lost. You have to call `auth.getToken` again and re-authorize.
+
 ### Mobile flow (mobile-class API keys only)
 
 `auth.getMobileSession` exchanges a username + password for a session key in a single call, but it only works for API keys classified as **mobile / standalone** in the API account settings. Last.fm's self-service create form does not expose this classification; every new key is a web key by default. If you registered your key as a web app, this method will fail with `error: 4 — Authentication Failed`. To get a mobile-class key, you need to email `partners@last.fm` and ask for a reclassification.
