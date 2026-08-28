@@ -6,6 +6,8 @@ export * from './core/pagination.js';
 export type * from './core/schemas/index.js';
 export * from './core/schemas/index.js';
 export * from './core/services/index.js';
+export type * from './exporter/index.js';
+export * from './exporter/index.js';
 export type * from './insights/index.js';
 export * from './insights/index.js';
 export type * from './playlists/index.js';

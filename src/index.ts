@@ -17,6 +17,9 @@ export type * from './core/schemas/index.js'
 export * from './core/schemas/index.js'
 // Core services & schemas
 export * from './core/services/index.js'
+export type * from './exporter/index.js'
+// Exporter service & schemas
+export * from './exporter/index.js'
 export type * from './insights/index.js'
 // Insights service & schemas
 export * from './insights/index.js'

@@ -72,6 +72,10 @@ export function mountOpenAPI(app: OpenAPIHono, opts: { serverUrl?: string } = {}
 				name: 'Smart Playlists Generator',
 				tags: ['playlists'],
 			},
+			{
+				name: 'Data Exporter & Backup',
+				tags: ['exporter'],
+			},
 		],
 		tags: [
 			{
@@ -124,6 +128,11 @@ export function mountOpenAPI(app: OpenAPIHono, opts: { serverUrl?: string } = {}
 				name: 'playlists',
 				description:
 					'Algorithmic smart playlist generation (time capsule, deep cuts, heavy rotation, discovery radar) with M3U, CSV, and search-query formatters.',
+			},
+			{
+				name: 'exporter',
+				description:
+					'Bulk scrobble history export with UTS checkpointing, loved tracks backup, library archive, and multi-format exporters (JSON, JSONL, CSV, ListenBrainz).',
 			},
 		],
 	})

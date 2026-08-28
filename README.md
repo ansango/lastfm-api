@@ -359,6 +359,95 @@ const group = await client.insights.compareTasteGroup({ users: ['alice', 'bob', 
 console.log(`Group Average Compatibility: ${group.groupAverageCompatibility}%`);
 ```
 
+## Reports & Wrapped Engine
+
+Generate shareable annual recaps, historical milestones, and monthly digests:
+
+```typescript
+import { createClient } from '@ansango/lastfm-api';
+
+const client = createClient();
+
+// 1. Year in Review / Wrapped
+const wrapped = await client.reports.getWrapped({ user: 'ansango', year: 2024 });
+console.log(`Top Artist of the Year: ${wrapped.topArtists[0].name}`);
+console.log(`Summer Anthem: ${wrapped.seasons.summer.topTrack} by ${wrapped.seasons.summer.topArtist}`);
+console.log(`Busiest Day: ${wrapped.busiestDay.date} (${wrapped.busiestDay.scrobbles} plays)`);
+
+// 2. Scrobble Milestones Tracker & Projection
+const milestones = await client.reports.getMilestones({ user: 'ansango', targets: [1000, 5000, 10000, 50000] });
+console.log(`Next milestone: ${milestones.nextMilestone.target} scrobbles (ETA: ${milestones.nextMilestone.projectedDate})`);
+
+// 3. Monthly Comparative Digest
+const digest = await client.reports.getMonthlyDigest({ user: 'ansango', year: 2024, month: 2 });
+console.log(`Growth vs previous month: ${digest.growthPercentage}%`);
+```
+
+## Smart Playlists Generator
+
+Algorithmic playlist creation with direct export to standard formats:
+
+```typescript
+import { createClient } from '@ansango/lastfm-api';
+
+const client = createClient();
+
+// Generate smart playlist (time-capsule, deep-cuts, heavy-rotation, discovery-radar)
+const playlist = await client.playlists.generate({
+  user: 'ansango',
+  mode: 'time-capsule',
+  limit: 25,
+});
+
+// Pre-rendered standard formats:
+console.log(playlist.formats.m3u); // Standard #EXTM3U playlist file content
+console.log(playlist.formats.csv); // CSV spreadsheet
+console.log(playlist.formats.spotifyQueries); // Spotify search query list
+```
+
+## Bulk Data Exporter & Backup
+
+Resilient scrobble history export with checkpointing and multiple output formats:
+
+```typescript
+import { createClient } from '@ansango/lastfm-api';
+
+const client = createClient();
+
+// Export scrobbles with ListenBrainz / JSONL / CSV formatting & checkpointing
+const exportData = await client.exporter.exportScrobbles({
+  user: 'ansango',
+  format: 'listenbrainz', // 'json' | 'jsonl' | 'csv' | 'listenbrainz'
+  limit: 1000,
+});
+
+// Resumable checkpoint timestamp
+console.log(`Resume from: ${exportData.nextCheckpointUts}`);
+```
+
+## Async Pagination & Streaming Iterators
+
+Stream large Last.fm datasets seamlessly using standard `for await` loops:
+
+```typescript
+import { createClient, iterateItems } from '@ansango/lastfm-api';
+
+const client = createClient();
+
+for await (const track of iterateItems(
+  (params) => client.user.getRecentTracks(params),
+  (res) => ({
+    items: res.recenttracks?.track ?? [],
+    totalPages: Number(res.recenttracks?.['@attr']?.totalPages ?? 1),
+    currentPage: Number(res.recenttracks?.['@attr']?.page ?? 1),
+  }),
+  { user: 'ansango', limit: 200 },
+  { maxItems: 1000 }
+)) {
+  console.log(`${track.name} - ${track.artist['#text']}`);
+}
+```
+
 ## Environment Variables
 
 In Node.js environments, the client automatically loads configuration from environment variables:

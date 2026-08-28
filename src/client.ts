@@ -20,6 +20,7 @@ import {
 	type TrackService,
 	type UserService,
 } from './core/services/index.js'
+import { createExporterService, type ExporterService } from './exporter/index.js'
 import { createInsightsService, type InsightsService } from './insights/index.js'
 import { createPlaylistsService, type PlaylistsService } from './playlists/index.js'
 import { createReportsService, type ReportsService } from './reports/index.js'
@@ -56,6 +57,7 @@ export class LastFmClient {
 	public readonly insights: InsightsService
 	public readonly reports: ReportsService
 	public readonly playlists: PlaylistsService
+	public readonly exporter: ExporterService
 
 	private readonly config: LastFmConfig
 
@@ -75,6 +77,7 @@ export class LastFmClient {
 		this.insights = createInsightsService(this.config)
 		this.reports = createReportsService(this.config)
 		this.playlists = createPlaylistsService(this.config)
+		this.exporter = createExporterService(this.config)
 	}
 
 	/**
