@@ -232,6 +232,72 @@ export const insightsDiscoveriesResponseSchema = z.object({
 	discoveries: z.array(insightDiscoveredArtistSchema),
 })
 
+// Mood request & response schemas
+export const insightMoodAxesSchema = z.object({
+	energy: z.number(),
+	valence: z.number(),
+})
+
+export const insightsMoodRequestSchema = z.object({
+	user: userNameSchema,
+	period: insightsPeriodSchema.optional(),
+	topArtistsLimit: limitSchema.optional(),
+})
+
+export const insightsMoodResponseSchema = z.object({
+	user: userNameSchema,
+	period: z.string(),
+	axes: insightMoodAxesSchema,
+	label: z.string(),
+	categories: z.array(z.string()),
+	confidence: z.number(),
+	tagSourceCount: z.number().int().nonnegative(),
+	artistCount: z.number().int().nonnegative(),
+	primarySource: z.union([z.literal('user-tags'), z.literal('artist-tags'), z.literal('mixed')]),
+})
+
+// Personality request & response schemas
+export const insightPersonalityFeaturesSchema = z.object({
+	totalScrobbles: z.number().int().nonnegative(),
+	uniqueArtists: z.number().int().nonnegative(),
+	top1Share: z.number(),
+	top3Share: z.number(),
+	top5Share: z.number(),
+	normalizedDiversity: z.number(),
+	newArtistsLast30d: z.number().int().nonnegative(),
+	totalArtistsLast30d: z.number().int().nonnegative(),
+	nightHourShare: z.number(),
+	morningHourShare: z.number(),
+	weekdayShare: z.number(),
+})
+
+export const insightPersonalityArchetypeSchema = z.object({
+	id: z.string(),
+	name: z.string(),
+	emoji: z.string(),
+	blurb: z.string(),
+})
+
+export const insightsPersonalityRequestSchema = z.object({
+	user: userNameSchema,
+})
+
+export const insightsPersonalityResponseSchema = z.object({
+	user: userNameSchema,
+	winner: z.union([
+		z.literal('Devotee'),
+		z.literal('Explorer'),
+		z.literal('Drifter'),
+		z.literal('DJ'),
+		z.literal('Nocturnal'),
+		z.literal('Archivist'),
+	]),
+	archetype: insightPersonalityArchetypeSchema,
+	scores: z.record(z.string(), z.number()),
+	reasons: z.array(z.string()),
+	features: insightPersonalityFeaturesSchema,
+})
+
 // Schema naming convention aliases for registry lookup
 export const insightsGetSummaryRequestSchema = insightsSummaryRequestSchema
 export const insightsGetSummaryResponseSchema = insightsSummaryResponseSchema
@@ -245,6 +311,10 @@ export const insightsGetTrendsRequestSchema = insightsTrendsRequestSchema
 export const insightsGetTrendsResponseSchema = insightsTrendsResponseSchema
 export const insightsGetDiscoveriesRequestSchema = insightsDiscoveriesRequestSchema
 export const insightsGetDiscoveriesResponseSchema = insightsDiscoveriesResponseSchema
+export const insightsGetMoodRequestSchema = insightsMoodRequestSchema
+export const insightsGetMoodResponseSchema = insightsMoodResponseSchema
+export const insightsGetPersonalityRequestSchema = insightsPersonalityRequestSchema
+export const insightsGetPersonalityResponseSchema = insightsPersonalityResponseSchema
 
 // Inferred types
 export type InsightsPeriod = z.infer<typeof insightsPeriodSchema>
@@ -281,3 +351,14 @@ export type InsightsDiscoveriesRequest = z.infer<typeof insightsDiscoveriesReque
 export type InsightsDiscoveriesResponse = z.infer<typeof insightsDiscoveriesResponseSchema>
 export type InsightsGetDiscoveriesRequest = InsightsDiscoveriesRequest
 export type InsightsGetDiscoveriesResponse = InsightsDiscoveriesResponse
+export type InsightMoodAxes = z.infer<typeof insightMoodAxesSchema>
+export type InsightsMoodRequest = z.infer<typeof insightsMoodRequestSchema>
+export type InsightsMoodResponse = z.infer<typeof insightsMoodResponseSchema>
+export type InsightsGetMoodRequest = InsightsMoodRequest
+export type InsightsGetMoodResponse = InsightsMoodResponse
+export type InsightPersonalityFeatures = z.infer<typeof insightPersonalityFeaturesSchema>
+export type InsightPersonalityArchetype = z.infer<typeof insightPersonalityArchetypeSchema>
+export type InsightsPersonalityRequest = z.infer<typeof insightsPersonalityRequestSchema>
+export type InsightsPersonalityResponse = z.infer<typeof insightsPersonalityResponseSchema>
+export type InsightsGetPersonalityRequest = InsightsPersonalityRequest
+export type InsightsGetPersonalityResponse = InsightsPersonalityResponse

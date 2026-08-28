@@ -45,13 +45,13 @@ describe('createApp: shape', () => {
 		expect(typeof app.fetch).toBe('function')
 	})
 
-	test('GET /doc returns valid OpenAPI 3.0 JSON with 62 paths', async () => {
+	test('GET /doc returns valid OpenAPI 3.0 JSON with 64 paths', async () => {
 		const app = createFullApp({ apiKey: 'test-key' })
 		const res = await app.request('/doc')
 		expect(res.status).toBe(200)
 		const body = (await res.json()) as { openapi: string; paths: Record<string, unknown> }
 		expect(body.openapi).toBe('3.0.0')
-		expect(Object.keys(body.paths).length).toBe(62)
+		expect(Object.keys(body.paths).length).toBe(64)
 	})
 
 	test('GET / returns the Scalar HTML page', async () => {
