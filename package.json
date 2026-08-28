@@ -97,10 +97,10 @@
 		"node": ">=20.0.0"
 	},
 	"scripts": {
-		"build": "rimraf dist && tsc",
+		"build": "rimraf dist && tsc -p tsconfig.build.json",
 		"clean": "rimraf dist",
 		"dev": "bun run clean && tsc --watch --project tsconfig.dev.json",
-		"typecheck": "tsc --noEmit -p tsconfig.test.json",
+		"typecheck": "tsc --noEmit -p tsconfig.json",
 		"test": "bun run test:unit",
 		"test:unit": "bun test src/__tests__",
 		"test:integration:live": "bun test-real.ts",
@@ -156,7 +156,7 @@
 	"devDependencies": {
 		"@biomejs/biome": "^2.5.11",
 		"@types/bun": "^1.4.0",
-		"@types/node": "^24.10.0",
+		"@types/node": "^26.4.0",
 		"dotenv": "^17.2.3",
 		"rimraf": "^6.1.0",
 		"typescript": "^5.9.3"

@@ -106,3 +106,4 @@ typings/
 dist/
 example-schemas.js
 test-validation.js
+AGENTS.md

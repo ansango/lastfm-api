@@ -65,7 +65,7 @@ async function testRecentTracks() {
 
 		console.log('✓ Recent Tracks:')
 		recent.recenttracks.track.slice(0, 5).forEach((track, _i) => {
-			const nowPlaying = track['@attr']?.nowplaying === 'true'
+			const nowPlaying = Boolean(track['@attr']?.nowplaying)
 			const status = nowPlaying ? '🔴 NOW PLAYING' : '✓'
 			console.log(`  ${status} ${track.name} - ${track.artist['#text']}`)
 		})
