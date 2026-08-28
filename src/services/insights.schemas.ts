@@ -537,6 +537,50 @@ export const insightsGenreEvolutionResponseSchema = z.object({
 	newGenres: z.array(z.object({ name: z.string(), currentPct: z.number().nonnegative() })),
 })
 
+// Recommendation schemas
+export const insightRecommendationItemSchema = z.object({
+	name: artistNameSchema,
+	score: z.number().nonnegative(),
+	matchedSeeds: z.array(artistNameSchema),
+	url: urlSchema.optional(),
+})
+
+export const insightsRecommendationsRequestSchema = z.object({
+	user: userNameSchema,
+	seedLimit: limitSchema.optional(),
+	limit: limitSchema.optional(),
+	period: insightsPeriodSchema.optional(),
+})
+
+export const insightsRecommendationsResponseSchema = z.object({
+	user: userNameSchema,
+	seedArtists: z.array(artistNameSchema),
+	totalRecommendations: z.number().int().nonnegative(),
+	recommendations: z.array(insightRecommendationItemSchema),
+})
+
+// Bridge Artist schemas
+export const insightBridgeArtistSchema = z.object({
+	name: artistNameSchema,
+	rankA: z.number().int().positive(),
+	rankB: z.number().int().positive(),
+	combinedScore: z.number().nonnegative(),
+	url: urlSchema.optional(),
+})
+
+export const insightsBridgeArtistsRequestSchema = z.object({
+	tagA: z.string().min(1),
+	tagB: z.string().min(1),
+	limit: limitSchema.optional(),
+})
+
+export const insightsBridgeArtistsResponseSchema = z.object({
+	tagA: z.string(),
+	tagB: z.string(),
+	totalBridges: z.number().int().nonnegative(),
+	bridgeArtists: z.array(insightBridgeArtistSchema),
+})
+
 // Schema naming convention aliases for registry lookup
 export const insightsGetSummaryRequestSchema = insightsSummaryRequestSchema
 export const insightsGetSummaryResponseSchema = insightsSummaryResponseSchema
@@ -578,6 +622,10 @@ export const insightsGetGenreBreakdownRequestSchema = insightsGenreBreakdownRequ
 export const insightsGetGenreBreakdownResponseSchema = insightsGenreBreakdownResponseSchema
 export const insightsGetGenreEvolutionRequestSchema = insightsGenreEvolutionRequestSchema
 export const insightsGetGenreEvolutionResponseSchema = insightsGenreEvolutionResponseSchema
+export const insightsGetSmartRecommendationsRequestSchema = insightsRecommendationsRequestSchema
+export const insightsGetSmartRecommendationsResponseSchema = insightsRecommendationsResponseSchema
+export const insightsGetBridgeArtistsRequestSchema = insightsBridgeArtistsRequestSchema
+export const insightsGetBridgeArtistsResponseSchema = insightsBridgeArtistsResponseSchema
 
 // Inferred types
 export type InsightsPeriod = z.infer<typeof insightsPeriodSchema>
@@ -674,3 +722,13 @@ export type InsightsGenreEvolutionRequest = z.infer<typeof insightsGenreEvolutio
 export type InsightsGenreEvolutionResponse = z.infer<typeof insightsGenreEvolutionResponseSchema>
 export type InsightsGetGenreEvolutionRequest = InsightsGenreEvolutionRequest
 export type InsightsGetGenreEvolutionResponse = InsightsGenreEvolutionResponse
+export type InsightRecommendationItem = z.infer<typeof insightRecommendationItemSchema>
+export type InsightsRecommendationsRequest = z.infer<typeof insightsRecommendationsRequestSchema>
+export type InsightsRecommendationsResponse = z.infer<typeof insightsRecommendationsResponseSchema>
+export type InsightsGetSmartRecommendationsRequest = InsightsRecommendationsRequest
+export type InsightsGetSmartRecommendationsResponse = InsightsRecommendationsResponse
+export type InsightBridgeArtist = z.infer<typeof insightBridgeArtistSchema>
+export type InsightsBridgeArtistsRequest = z.infer<typeof insightsBridgeArtistsRequestSchema>
+export type InsightsBridgeArtistsResponse = z.infer<typeof insightsBridgeArtistsResponseSchema>
+export type InsightsGetBridgeArtistsRequest = InsightsBridgeArtistsRequest
+export type InsightsGetBridgeArtistsResponse = InsightsBridgeArtistsResponse
