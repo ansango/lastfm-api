@@ -9,6 +9,42 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 > [ansango/lastfm-api](https://github.com/ansango/lastfm-api). Entries below preserve the
 > historical package and repository names used by their original releases.
 
+## [3.3.0] - 2026-08-28
+
+### ✨ Features
+
+- `auth.getToken()` now returns a pre-built `authUrl` so consumers don't have to
+  construct the browser-flow URL themselves. The CLI prints it; Scalar renders it
+  in the response. (#115) ([c69cd53](https://github.com/ansango/lastfm-api/commit/c69cd53))
+
+### ⚠️ Breaking Changes
+
+- `auth.getMobileSession` has been **removed**. The method was deprecated in 3.2.0
+  (PR #106) with the warning that it would be removed in a future major release.
+  Last.fm restricts this endpoint to mobile-classified API keys, which are not
+  exposed through the public self-service create form. Every consumer can use the
+  browser flow (`auth.getToken` + `auth.getSession`) instead. (#117) ([99c4466](https://github.com/ansango/lastfm-api/commit/99c4466))
+
+  **Migration:**
+
+  ```ts
+  // 3.2.x — no longer compiles
+  const { session } = await client.auth.getMobileSession({
+    username: "...",
+    password: "...",
+  });
+
+  // 3.3.0 — use the browser flow
+  const { token, authUrl } = await client.auth.getToken();
+  // open authUrl in a browser, authorize, copy token from URL bar
+  const { session } = await client.auth.getSession({ token });
+  ```
+
+  The Scalar tool surface no longer exposes `POST /auth/get-mobile-session`. The
+  `x-lastfm-sk` header description and the `AUTH_TAG_DESCRIPTION` were rewritten
+  to point at the browser flow + `authUrl`. The 57-method surface is now 56.
+
+
 ## [3.2.0] - 2026-08-28
 
 ### ✨ Features
