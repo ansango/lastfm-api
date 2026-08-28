@@ -1,4 +1,4 @@
-import { nameSchema } from "./base.primitives.schemas.js";
+import { nameSchema } from './base.primitives.schemas.js';
 // Entity name aliases
 export const artistNameSchema = nameSchema;
 export const albumNameSchema = nameSchema;

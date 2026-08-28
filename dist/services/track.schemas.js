@@ -1,9 +1,9 @@
-import { z } from "zod";
-import { albumNameSchema, artistNameSchema, contentSchema, countSchema, durationSchema, imageSchema, itemsPerPageSchema, limitSchema, listenersSchema, matchSchema, mbidSchema, pageSchema, playcountSchema, positionSchema, publishedSchema, roleSchema, searchTermsSchema, startIndexSchema, startPageSchema, summarySchema, tagNameSchema, totalResultsSchema, trackNameSchema, urlSchema, userNameSchema, } from "./schemas/index.js";
+import { z } from 'zod';
+import { albumNameSchema, artistNameSchema, contentSchema, countSchema, durationSchema, imageSchema, itemsPerPageSchema, limitSchema, listenersSchema, matchSchema, mbidSchema, pageSchema, playcountSchema, positionSchema, publishedSchema, roleSchema, searchTermsSchema, startIndexSchema, startPageSchema, summarySchema, tagNameSchema, totalResultsSchema, trackNameSchema, urlSchema, userNameSchema, } from './schemas/index.js';
 export const trackArtistSchema = z.object({
     name: artistNameSchema,
     mbid: mbidSchema,
-    url: urlSchema
+    url: urlSchema,
 });
 export const trackAlbumSchema = z.object({
     artist: artistNameSchema,
@@ -11,20 +11,20 @@ export const trackAlbumSchema = z.object({
     mbid: mbidSchema,
     url: urlSchema,
     image: z.array(imageSchema),
-    "@attr": z.object({
-        position: positionSchema
-    })
+    '@attr': z.object({
+        position: positionSchema,
+    }),
 });
 export const trackTopTagSchema = z.object({
     tag: z.array(z.object({
         name: tagNameSchema,
-        url: urlSchema
-    }))
+        url: urlSchema,
+    })),
 });
 export const trackWikiSchema = z.object({
     published: publishedSchema,
     summary: summarySchema,
-    content: contentSchema
+    content: contentSchema,
 });
 /**
  * Track
@@ -41,22 +41,22 @@ export const trackSchema = z.object({
     album: trackAlbumSchema,
     topTags: trackTopTagSchema,
     wiki: trackWikiSchema,
-    userplaycount: playcountSchema
+    userplaycount: playcountSchema,
 });
 export const trackGetInfoRequestSchema = z.object({
     artist: artistNameSchema,
     track: trackNameSchema,
     mbid: mbidSchema.optional(),
-    username: userNameSchema.optional()
+    username: userNameSchema.optional(),
 });
 export const trackGetInfoResponseSchema = z.object({
-    track: trackSchema
+    track: trackSchema,
 });
 export const trackGetSimilarRequestSchema = z.object({
     artist: artistNameSchema,
     track: trackNameSchema,
     mbid: mbidSchema.optional(),
-    limit: limitSchema.optional()
+    limit: limitSchema.optional(),
 });
 export const trackGetSimilarResponseSchema = z.object({
     similartracks: z.object({
@@ -70,68 +70,68 @@ export const trackGetSimilarResponseSchema = z.object({
             artist: z.object({
                 name: artistNameSchema,
                 mbid: mbidSchema,
-                url: urlSchema
+                url: urlSchema,
             }),
-            image: z.array(imageSchema)
+            image: z.array(imageSchema),
         })),
-        "@attr": z.object({
-            artist: artistNameSchema
-        })
-    })
+        '@attr': z.object({
+            artist: artistNameSchema,
+        }),
+    }),
 });
 export const trackGetTagsRequestSchema = z.object({
     artist: artistNameSchema,
     track: trackNameSchema,
     mbid: mbidSchema.optional(),
-    user: userNameSchema.optional()
+    user: userNameSchema.optional(),
 });
 export const trackGetTagsResponseSchema = z.object({
     tags: z.object({
         tag: z.array(z.object({
             name: tagNameSchema,
-            url: urlSchema
+            url: urlSchema,
         })),
-        "@attr": z.object({
+        '@attr': z.object({
             artist: artistNameSchema,
-            track: trackNameSchema
-        })
-    })
+            track: trackNameSchema,
+        }),
+    }),
 });
 export const trackGetTopTagsRequestSchema = z.object({
     artist: artistNameSchema,
     track: trackNameSchema,
-    mbid: mbidSchema.optional()
+    mbid: mbidSchema.optional(),
 });
 export const trackGetTopTagsResponseSchema = z.object({
     toptags: z.object({
         tag: z.array(z.object({
             name: tagNameSchema,
             url: urlSchema,
-            count: countSchema
+            count: countSchema,
         })),
-        "@attr": z.object({
+        '@attr': z.object({
             artist: artistNameSchema,
-            track: trackNameSchema
-        })
-    })
+            track: trackNameSchema,
+        }),
+    }),
 });
 export const trackSearchRequestSchema = z.object({
     track: trackNameSchema,
     limit: limitSchema.optional(),
     page: pageSchema.optional(),
-    artist: artistNameSchema.optional()
+    artist: artistNameSchema.optional(),
 });
 export const trackSearchResponseSchema = z.object({
     results: z.object({
-        "opensearch:Query": z.object({
-            "#text": z.string(),
+        'opensearch:Query': z.object({
+            '#text': z.string(),
             role: roleSchema,
             searchTerms: searchTermsSchema,
-            startPage: startPageSchema
+            startPage: startPageSchema,
         }),
-        "opensearch:totalResults": totalResultsSchema,
-        "opensearch:startIndex": startIndexSchema,
-        "opensearch:itemsPerPage": itemsPerPageSchema,
+        'opensearch:totalResults': totalResultsSchema,
+        'opensearch:startIndex': startIndexSchema,
+        'opensearch:itemsPerPage': itemsPerPageSchema,
         trackmatches: z.object({
             track: z.array(z.object({
                 name: trackNameSchema,
@@ -139,13 +139,13 @@ export const trackSearchResponseSchema = z.object({
                 url: urlSchema,
                 listeners: listenersSchema,
                 image: z.array(imageSchema),
-                mbid: mbidSchema
-            }))
+                mbid: mbidSchema,
+            })),
         }),
-        "@attr": z.object({
-            for: z.string()
-        })
-    })
+        '@attr': z.object({
+            for: z.string(),
+        }),
+    }),
 });
 /**
  * Track correction entry returned by `track.getCorrection`.
@@ -163,72 +163,76 @@ export const trackCorrectionSchema = z.object({
     track: z.object({
         name: trackNameSchema,
         mbid: mbidSchema,
-        url: urlSchema
+        url: urlSchema,
     }),
     artist: z.object({
         name: artistNameSchema,
         mbid: mbidSchema,
-        url: urlSchema
+        url: urlSchema,
     }),
     artistcorrected: z.string().optional(),
     trackcorrected: z.string().optional(),
-    "@attr": z.object({
-        index: z.string()
-    }).optional()
+    '@attr': z
+        .object({
+        index: z.string(),
+    })
+        .optional(),
 });
 export const trackGetCorrectionRequestSchema = z.object({
     artist: artistNameSchema,
-    track: trackNameSchema
+    track: trackNameSchema,
 });
 export const trackGetCorrectionResponseSchema = z.object({
     corrections: z.object({
         correction: z.array(trackCorrectionSchema),
-        "@attr": z.object({
+        '@attr': z
+            .object({
             artist: artistNameSchema,
-            track: trackNameSchema
-        }).optional()
-    })
+            track: trackNameSchema,
+        })
+            .optional(),
+    }),
 });
 export const trackScrobbleRequestSchema = z.object({
     artist: artistNameSchema,
     track: trackNameSchema,
     timestamp: z.union([z.string(), z.number()]),
     sk: z.string().optional(),
-    album: albumNameSchema.optional()
+    album: albumNameSchema.optional(),
 });
 export const trackScrobbleResponseSchema = z.object({
     scrobbles: z.object({
         scrobble: z.object({
             artist: z.object({
                 corrected: z.string(),
-                "#text": artistNameSchema
+                '#text': artistNameSchema,
             }),
             album: z.object({
-                corrected: z.string()
+                corrected: z.string(),
             }),
             track: z.object({
                 corrected: z.string(),
-                "#text": trackNameSchema
+                '#text': trackNameSchema,
             }),
             ignoredMessage: z.object({
                 code: z.string(),
-                "#text": z.string()
+                '#text': z.string(),
             }),
             albumArtist: z.object({
                 corrected: z.string(),
-                "#text": albumNameSchema
+                '#text': albumNameSchema,
             }),
-            timestamp: z.string()
+            timestamp: z.string(),
         }),
-        "@attr": z.object({
+        '@attr': z.object({
             accepted: z.number(),
-            ignored: z.number()
-        })
-    })
+            ignored: z.number(),
+        }),
+    }),
 });
 export const batchTracksScrobbleRequestSchema = z.object({
-    tracks: z.array(trackScrobbleRequestSchema.omit({ "sk": true })),
-    sk: z.string().optional()
+    tracks: z.array(trackScrobbleRequestSchema.omit({ sk: true })),
+    sk: z.string().optional(),
 });
 /**
  * Maximum number of tags accepted by `track.addTags` per the Last.fm
@@ -245,9 +249,9 @@ export const trackAddTagsRequestSchema = z.object({
     artist: artistNameSchema,
     track: trackNameSchema,
     tags: z.array(tagNameSchema).max(MAX_TRACK_TAGS_PER_ADD, {
-        message: `track.addTags accepts at most ${MAX_TRACK_TAGS_PER_ADD} tags per request`
+        message: `track.addTags accepts at most ${MAX_TRACK_TAGS_PER_ADD} tags per request`,
     }),
-    sk: z.string().optional()
+    sk: z.string().optional(),
 });
 /**
  * Request shape for `track.removeTag`. A single tag is removed per
@@ -258,7 +262,7 @@ export const trackRemoveTagRequestSchema = z.object({
     artist: artistNameSchema,
     track: trackNameSchema,
     tag: tagNameSchema,
-    sk: z.string().optional()
+    sk: z.string().optional(),
 });
 /**
  * Request shape for `track.love` / `track.unlove`. Both share the
@@ -269,7 +273,7 @@ export const trackRemoveTagRequestSchema = z.object({
 export const trackLoveRequestSchema = z.object({
     artist: artistNameSchema,
     track: trackNameSchema,
-    sk: z.string().optional()
+    sk: z.string().optional(),
 });
 export const trackUnloveRequestSchema = trackLoveRequestSchema;
 /**
@@ -292,7 +296,7 @@ export const trackUpdateNowPlayingRequestSchema = z.object({
     mbid: mbidSchema.optional(),
     duration: z.union([z.string(), z.number()]).optional(),
     albumArtist: artistNameSchema.optional(),
-    sk: z.string().optional()
+    sk: z.string().optional(),
 });
 /**
  * `{ corrected, "#text" }` payload returned for the textual fields of
@@ -301,14 +305,14 @@ export const trackUpdateNowPlayingRequestSchema = z.object({
  */
 export const correctedTextFieldSchema = z.object({
     corrected: z.string(),
-    "#text": z.string()
+    '#text': z.string(),
 });
 /**
  * `{ corrected }` payload for fields that don't carry a `#text`
  * value (e.g. `album` in the now-playing response).
  */
 export const correctedFlagOnlyFieldSchema = z.object({
-    corrected: z.string()
+    corrected: z.string(),
 });
 /**
  * `ignoredMessage` block returned by the now-playing endpoint when
@@ -316,7 +320,7 @@ export const correctedFlagOnlyFieldSchema = z.object({
  */
 export const nowPlayingIgnoredMessageSchema = z.object({
     code: z.string(),
-    "#text": z.string()
+    '#text': z.string(),
 });
 /**
  * Response root for `track.updateNowPlaying`. The `nowplaying` block
@@ -330,7 +334,7 @@ export const trackUpdateNowPlayingResponseSchema = z.object({
         artist: correctedTextFieldSchema.optional(),
         album: correctedFlagOnlyFieldSchema.optional(),
         albumArtist: correctedTextFieldSchema.optional(),
-        ignoredMessage: nowPlayingIgnoredMessageSchema
-    })
+        ignoredMessage: nowPlayingIgnoredMessageSchema,
+    }),
 });
 //# sourceMappingURL=track.schemas.js.map

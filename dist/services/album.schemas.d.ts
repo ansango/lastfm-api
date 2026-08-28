@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from 'zod';
 /**
  * Album
  * @see https://www.last.fm/api/show/album.getInfo
@@ -17,7 +17,7 @@ export declare const albumSchema: z.ZodObject<{
     }, z.core.$strip>;
     playcount: z.ZodString;
     image: z.ZodArray<z.ZodObject<{
-        "#text": z.ZodString;
+        '#text': z.ZodString;
         size: z.ZodUnion<readonly [z.ZodLiteral<"small">, z.ZodLiteral<"medium">, z.ZodLiteral<"large">, z.ZodLiteral<"extralarge">, z.ZodLiteral<"mega">]>;
     }, z.core.$strip>>;
     tracks: z.ZodOptional<z.ZodObject<{
@@ -64,7 +64,7 @@ export declare const albumGetInfoResponseSchema: z.ZodObject<{
         }, z.core.$strip>;
         playcount: z.ZodString;
         image: z.ZodArray<z.ZodObject<{
-            "#text": z.ZodString;
+            '#text': z.ZodString;
             size: z.ZodUnion<readonly [z.ZodLiteral<"small">, z.ZodLiteral<"medium">, z.ZodLiteral<"large">, z.ZodLiteral<"extralarge">, z.ZodLiteral<"mega">]>;
         }, z.core.$strip>>;
         tracks: z.ZodOptional<z.ZodObject<{
@@ -103,7 +103,7 @@ export declare const albumGetTagsResponseSchema: z.ZodObject<{
             url: z.ZodString;
         }, z.core.$strip>>;
     }, z.core.$strip>;
-    "@attr": z.ZodObject<{
+    '@attr': z.ZodObject<{
         album: z.ZodString;
         artist: z.ZodString;
     }, z.core.$strip>;
@@ -121,7 +121,7 @@ export declare const albumGetTopTagsResponseSchema: z.ZodObject<{
             count: z.ZodUnion<readonly [z.ZodString, z.ZodNumber]>;
         }, z.core.$strip>>;
     }, z.core.$strip>;
-    "@attr": z.ZodObject<{
+    '@attr': z.ZodObject<{
         album: z.ZodString;
         artist: z.ZodString;
     }, z.core.$strip>;
@@ -133,28 +133,28 @@ export declare const albumSearchRequestSchema: z.ZodObject<{
 }, z.core.$strip>;
 export declare const albumSearchResponseSchema: z.ZodObject<{
     results: z.ZodObject<{
-        "opensearch:Query": z.ZodObject<{
-            "#text": z.ZodString;
+        'opensearch:Query': z.ZodObject<{
+            '#text': z.ZodString;
             role: z.ZodString;
             searchTerms: z.ZodString;
             startPage: z.ZodString;
         }, z.core.$strip>;
-        "opensearch:totalResults": z.ZodString;
-        "opensearch:startIndex": z.ZodString;
-        "opensearch:itemsPerPage": z.ZodString;
+        'opensearch:totalResults': z.ZodString;
+        'opensearch:startIndex': z.ZodString;
+        'opensearch:itemsPerPage': z.ZodString;
         albummatches: z.ZodObject<{
             album: z.ZodArray<z.ZodObject<{
                 name: z.ZodString;
                 artist: z.ZodString;
                 url: z.ZodString;
                 image: z.ZodArray<z.ZodObject<{
-                    "#text": z.ZodString;
+                    '#text': z.ZodString;
                     size: z.ZodUnion<readonly [z.ZodLiteral<"small">, z.ZodLiteral<"medium">, z.ZodLiteral<"large">, z.ZodLiteral<"extralarge">, z.ZodLiteral<"mega">]>;
                 }, z.core.$strip>>;
                 mbid: z.ZodString;
             }, z.core.$strip>>;
         }, z.core.$strip>;
-        "@attr": z.ZodObject<{
+        '@attr': z.ZodObject<{
             for: z.ZodString;
         }, z.core.$strip>;
     }, z.core.$strip>;

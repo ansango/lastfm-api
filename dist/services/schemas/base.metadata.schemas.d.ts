@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from 'zod';
 export declare const ageSchema: z.ZodString;
 export declare const subscriberSchema: z.ZodString;
 export declare const realNameSchema: z.ZodString;

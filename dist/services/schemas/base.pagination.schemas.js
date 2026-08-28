@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from 'zod';
 // Standard pagination
 export const totalPagesSchema = z.string();
 export const totalSchema = z.union([z.string(), z.number()]);

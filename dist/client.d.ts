@@ -1,5 +1,5 @@
 import type { LastFmConfig } from './config.js';
-import { type UserService, type AlbumService, type ArtistService, type TrackService, type TagService, type ChartService, type GeoService, type LibraryService, type AuthService } from './services/index.js';
+import { type AlbumService, type ArtistService, type AuthService, type ChartService, type GeoService, type LibraryService, type TagService, type TrackService, type UserService } from './services/index.js';
 /**
  * Last.fm API Client
  *

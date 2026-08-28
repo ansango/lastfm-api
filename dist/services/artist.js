@@ -1,4 +1,4 @@
-import { fetcher, buildUrl, signedPost, LastFmApiError } from '../utils.js';
+import { buildUrl, fetcher, LastFmApiError, signedPost } from '../utils.js';
 function resolveSessionKeyForArtistTagMutation(config, requestSk, action) {
     const sk = requestSk ?? config.sessionKey;
     if (!sk) {
@@ -13,9 +13,9 @@ export function createArtistService(config) {
             params: {
                 artist: params.artist,
                 tags: params.tags.join(','),
-                sk
+                sk,
             },
-            init
+            init,
         }).then(() => undefined);
     };
     const removeTagImpl = (params, init) => {
@@ -24,9 +24,9 @@ export function createArtistService(config) {
             params: {
                 artist: params.artist,
                 tag: params.tag,
-                sk
+                sk,
             },
-            init
+            init,
         }).then(() => undefined);
     };
     return {
@@ -39,7 +39,7 @@ export function createArtistService(config) {
         search: (params, init) => fetcher(buildUrl(config, 'artist.search', params), init),
         getCorrection: (params, init) => fetcher(buildUrl(config, 'artist.getCorrection', params), init),
         addTags: addTagsImpl,
-        removeTag: removeTagImpl
+        removeTag: removeTagImpl,
     };
 }
 //# sourceMappingURL=artist.js.map

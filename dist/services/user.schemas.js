@@ -1,15 +1,15 @@
-import { z } from "zod";
-import { ageSchema, albumCountSchema, albumNameSchema, artistCountSchema, artistNameSchema, bootstrapSchema, countSchema, countrySchema, datePropSchema, durationSchema, fromSchema, genderSchema, imageSchema, limitSchema, mbidSchema, pageSchema, periodSchema, playcountSchema, playlistsSchema, rankSchema, realNameSchema, subscriberSchema, tagNameSchema, textSchema, toSchema, totalPagesSchema, totalSchema, trackCountSchema, trackNameSchema, typeSchema, unixtimeSchema, urlSchema, userNameSchema, } from "./schemas/index.js";
+import { z } from 'zod';
+import { ageSchema, albumCountSchema, albumNameSchema, artistCountSchema, artistNameSchema, bootstrapSchema, countrySchema, countSchema, datePropSchema, durationSchema, fromSchema, genderSchema, imageSchema, limitSchema, mbidSchema, pageSchema, periodSchema, playcountSchema, playlistsSchema, rankSchema, realNameSchema, subscriberSchema, tagNameSchema, textSchema, toSchema, totalPagesSchema, totalSchema, trackCountSchema, trackNameSchema, typeSchema, unixtimeSchema, urlSchema, userNameSchema, } from './schemas/index.js';
 // Response schemas
 export const userGetFriendsResponseSchema = z.record(z.string(), z.any());
 // Request schemas
 export const userGetFriendsRequestSchema = z.object({
     user: userNameSchema,
     limit: limitSchema.optional(),
-    page: pageSchema.optional()
+    page: pageSchema.optional(),
 });
 export const userGetInfoRequestSchema = z.object({
-    user: userNameSchema
+    user: userNameSchema,
 });
 /**
  * User
@@ -29,121 +29,123 @@ export const userSchema = z.object({
     image: z.array(imageSchema),
     registered: z.object({
         unixtime: unixtimeSchema,
-        "#text": z.number()
+        '#text': z.number(),
     }),
     country: countrySchema,
     gender: genderSchema,
     url: urlSchema,
-    type: typeSchema
+    type: typeSchema,
 });
 export const userGetInfoResponseSchema = z.object({
-    user: userSchema
+    user: userSchema,
 });
 export const userGetLovedTracksRequestSchema = z.object({
     user: userNameSchema,
     limit: limitSchema.optional(),
-    page: pageSchema.optional()
+    page: pageSchema.optional(),
 });
 export const lovedTracksSchema = z.object({
     track: z.array(z.object({
         artist: z.object({
             name: artistNameSchema,
             mbid: mbidSchema,
-            url: urlSchema
+            url: urlSchema,
         }),
         date: datePropSchema,
         name: trackNameSchema,
         mbid: mbidSchema,
         url: urlSchema,
-        image: z.array(imageSchema)
+        image: z.array(imageSchema),
     })),
-    "@attr": z.object({
+    '@attr': z.object({
         user: userNameSchema,
         totalPages: totalPagesSchema,
         pages: pageSchema,
         perPages: pageSchema,
-        total: totalSchema
-    })
+        total: totalSchema,
+    }),
 });
 export const userGetLovedTracksResponseSchema = z.object({
-    lovedtracks: lovedTracksSchema
+    lovedtracks: lovedTracksSchema,
 });
 export const userGetRecentTracksRequestSchema = z.object({
     user: userNameSchema,
     limit: limitSchema.optional(),
     page: pageSchema.optional(),
     from: fromSchema.optional(),
-    to: toSchema.optional()
+    to: toSchema.optional(),
 });
 export const recentTracksSchema = z.object({
     track: z.array(z.object({
         artist: z.object({
             name: artistNameSchema,
             mbid: mbidSchema,
-            "#text": artistNameSchema
+            '#text': artistNameSchema,
         }),
         album: z.object({
             mbid: mbidSchema,
-            "#text": albumNameSchema
+            '#text': albumNameSchema,
         }),
         date: datePropSchema.optional(),
         name: trackNameSchema,
         mbid: mbidSchema,
         url: urlSchema,
         image: z.array(imageSchema),
-        "@attr": z.object({
-            nowplaying: z.boolean()
-        }).optional()
+        '@attr': z
+            .object({
+            nowplaying: z.boolean(),
+        })
+            .optional(),
     })),
-    "@attr": z.object({
+    '@attr': z.object({
         user: userNameSchema,
         totalPages: totalPagesSchema,
         pages: pageSchema,
         perPages: pageSchema,
-        total: totalSchema
-    })
+        total: totalSchema,
+    }),
 });
 export const userGetRecentTracksResponseSchema = z.object({
-    recenttracks: recentTracksSchema
+    recenttracks: recentTracksSchema,
 });
 export const userGetTopAlbumsRequestSchema = z.object({
     user: userNameSchema,
     limit: limitSchema.optional(),
     page: pageSchema.optional(),
-    period: periodSchema.optional()
+    period: periodSchema.optional(),
 });
 export const topAlbumsSchema = z.object({
     album: z.array(z.object({
         artist: z.object({
             name: artistNameSchema,
             mbid: mbidSchema,
-            url: urlSchema
+            url: urlSchema,
         }),
         image: z.array(imageSchema),
         mbid: mbidSchema,
         url: urlSchema,
         playcount: playcountSchema,
         name: albumNameSchema,
-        "@attr": z.object({
-            rank: rankSchema
-        })
+        '@attr': z.object({
+            rank: rankSchema,
+        }),
     })),
-    "@attr": z.object({
+    '@attr': z.object({
         user: userNameSchema,
         totalPages: totalPagesSchema,
         pages: pageSchema,
         perPages: pageSchema,
-        total: totalSchema
-    })
+        total: totalSchema,
+    }),
 });
 export const userGetTopAlbumsResponseSchema = z.object({
-    topalbums: topAlbumsSchema
+    topalbums: topAlbumsSchema,
 });
 export const userGetTopArtistsRequestSchema = z.object({
     user: userNameSchema,
     limit: limitSchema.optional(),
     page: pageSchema.optional(),
-    period: periodSchema.optional()
+    period: periodSchema.optional(),
 });
 export const topArtistsSchema = z.object({
     artist: z.array(z.object({
@@ -152,44 +154,44 @@ export const topArtistsSchema = z.object({
         name: artistNameSchema,
         playcount: playcountSchema,
         url: urlSchema,
-        "@attr": z.object({
-            rank: rankSchema
-        })
+        '@attr': z.object({
+            rank: rankSchema,
+        }),
     })),
-    "@attr": z.object({
+    '@attr': z.object({
         user: userNameSchema,
         totalPages: totalPagesSchema,
         pages: pageSchema,
         perPages: pageSchema,
-        total: totalSchema
-    })
+        total: totalSchema,
+    }),
 });
 export const userGetTopArtistsResponseSchema = z.object({
-    topartists: topArtistsSchema
+    topartists: topArtistsSchema,
 });
 export const userGetTopTagsRequestSchema = z.object({
     user: userNameSchema,
     limit: limitSchema.optional(),
-    page: pageSchema.optional()
+    page: pageSchema.optional(),
 });
 export const topTagsSchema = z.object({
     tag: z.array(z.object({
         name: tagNameSchema,
         url: urlSchema,
-        count: countSchema
+        count: countSchema,
     })),
-    "@attr": z.object({
-        user: userNameSchema
-    })
+    '@attr': z.object({
+        user: userNameSchema,
+    }),
 });
 export const userGetTopTagsResponseSchema = z.object({
-    toptags: topTagsSchema
+    toptags: topTagsSchema,
 });
 export const userGetTopTracksRequestSchema = z.object({
     user: userNameSchema,
     limit: limitSchema.optional(),
     page: pageSchema.optional(),
-    period: periodSchema.optional()
+    period: periodSchema.optional(),
 });
 export const topTracksSchema = z.object({
     track: z.array(z.object({
@@ -199,63 +201,63 @@ export const topTracksSchema = z.object({
         artist: z.object({
             name: artistNameSchema,
             mbid: mbidSchema,
-            url: urlSchema
+            url: urlSchema,
         }),
         url: urlSchema,
         duration: durationSchema,
         playcount: playcountSchema,
-        "@attr": z.object({
-            rank: rankSchema
-        })
+        '@attr': z.object({
+            rank: rankSchema,
+        }),
     })),
-    "@attr": z.object({
+    '@attr': z.object({
         user: userNameSchema,
         totalPages: totalPagesSchema,
         pages: pageSchema,
         perPages: pageSchema,
-        total: totalSchema
-    })
+        total: totalSchema,
+    }),
 });
 export const userGetTopTracksResponseSchema = z.object({
-    toptracks: topTracksSchema
+    toptracks: topTracksSchema,
 });
 export const userGetWeeklyAlbumChartRequestSchema = z.object({
     user: userNameSchema,
     from: fromSchema.optional(),
-    to: toSchema.optional()
+    to: toSchema.optional(),
 });
 export const weeklyAlbumChartAttrSchema = z.object({
     from: fromSchema,
     to: toSchema,
-    user: userNameSchema
+    user: userNameSchema,
 });
 export const weeklyAlbumChartSchema = z.object({
     album: z.array(z.object({
         artist: z.object({
             mbid: mbidSchema,
-            "#text": textSchema
+            '#text': textSchema,
         }),
         mbid: mbidSchema,
         url: urlSchema,
         name: albumNameSchema,
         playcount: playcountSchema,
-        "@attr": z.object({
-            rank: rankSchema
-        })
+        '@attr': z.object({
+            rank: rankSchema,
+        }),
     })),
-    "@attr": z.object({
+    '@attr': z.object({
         from: fromSchema,
         user: userNameSchema,
-        to: toSchema
-    })
+        to: toSchema,
+    }),
 });
 export const userGetWeeklyAlbumChartResponseSchema = z.object({
-    weeklyalbumchart: weeklyAlbumChartSchema
+    weeklyalbumchart: weeklyAlbumChartSchema,
 });
 export const userGetWeeklyArtistChartRequestSchema = z.object({
     user: userNameSchema,
     from: fromSchema.optional(),
-    to: toSchema.optional()
+    to: toSchema.optional(),
 });
 export const weeklyArtistChartSchema = z.object({
     artist: z.array(z.object({
@@ -263,70 +265,66 @@ export const weeklyArtistChartSchema = z.object({
         url: urlSchema,
         name: artistNameSchema,
         playcount: playcountSchema,
-        "@attr": z.object({
-            rank: rankSchema
-        })
+        '@attr': z.object({
+            rank: rankSchema,
+        }),
     })),
-    "@attr": z.object({
+    '@attr': z.object({
         user: userNameSchema,
         to: toSchema,
-        from: fromSchema
-    })
+        from: fromSchema,
+    }),
 });
 export const userGetWeeklyArtistChartResponseSchema = z.object({
-    weeklyartistchart: weeklyArtistChartSchema
+    weeklyartistchart: weeklyArtistChartSchema,
 });
 export const userGetWeeklyChartListRequestSchema = z.object({
-    user: userNameSchema
+    user: userNameSchema,
 });
 export const weeklyChartListSchema = z.object({
     chart: z.array(z.object({
-        "#text": textSchema,
+        '#text': textSchema,
         from: fromSchema,
-        to: toSchema
-    }))
+        to: toSchema,
+    })),
 });
 export const userGetWeeklyChartListResponseSchema = z.object({
-    weeklychartlist: weeklyChartListSchema
+    weeklychartlist: weeklyChartListSchema,
 });
 export const userGetWeeklyTrackChartRequestSchema = z.object({
     user: userNameSchema,
     from: fromSchema.optional(),
-    to: toSchema.optional()
+    to: toSchema.optional(),
 });
 export const weeklyTrackChartSchema = z.object({
     track: z.array(z.object({
         artist: z.object({
             mbid: mbidSchema,
-            "#text": textSchema
+            '#text': textSchema,
         }),
         image: z.array(imageSchema),
         mbid: mbidSchema,
         url: urlSchema,
         name: trackNameSchema,
         playcount: playcountSchema,
-        "@attr": z.object({
-            rank: rankSchema
-        })
+        '@attr': z.object({
+            rank: rankSchema,
+        }),
     })),
-    "@attr": z.object({
+    '@attr': z.object({
         user: userNameSchema,
         to: toSchema,
-        from: fromSchema
-    })
+        from: fromSchema,
+    }),
 });
 export const userGetWeeklyTrackChartResponseSchema = z.object({
-    weeklytrackchart: weeklyTrackChartSchema
+    weeklytrackchart: weeklyTrackChartSchema,
 });
 /**
  * Tagging type accepted by `user.getPersonalTags`.
  * https://www.last.fm/api/show/user.getPersonalTags
  */
-export const personalTaggingTypeSchema = z.union([
-    z.literal("artist"),
-    z.literal("album"),
-    z.literal("track")
-]);
+export const personalTaggingTypeSchema = z.union([z.literal('artist'), z.literal('album'), z.literal('track')]);
 /**
  * Pagination metadata returned inside the `taggings` envelope for
  * `user.getPersonalTags`. Last.fm sends all four fields as JSON
@@ -336,7 +334,7 @@ export const personalTaggingsAttrSchema = z.object({
     page: z.string(),
     perPage: z.string(),
     totalPages: z.string(),
-    total: z.string()
+    total: z.string(),
 });
 /**
  * Common metadata inside the `taggings` envelope: the user, the tag,
@@ -345,34 +343,38 @@ export const personalTaggingsAttrSchema = z.object({
 export const personalTaggingsMetadataSchema = z.object({
     user: userNameSchema,
     tag: z.string(),
-    "@attr": personalTaggingsAttrSchema
+    '@attr': personalTaggingsAttrSchema,
 });
 export const personalTaggedArtistSchema = z.object({
     name: artistNameSchema,
     mbid: mbidSchema,
-    url: urlSchema
+    url: urlSchema,
 });
 export const personalTaggedAlbumSchema = z.object({
     name: albumNameSchema,
     mbid: mbidSchema,
     url: urlSchema,
-    artist: z.object({
+    artist: z
+        .object({
         name: artistNameSchema,
         mbid: mbidSchema,
-        url: urlSchema
-    }).optional(),
-    image: z.array(imageSchema).optional()
+        url: urlSchema,
+    })
+        .optional(),
+    image: z.array(imageSchema).optional(),
 });
 export const personalTaggedTrackSchema = z.object({
     name: trackNameSchema,
     mbid: mbidSchema,
     url: urlSchema,
-    artist: z.object({
+    artist: z
+        .object({
         name: artistNameSchema,
         mbid: mbidSchema,
-        url: urlSchema
-    }).optional(),
-    image: z.array(imageSchema).optional()
+        url: urlSchema,
+    })
+        .optional(),
+    image: z.array(imageSchema).optional(),
 });
 /**
  * Response of `user.getPersonalTags` when `taggingtype = "artist"`.
@@ -380,9 +382,9 @@ export const personalTaggedTrackSchema = z.object({
 export const userGetPersonalTagsArtistResponseSchema = z.object({
     taggings: personalTaggingsMetadataSchema.extend({
         artists: z.object({
-            artist: z.array(personalTaggedArtistSchema)
-        })
-    })
+            artist: z.array(personalTaggedArtistSchema),
+        }),
+    }),
 });
 /**
  * Response of `user.getPersonalTags` when `taggingtype = "album"`.
@@ -390,9 +392,9 @@ export const userGetPersonalTagsArtistResponseSchema = z.object({
 export const userGetPersonalTagsAlbumResponseSchema = z.object({
     taggings: personalTaggingsMetadataSchema.extend({
         albums: z.object({
-            album: z.array(personalTaggedAlbumSchema)
-        })
-    })
+            album: z.array(personalTaggedAlbumSchema),
+        }),
+    }),
 });
 /**
  * Response of `user.getPersonalTags` when `taggingtype = "track"`.
@@ -400,9 +402,9 @@ export const userGetPersonalTagsAlbumResponseSchema = z.object({
 export const userGetPersonalTagsTrackResponseSchema = z.object({
     taggings: personalTaggingsMetadataSchema.extend({
         tracks: z.object({
-            track: z.array(personalTaggedTrackSchema)
-        })
-    })
+            track: z.array(personalTaggedTrackSchema),
+        }),
+    }),
 });
 /**
  * Union response accepted at runtime. A literal `taggingtype` request
@@ -412,7 +414,7 @@ export const userGetPersonalTagsTrackResponseSchema = z.object({
 export const userGetPersonalTagsResponseSchema = z.union([
     userGetPersonalTagsArtistResponseSchema,
     userGetPersonalTagsAlbumResponseSchema,
-    userGetPersonalTagsTrackResponseSchema
+    userGetPersonalTagsTrackResponseSchema,
 ]);
 /**
  * Request shape for `user.getPersonalTags`. `T` widens the literal
@@ -423,6 +425,6 @@ export const userGetPersonalTagsRequestSchema = z.object({
     tag: z.string(),
     taggingtype: personalTaggingTypeSchema,
     limit: z.union([z.string(), z.number()]).optional(),
-    page: z.union([z.string(), z.number()]).optional()
+    page: z.union([z.string(), z.number()]).optional(),
 });
 //# sourceMappingURL=user.schemas.js.map

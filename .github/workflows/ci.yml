@@ -42,6 +42,11 @@ jobs:
       - name: Typecheck tool (#92)
         run: bun run --cwd tool/api-scalar typecheck
 
+      - name: Lint (Biome)
+        # Catches formatting drift, unused imports, suspicious patterns. Biome
+        # covers both `src/`, `tool/`, and `scripts/` from the root config.
+        run: bun run lint
+
       - name: Run unit tests
         id: tests
         # Capture both the streamed output (for parsing into the PR summary)

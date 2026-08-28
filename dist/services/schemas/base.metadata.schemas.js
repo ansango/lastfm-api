@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from 'zod';
 // User-specific metadata
 export const ageSchema = z.string();
 export const subscriberSchema = z.string();

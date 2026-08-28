@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from 'zod';
 // String primitives
 export const nameSchema = z.string();
 export const mbidSchema = z.string();
@@ -27,11 +27,11 @@ export const unixtimeSchema = z.number();
 export const reachSchema = z.number();
 // Enum types
 export const periodSchema = z.union([
-    z.literal("overall"),
-    z.literal("7day"),
-    z.literal("1month"),
-    z.literal("3month"),
-    z.literal("6month"),
-    z.literal("12month"),
+    z.literal('overall'),
+    z.literal('7day'),
+    z.literal('1month'),
+    z.literal('3month'),
+    z.literal('6month'),
+    z.literal('12month'),
 ]);
 //# sourceMappingURL=base.primitives.schemas.js.map

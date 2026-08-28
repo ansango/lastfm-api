@@ -1,4 +1,4 @@
-import { fetcher, buildAuthUrl, signedPost, LastFmApiError } from '../utils.js';
+import { buildAuthUrl, fetcher, LastFmApiError, signedPost } from '../utils.js';
 export function createAuthService(config) {
     const getMobileSessionImpl = (params, init) => {
         // Enforce HTTPS before any network call. The default baseUrl is
@@ -11,16 +11,16 @@ export function createAuthService(config) {
         return signedPost(config, 'auth.getMobileSession', {
             params: {
                 username: params.username,
-                password: params.password
+                password: params.password,
             },
             requiresSession: false,
-            init
+            init,
         });
     };
     return {
         getSession: (params, init) => fetcher(buildAuthUrl(config, 'auth.getSession', params), init),
         getToken: (init) => fetcher(buildAuthUrl(config, 'auth.getToken'), init),
-        getMobileSession: getMobileSessionImpl
+        getMobileSession: getMobileSessionImpl,
     };
 }
 //# sourceMappingURL=auth.js.map

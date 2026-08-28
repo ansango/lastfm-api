@@ -1,5 +1,5 @@
-import type { TagGetInfoRequest, TagGetInfoResponse, TagGetSimilarRequest, TagGetSimilarResponse, TagGetTopAlbumsRequest, TagGetTopAlbumsResponse, TagGetTopArtistsRequest, TagGetTopArtistsResponse, TagGetTopTagsRequest, TagGetTopTagsResponse, TagGetTopTracksRequest, TagGetTopTracksResponse, TagGetWeeklyChartListRequest, TagGetWeeklyChartListResponse } from './tag.schemas.js';
 import type { LastFmConfig } from '../config.js';
+import type { TagGetInfoRequest, TagGetInfoResponse, TagGetSimilarRequest, TagGetSimilarResponse, TagGetTopAlbumsRequest, TagGetTopAlbumsResponse, TagGetTopArtistsRequest, TagGetTopArtistsResponse, TagGetTopTagsRequest, TagGetTopTagsResponse, TagGetTopTracksRequest, TagGetTopTracksResponse, TagGetWeeklyChartListRequest, TagGetWeeklyChartListResponse } from './tag.schemas.js';
 export interface TagService {
     /**
      * Get the metadata for a tag on Last.fm. Includes biography.

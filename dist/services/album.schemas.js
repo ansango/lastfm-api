@@ -1,5 +1,5 @@
-import { z } from "zod";
-import { tagNameSchema, urlSchema, artistNameSchema, mbidSchema, durationSchema, nameSchema, publishedSchema, summarySchema, contentSchema, playcountSchema, imageSchema, albumNameSchema, listenersSchema, userNameSchema, langSchema, countSchema, limitSchema, pageSchema, textSchema, roleSchema, searchTermsSchema, startPageSchema, totalResultsSchema, startIndexSchema, itemsPerPageSchema, forSchema, } from "./schemas/index.js";
+import { z } from 'zod';
+import { albumNameSchema, artistNameSchema, contentSchema, countSchema, durationSchema, forSchema, imageSchema, itemsPerPageSchema, langSchema, limitSchema, listenersSchema, mbidSchema, nameSchema, pageSchema, playcountSchema, publishedSchema, roleSchema, searchTermsSchema, startIndexSchema, startPageSchema, summarySchema, tagNameSchema, textSchema, totalResultsSchema, urlSchema, userNameSchema, } from './schemas/index.js';
 const albumTagSchema = z.object({
     tag: z
         .union([
@@ -72,7 +72,7 @@ export const albumGetTagsResponseSchema = z.object({
             url: urlSchema,
         })),
     }),
-    "@attr": z.object({
+    '@attr': z.object({
         album: albumNameSchema,
         artist: artistNameSchema,
     }),
@@ -90,7 +90,7 @@ export const albumGetTopTagsResponseSchema = z.object({
             count: countSchema,
         })),
     }),
-    "@attr": z.object({
+    '@attr': z.object({
         album: albumNameSchema,
         artist: artistNameSchema,
     }),
@@ -102,15 +102,15 @@ export const albumSearchRequestSchema = z.object({
 });
 export const albumSearchResponseSchema = z.object({
     results: z.object({
-        "opensearch:Query": z.object({
-            "#text": textSchema,
+        'opensearch:Query': z.object({
+            '#text': textSchema,
             role: roleSchema,
             searchTerms: searchTermsSchema,
             startPage: startPageSchema,
         }),
-        "opensearch:totalResults": totalResultsSchema,
-        "opensearch:startIndex": startIndexSchema,
-        "opensearch:itemsPerPage": itemsPerPageSchema,
+        'opensearch:totalResults': totalResultsSchema,
+        'opensearch:startIndex': startIndexSchema,
+        'opensearch:itemsPerPage': itemsPerPageSchema,
         albummatches: z.object({
             album: z.array(z.object({
                 name: albumNameSchema,
@@ -120,7 +120,7 @@ export const albumSearchResponseSchema = z.object({
                 mbid: mbidSchema,
             })),
         }),
-        "@attr": z.object({
+        '@attr': z.object({
             for: forSchema,
         }),
     }),
@@ -142,9 +142,9 @@ export const albumAddTagsRequestSchema = z.object({
     artist: artistNameSchema,
     album: albumNameSchema,
     tags: z.array(tagNameSchema).max(MAX_ALBUM_TAGS_PER_ADD, {
-        message: `album.addTags accepts at most ${MAX_ALBUM_TAGS_PER_ADD} tags per request`
+        message: `album.addTags accepts at most ${MAX_ALBUM_TAGS_PER_ADD} tags per request`,
     }),
-    sk: z.string().optional()
+    sk: z.string().optional(),
 });
 /**
  * Request shape for `album.removeTag`. A single tag is removed per
@@ -155,7 +155,7 @@ export const albumRemoveTagRequestSchema = z.object({
     artist: artistNameSchema,
     album: albumNameSchema,
     tag: tagNameSchema,
-    sk: z.string().optional()
+    sk: z.string().optional(),
 });
 /**
  * Empty success payload for the void tag-mutation methods. The Last.fm

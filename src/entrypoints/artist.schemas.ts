@@ -1,2 +1,2 @@
 // Generated schema exports for artist service
-export * from '../services/artist.schemas.js';
+export * from '../services/artist.schemas.js'
