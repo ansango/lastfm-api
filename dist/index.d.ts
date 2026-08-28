@@ -8,6 +8,8 @@ export * from './core/schemas/index.js';
 export * from './core/services/index.js';
 export type * from './insights/index.js';
 export * from './insights/index.js';
+export type * from './playlists/index.js';
+export * from './playlists/index.js';
 export type * from './reports/index.js';
 export * from './reports/index.js';
 export { buildAuthUrl, buildUrl, fetcher, generateSignature, LastFmApiError, parseLastFmResponse } from './utils.js';

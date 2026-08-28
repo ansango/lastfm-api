@@ -11,6 +11,8 @@ export * from './core/schemas/index.js';
 export * from './core/services/index.js';
 // Insights service & schemas
 export * from './insights/index.js';
+// Playlists service & schemas
+export * from './playlists/index.js';
 // Reports service & schemas
 export * from './reports/index.js';
 // Utilities
