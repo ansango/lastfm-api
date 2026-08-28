@@ -298,6 +298,35 @@ export const insightsPersonalityResponseSchema = z.object({
 	features: insightPersonalityFeaturesSchema,
 })
 
+// Compare request & response schemas
+export const insightSharedArtistSchema = z.object({
+	name: artistNameSchema,
+	userAPlaycount: z.number().int().nonnegative(),
+	userBPlaycount: z.number().int().nonnegative(),
+	weight: z.number().int().nonnegative(),
+})
+
+export const insightsCompareRequestSchema = z.object({
+	userA: userNameSchema,
+	userB: userNameSchema,
+	period: insightsPeriodSchema.optional(),
+	limit: limitSchema.optional(),
+})
+
+export const insightsCompareResponseSchema = z.object({
+	userA: userNameSchema,
+	userB: userNameSchema,
+	period: z.string(),
+	compatibilityScore: z.number().int().nonnegative(),
+	jaccard: z.number(),
+	sharedCount: z.number().int().nonnegative(),
+	userACount: z.number().int().nonnegative(),
+	userBCount: z.number().int().nonnegative(),
+	sharedArtists: z.array(insightSharedArtistSchema),
+	onlyUserA: z.array(artistNameSchema),
+	onlyUserB: z.array(artistNameSchema),
+})
+
 // Schema naming convention aliases for registry lookup
 export const insightsGetSummaryRequestSchema = insightsSummaryRequestSchema
 export const insightsGetSummaryResponseSchema = insightsSummaryResponseSchema
@@ -315,6 +344,10 @@ export const insightsGetMoodRequestSchema = insightsMoodRequestSchema
 export const insightsGetMoodResponseSchema = insightsMoodResponseSchema
 export const insightsGetPersonalityRequestSchema = insightsPersonalityRequestSchema
 export const insightsGetPersonalityResponseSchema = insightsPersonalityResponseSchema
+export const insightsCompareUsersRequestSchema = insightsCompareRequestSchema
+export const insightsCompareUsersResponseSchema = insightsCompareResponseSchema
+export const insightsGetCompareUsersRequestSchema = insightsCompareRequestSchema
+export const insightsGetCompareUsersResponseSchema = insightsCompareResponseSchema
 
 // Inferred types
 export type InsightsPeriod = z.infer<typeof insightsPeriodSchema>
@@ -362,3 +395,8 @@ export type InsightsPersonalityRequest = z.infer<typeof insightsPersonalityReque
 export type InsightsPersonalityResponse = z.infer<typeof insightsPersonalityResponseSchema>
 export type InsightsGetPersonalityRequest = InsightsPersonalityRequest
 export type InsightsGetPersonalityResponse = InsightsPersonalityResponse
+export type InsightSharedArtist = z.infer<typeof insightSharedArtistSchema>
+export type InsightsCompareRequest = z.infer<typeof insightsCompareRequestSchema>
+export type InsightsCompareResponse = z.infer<typeof insightsCompareResponseSchema>
+export type InsightsCompareUsersRequest = InsightsCompareRequest
+export type InsightsCompareUsersResponse = InsightsCompareResponse
