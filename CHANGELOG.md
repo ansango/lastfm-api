@@ -9,6 +9,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 > [ansango/lastfm-api](https://github.com/ansango/lastfm-api). Entries below preserve the
 > historical package and repository names used by their original releases.
 
+## [3.4.0] - 2026-08-28
+
+### ✨ Features
+
+- **insights**: implement compareUsers with Jaccard affinity index (closes #125) ([95f39d6](https://github.com/ansango/lastfm-api/commit/95f39d6))
+- **insights**: implement getMood psychometric classifier and getPersonality archetypes (closes #124) ([0aae0e8](https://github.com/ansango/lastfm-api/commit/0aae0e8))
+- **insights**: implement getTrends ranking diff and getDiscoveries new-artist detector (closes #123) ([1a07234](https://github.com/ansango/lastfm-api/commit/1a07234))
+- **insights**: implement getHoursHistogram and getBinges temporal analytics (closes #122) ([7615ba9](https://github.com/ansango/lastfm-api/commit/7615ba9))
+- **insights**: implement getNowPlaying with artist bio and similarity enrichment (closes #121) ([9de9213](https://github.com/ansango/lastfm-api/commit/9de9213))
+- **insights**: register getSummary route in method registry and Scalar OpenAPI docs ([875bafe](https://github.com/ansango/lastfm-api/commit/875bafe))
+- **insights**: implement getSummary with Shannon diversity index (closes #120) ([28b03b0](https://github.com/ansango/lastfm-api/commit/28b03b0))
+- **insights**: wire insights namespace in method registry ([2d1db4d](https://github.com/ansango/lastfm-api/commit/2d1db4d))
+- **insights**: base architecture, Zod schemas infrastructure, and client wiring (closes #119) ([6ce9d4e](https://github.com/ansango/lastfm-api/commit/6ce9d4e))
+
+### 📚 Documentation
+
+- **insights**: add dedicated OpenAPI descriptions in Scalar for all 9 insight methods ([1115785](https://github.com/ansango/lastfm-api/commit/1115785))
+- **insights**: documentation, OpenAPI Scalar integration, and CLI migration guide (closes #126) ([f325696](https://github.com/ansango/lastfm-api/commit/f325696))
+
+### 🔧 Chores
+
+- remove PROJECT_IDEAS.md ([a837c39](https://github.com/ansango/lastfm-api/commit/a837c39))
+- update dependencies and configuration files - Bump @types/node to version 26.4.0 in package.json and bun.lock - Modify build script in package.json to use tsconfig.build.json - Update changelog script to handle undefined tags - Refactor recent tracks test for better readability - Adjust tsconfig files for improved build and development settings - Add tsconfig.build.json for build-specific configurations - Update .gitignore to exclude AGENTS.md ([2a1687f](https://github.com/ansango/lastfm-api/commit/2a1687f))
+
+
 ## [3.3.0] - 2026-08-28
 
 ### ✨ Features
