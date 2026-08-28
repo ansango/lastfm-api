@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from 'zod';
 export declare const tagWikiSchema: z.ZodObject<{
     summary: z.ZodString;
     content: z.ZodString;
@@ -42,7 +42,7 @@ export declare const tagGetSimilarResponseSchema: z.ZodObject<{
             name: z.ZodString;
             url: z.ZodString;
         }, z.core.$strip>>;
-        "@attr": z.ZodObject<{
+        '@attr': z.ZodObject<{
             tag: z.ZodString;
         }, z.core.$strip>;
     }, z.core.$strip>;
@@ -64,14 +64,14 @@ export declare const tagGetTopAlbumsResponseSchema: z.ZodObject<{
                 url: z.ZodString;
             }, z.core.$strip>;
             image: z.ZodArray<z.ZodObject<{
-                "#text": z.ZodString;
+                '#text': z.ZodString;
                 size: z.ZodUnion<readonly [z.ZodLiteral<"small">, z.ZodLiteral<"medium">, z.ZodLiteral<"large">, z.ZodLiteral<"extralarge">, z.ZodLiteral<"mega">]>;
             }, z.core.$strip>>;
-            "@attr": z.ZodObject<{
+            '@attr': z.ZodObject<{
                 rank: z.ZodString;
             }, z.core.$strip>;
         }, z.core.$strip>>;
-        "@attr": z.ZodObject<{
+        '@attr': z.ZodObject<{
             tag: z.ZodString;
             page: z.ZodUnion<readonly [z.ZodString, z.ZodNumber]>;
             perPage: z.ZodString;
@@ -92,14 +92,14 @@ export declare const tagGetTopArtistsResponseSchema: z.ZodObject<{
             mbid: z.ZodString;
             url: z.ZodString;
             image: z.ZodArray<z.ZodObject<{
-                "#text": z.ZodString;
+                '#text': z.ZodString;
                 size: z.ZodUnion<readonly [z.ZodLiteral<"small">, z.ZodLiteral<"medium">, z.ZodLiteral<"large">, z.ZodLiteral<"extralarge">, z.ZodLiteral<"mega">]>;
             }, z.core.$strip>>;
-            "@attr": z.ZodObject<{
+            '@attr': z.ZodObject<{
                 rank: z.ZodString;
             }, z.core.$strip>;
         }, z.core.$strip>>;
-        "@attr": z.ZodObject<{
+        '@attr': z.ZodObject<{
             tag: z.ZodString;
             page: z.ZodUnion<readonly [z.ZodString, z.ZodNumber]>;
             perPage: z.ZodString;
@@ -118,7 +118,7 @@ export declare const tagGetTopTagsResponseSchema: z.ZodObject<{
             reach: z.ZodNumber;
             count: z.ZodUnion<readonly [z.ZodString, z.ZodNumber]>;
         }, z.core.$strip>>;
-        "@attr": z.ZodObject<{
+        '@attr': z.ZodObject<{
             offset: z.ZodNumber;
             num_res: z.ZodNumber;
             total: z.ZodUnion<readonly [z.ZodString, z.ZodNumber]>;
@@ -143,14 +143,14 @@ export declare const tagGetTopTracksResponseSchema: z.ZodObject<{
                 url: z.ZodString;
             }, z.core.$strip>;
             image: z.ZodArray<z.ZodObject<{
-                "#text": z.ZodString;
+                '#text': z.ZodString;
                 size: z.ZodUnion<readonly [z.ZodLiteral<"small">, z.ZodLiteral<"medium">, z.ZodLiteral<"large">, z.ZodLiteral<"extralarge">, z.ZodLiteral<"mega">]>;
             }, z.core.$strip>>;
-            "@attr": z.ZodObject<{
+            '@attr': z.ZodObject<{
                 rank: z.ZodString;
             }, z.core.$strip>;
         }, z.core.$strip>>;
-        "@attr": z.ZodObject<{
+        '@attr': z.ZodObject<{
             tag: z.ZodString;
             page: z.ZodUnion<readonly [z.ZodString, z.ZodNumber]>;
             perPage: z.ZodString;
@@ -168,7 +168,7 @@ export declare const tagGetWeeklyChartListResponseSchema: z.ZodObject<{
             from: z.ZodString;
             to: z.ZodString;
         }, z.core.$strip>>;
-        "@attr": z.ZodObject<{
+        '@attr': z.ZodObject<{
             tag: z.ZodString;
         }, z.core.$strip>;
     }, z.core.$strip>;

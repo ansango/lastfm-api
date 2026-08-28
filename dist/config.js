@@ -8,7 +8,7 @@ function loadEnvConfig() {
             apiKey: process.env.LASTFM_API_KEY,
             sharedSecret: process.env.LASTFM_SHARED_SECRET,
             sessionKey: process.env.LASTFM_SESSION_KEY,
-            baseUrl: process.env.LASTFM_BASE_URL
+            baseUrl: process.env.LASTFM_BASE_URL,
         };
     }
     return {};
@@ -30,7 +30,7 @@ export function createConfig(options = {}) {
     const config = {
         baseUrl: 'https://ws.audioscrobbler.com/2.0/',
         ...envConfig,
-        ...options
+        ...options,
     };
     validateConfig(config);
     return config;

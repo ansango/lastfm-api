@@ -1,14 +1,14 @@
+import type { LastFmConfig } from '../config.js'
+
+import { buildUrl, fetcher } from '../utils.js'
 import type {
 	ChartGetTopArtistsRequest,
 	ChartGetTopArtistsResponse,
 	ChartGetTopTagsRequest,
 	ChartGetTopTagsResponse,
 	ChartGetTopTracksRequest,
-	ChartGetTopTracksResponse
-} from './chart.schemas.js';
-
-import { fetcher, buildUrl } from '../utils.js';
-import type { LastFmConfig } from '../config.js';
+	ChartGetTopTracksResponse,
+} from './chart.schemas.js'
 
 export interface ChartService {
 	/**
@@ -18,10 +18,7 @@ export interface ChartService {
 	 * @returns {Promise<ChartGetTopArtistsResponse>}
 	 * https://www.last.fm/api/show/chart.getTopArtists
 	 * */
-	getTopArtists: (
-		params: ChartGetTopArtistsRequest,
-		init?: RequestInit
-	) => Promise<ChartGetTopArtistsResponse>;
+	getTopArtists: (params: ChartGetTopArtistsRequest, init?: RequestInit) => Promise<ChartGetTopArtistsResponse>
 	/**
 	 * Get the top tags chart
 	 * @param {ChartGetTopTagsRequest} params
@@ -29,10 +26,7 @@ export interface ChartService {
 	 * @returns {Promise<ChartGetTopTagsResponse>}
 	 * https://www.last.fm/api/show/chart.getTopTags
 	 * */
-	getTopTags: (
-		params: ChartGetTopTagsRequest,
-		init?: RequestInit
-	) => Promise<ChartGetTopTagsResponse>;
+	getTopTags: (params: ChartGetTopTagsRequest, init?: RequestInit) => Promise<ChartGetTopTagsResponse>
 	/**
 	 * Get the top tracks chart
 	 * @param {ChartGetTopTracksRequest} params
@@ -40,19 +34,15 @@ export interface ChartService {
 	 * @returns {Promise<ChartGetTopTracksResponse>}
 	 * https://www.last.fm/api/show/chart.getTopTracks
 	 * */
-	getTopTracks: (
-		params: ChartGetTopTracksRequest,
-		init?: RequestInit
-	) => Promise<ChartGetTopTracksResponse>;
+	getTopTracks: (params: ChartGetTopTracksRequest, init?: RequestInit) => Promise<ChartGetTopTracksResponse>
 }
 
 export function createChartService(config: LastFmConfig): ChartService {
 	return {
 		getTopArtists: (params, init) =>
 			fetcher<ChartGetTopArtistsResponse>(buildUrl(config, 'chart.getTopArtists', params), init),
-		getTopTags: (params, init) =>
-			fetcher<ChartGetTopTagsResponse>(buildUrl(config, 'chart.getTopTags', params), init),
+		getTopTags: (params, init) => fetcher<ChartGetTopTagsResponse>(buildUrl(config, 'chart.getTopTags', params), init),
 		getTopTracks: (params, init) =>
-			fetcher<ChartGetTopTracksResponse>(buildUrl(config, 'chart.getTopTracks', params), init)
-	};
+			fetcher<ChartGetTopTracksResponse>(buildUrl(config, 'chart.getTopTracks', params), init),
+	}
 }

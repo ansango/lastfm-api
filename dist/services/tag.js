@@ -1,4 +1,4 @@
-import { fetcher, buildUrl } from '../utils.js';
+import { buildUrl, fetcher } from '../utils.js';
 export function createTagService(config) {
     return {
         getInfo: (params, init) => fetcher(buildUrl(config, 'tag.getInfo', params), init),
@@ -7,7 +7,7 @@ export function createTagService(config) {
         getTopArtists: (params, init) => fetcher(buildUrl(config, 'tag.getTopArtists', params), init),
         getTopTags: (params, init) => fetcher(buildUrl(config, 'tag.getTopTags', params), init),
         getTopTracks: (params, init) => fetcher(buildUrl(config, 'tag.getTopTracks', params), init),
-        getWeeklyChartList: (params, init) => fetcher(buildUrl(config, 'tag.getWeeklyChartList', params), init)
+        getWeeklyChartList: (params, init) => fetcher(buildUrl(config, 'tag.getWeeklyChartList', params), init),
     };
 }
 //# sourceMappingURL=tag.js.map

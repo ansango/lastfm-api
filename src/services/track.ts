@@ -1,3 +1,5 @@
+import type { LastFmConfig } from '../config.js'
+import { buildUrl, fetcher, LastFmApiError, signedPost } from '../utils.js'
 import type {
 	BatchTracksScrobbleRequest,
 	TrackAddTagsRequest,
@@ -5,25 +7,23 @@ import type {
 	TrackGetCorrectionResponse,
 	TrackGetInfoRequest,
 	TrackGetInfoResponse,
-	TrackLoveRequest,
-	TrackRemoveTagRequest,
 	TrackGetSimilarRequest,
 	TrackGetSimilarResponse,
 	TrackGetTagsRequest,
 	TrackGetTagsResponse,
 	TrackGetTopTagsRequest,
 	TrackGetTopTagsResponse,
+	TrackLoveRequest,
+	TrackRemoveTagRequest,
 	TrackScrobbleRequest,
 	TrackScrobbleResponse,
 	TrackSearchRequest,
 	TrackSearchResponse,
 	TrackUpdateNowPlayingRequest,
-	TrackUpdateNowPlayingResponse
-} from './track.schemas.js';
-import { fetcher, buildUrl, signedPost, LastFmApiError } from '../utils.js';
-import type { LastFmConfig } from '../config.js';
+	TrackUpdateNowPlayingResponse,
+} from './track.schemas.js'
 
-import { buildBatchScrobbleParams, buildScrobbleParams } from './track.utils.js';
+import { buildBatchScrobbleParams, buildScrobbleParams } from './track.utils.js'
 
 export interface TrackService {
 	/**
@@ -33,7 +33,7 @@ export interface TrackService {
 	 * @returns {Promise<TrackGetInfoResponse>}
 	 * https://www.last.fm/api/show/track.getInfo
 	 * */
-	getInfo: (params: TrackGetInfoRequest, init?: RequestInit) => Promise<TrackGetInfoResponse>;
+	getInfo: (params: TrackGetInfoRequest, init?: RequestInit) => Promise<TrackGetInfoResponse>
 	/**
 	 * Get the tags applied by an individual user to a track on Last.fm.
 	 * @param {TrackGetSimilarRequest} params
@@ -41,10 +41,7 @@ export interface TrackService {
 	 * @returns {Promise<TrackGetSimilarResponse>}
 	 * https://www.last.fm/api/show/track.getSimilar
 	 * */
-	getSimilar: (
-		params: TrackGetSimilarRequest,
-		init?: RequestInit
-	) => Promise<TrackGetSimilarResponse>;
+	getSimilar: (params: TrackGetSimilarRequest, init?: RequestInit) => Promise<TrackGetSimilarResponse>
 	/**
 	 * Get the tags applied by an individual user to a track on Last.fm.
 	 * @param {TrackGetTagsRequest} params
@@ -52,7 +49,7 @@ export interface TrackService {
 	 * @returns {Promise<TrackGetTagsResponse>}
 	 * https://www.last.fm/api/show/track.getTags
 	 * */
-	getTags: (params: TrackGetTagsRequest, init?: RequestInit) => Promise<TrackGetTagsResponse>;
+	getTags: (params: TrackGetTagsRequest, init?: RequestInit) => Promise<TrackGetTagsResponse>
 	/**
 	 * Get the top tags for a track on Last.fm, ordered by popularity.
 	 *  @param {TrackGetTopTagsRequest} params
@@ -60,10 +57,7 @@ export interface TrackService {
 	 * @returns {Promise<TrackGetTopTagsResponse>}
 	 * https://www.last.fm/api/show/track.getTopTags
 	 * */
-	getTopTags: (
-		params: TrackGetTopTagsRequest,
-		init?: RequestInit
-	) => Promise<TrackGetTopTagsResponse>;
+	getTopTags: (params: TrackGetTopTagsRequest, init?: RequestInit) => Promise<TrackGetTopTagsResponse>
 	/**
 	 * Get the canonical correction for a misspelled or noncanonical
 	 * track (with its artist). Returns the list of corrections Last.fm
@@ -76,10 +70,7 @@ export interface TrackService {
 	 * @returns {Promise<TrackGetCorrectionResponse>}
 	 * https://www.last.fm/api/show/track.getCorrection
 	 */
-	getCorrection: (
-		params: TrackGetCorrectionRequest,
-		init?: RequestInit
-	) => Promise<TrackGetCorrectionResponse>;
+	getCorrection: (params: TrackGetCorrectionRequest, init?: RequestInit) => Promise<TrackGetCorrectionResponse>
 	/**
 	 * Search for a track by track name. Returns track matches sorted by relevance.
 	 * @param {TrackSearchRequest} params
@@ -87,7 +78,7 @@ export interface TrackService {
 	 * @returns {Promise<TrackSearchResponse>}
 	 * https://www.last.fm/api/show/track.search
 	 * */
-	search: (params: TrackSearchRequest, init?: RequestInit) => Promise<TrackSearchResponse>;
+	search: (params: TrackSearchRequest, init?: RequestInit) => Promise<TrackSearchResponse>
 
 	/**
 	 * Scrobble a track. Submits a track play to the Last.fm.
@@ -105,15 +96,12 @@ export interface TrackService {
 	 * @returns {Promise<TrackScrobbleResponse>}
 	 * https://www.last.fm/api/show/track.scrobble
 	 */
-	scrobble: (params: TrackScrobbleRequest, init?: RequestInit) => Promise<TrackScrobbleResponse>;
+	scrobble: (params: TrackScrobbleRequest, init?: RequestInit) => Promise<TrackScrobbleResponse>
 	/**
 	 * @deprecated Use `scrobble` instead. Renamed to match the canonical Last.fm
 	 * method name (`track.scrobble`). Kept as an alias for backwards compatibility.
 	 */
-	postTrackScrobble: (
-		params: TrackScrobbleRequest,
-		init?: RequestInit
-	) => Promise<TrackScrobbleResponse>;
+	postTrackScrobble: (params: TrackScrobbleRequest, init?: RequestInit) => Promise<TrackScrobbleResponse>
 	/**
 	 * Scrobble a batch of tracks. Submits a batch of track plays to the Last.fm.
 	 * Canonical Last.fm method name: `track.scrobble`.
@@ -122,19 +110,13 @@ export interface TrackService {
 	 * @returns {Promise<TrackScrobbleResponse>}
 	 * https://www.last.fm/api/show/track.scrobble
 	 * */
-	scrobbleMany: (
-		params: BatchTracksScrobbleRequest,
-		init?: RequestInit
-	) => Promise<TrackScrobbleResponse>;
+	scrobbleMany: (params: BatchTracksScrobbleRequest, init?: RequestInit) => Promise<TrackScrobbleResponse>
 	/**
 	 * @deprecated Use `scrobbleMany` instead. Renamed to match the canonical
 	 * Last.fm method name (`track.scrobble`). Kept as an alias for backwards
 	 * compatibility.
 	 */
-	postBatchTrackScrobble: (
-		params: BatchTracksScrobbleRequest,
-		init?: RequestInit
-	) => Promise<TrackScrobbleResponse>;
+	postBatchTrackScrobble: (params: BatchTracksScrobbleRequest, init?: RequestInit) => Promise<TrackScrobbleResponse>
 	/**
 	 * Add one or more personal tags to a track. Requires an
 	 * authenticated session.
@@ -156,7 +138,7 @@ export interface TrackService {
 	 * @returns {Promise<void>}
 	 * https://www.last.fm/api/show/track.addTags
 	 */
-	addTags: (params: TrackAddTagsRequest, init?: RequestInit) => Promise<void>;
+	addTags: (params: TrackAddTagsRequest, init?: RequestInit) => Promise<void>
 	/**
 	 * Remove a single personal tag from a track. Requires an
 	 * authenticated session.
@@ -173,7 +155,7 @@ export interface TrackService {
 	 * @returns {Promise<void>}
 	 * https://www.last.fm/api/show/track.removeTag
 	 */
-	removeTag: (params: TrackRemoveTagRequest, init?: RequestInit) => Promise<void>;
+	removeTag: (params: TrackRemoveTagRequest, init?: RequestInit) => Promise<void>
 	/**
 	 * Mark a track as loved on the user's Last.fm account. Requires an
 	 * authenticated session.
@@ -191,7 +173,7 @@ export interface TrackService {
 	 * @returns {Promise<void>}
 	 * https://www.last.fm/api/show/track.love
 	 */
-	love: (params: TrackLoveRequest, init?: RequestInit) => Promise<void>;
+	love: (params: TrackLoveRequest, init?: RequestInit) => Promise<void>
 	/**
 	 * Remove a track from the user's loved list on Last.fm. Requires an
 	 * authenticated session.
@@ -208,7 +190,7 @@ export interface TrackService {
 	 * @returns {Promise<void>}
 	 * https://www.last.fm/api/show/track.unlove
 	 */
-	unlove: (params: TrackLoveRequest, init?: RequestInit) => Promise<void>;
+	unlove: (params: TrackLoveRequest, init?: RequestInit) => Promise<void>
 	/**
 	 * Announce the track the user is currently listening to on Last.fm.
 	 * Requires an authenticated session.
@@ -236,114 +218,100 @@ export interface TrackService {
 	 * @returns {Promise<TrackUpdateNowPlayingResponse>}
 	 * https://www.last.fm/api/show/track.updateNowPlaying
 	 */
-	updateNowPlaying: (
-		params: TrackUpdateNowPlayingRequest,
-		init?: RequestInit
-	) => Promise<TrackUpdateNowPlayingResponse>;
+	updateNowPlaying: (params: TrackUpdateNowPlayingRequest, init?: RequestInit) => Promise<TrackUpdateNowPlayingResponse>
 }
 
 function resolveSessionKeyForTrackMutation(
 	config: LastFmConfig,
 	requestSk: string | undefined,
-	action: 'addTags' | 'removeTag' | 'love' | 'unlove'
+	action: 'addTags' | 'removeTag' | 'love' | 'unlove',
 ): string {
-	const sk = requestSk ?? config.sessionKey;
+	const sk = requestSk ?? config.sessionKey
 	if (!sk) {
 		throw new LastFmApiError(
 			`A session key (\`sk\`) is required to track.${action}. Pass \`sk\` in the request params or set \`sessionKey\` on the LastFmConfig.`,
-			0
-		);
+			0,
+		)
 	}
-	return sk;
+	return sk
 }
 
-function resolveSessionKeyForNowPlaying(
-	config: LastFmConfig,
-	requestSk: string | undefined
-): string {
-	const sk = requestSk ?? config.sessionKey;
+function resolveSessionKeyForNowPlaying(config: LastFmConfig, requestSk: string | undefined): string {
+	const sk = requestSk ?? config.sessionKey
 	if (!sk) {
 		throw new LastFmApiError(
 			'A session key (`sk`) is required to track.updateNowPlaying. Pass `sk` in the request params or set `sessionKey` on the LastFmConfig.',
-			0
-		);
+			0,
+		)
 	}
-	return sk;
+	return sk
 }
 
 export function createTrackService(config: LastFmConfig): TrackService {
 	const scrobbleImpl = (params: TrackScrobbleRequest, init?: RequestInit) =>
 		signedPost<TrackScrobbleResponse>(config, 'track.scrobble', {
 			params: buildScrobbleParams(config, params),
-			init
-		});
+			init,
+		})
 
 	const scrobbleManyImpl = (params: BatchTracksScrobbleRequest, init?: RequestInit) =>
 		signedPost<TrackScrobbleResponse>(config, 'track.scrobble', {
 			params: buildBatchScrobbleParams(config, params),
-			init
-		});
+			init,
+		})
 
 	return {
-		getInfo: (params, init) =>
-			fetcher<TrackGetInfoResponse>(buildUrl(config, 'track.getInfo', params), init),
-		getSimilar: (params, init) =>
-			fetcher<TrackGetSimilarResponse>(buildUrl(config, 'track.getSimilar', params), init),
-		getTags: (params, init) =>
-			fetcher<TrackGetTagsResponse>(buildUrl(config, 'track.getTags', params), init),
-		getTopTags: (params, init) =>
-			fetcher<TrackGetTopTagsResponse>(buildUrl(config, 'track.getTopTags', params), init),
+		getInfo: (params, init) => fetcher<TrackGetInfoResponse>(buildUrl(config, 'track.getInfo', params), init),
+		getSimilar: (params, init) => fetcher<TrackGetSimilarResponse>(buildUrl(config, 'track.getSimilar', params), init),
+		getTags: (params, init) => fetcher<TrackGetTagsResponse>(buildUrl(config, 'track.getTags', params), init),
+		getTopTags: (params, init) => fetcher<TrackGetTopTagsResponse>(buildUrl(config, 'track.getTopTags', params), init),
 		getCorrection: (params, init) =>
-			fetcher<TrackGetCorrectionResponse>(
-				buildUrl(config, 'track.getCorrection', params),
-				init
-			),
-		search: (params, init) =>
-			fetcher<TrackSearchResponse>(buildUrl(config, 'track.search', params), init),
+			fetcher<TrackGetCorrectionResponse>(buildUrl(config, 'track.getCorrection', params), init),
+		search: (params, init) => fetcher<TrackSearchResponse>(buildUrl(config, 'track.search', params), init),
 		scrobble: scrobbleImpl,
 		postTrackScrobble: scrobbleImpl,
 		scrobbleMany: scrobbleManyImpl,
 		postBatchTrackScrobble: scrobbleManyImpl,
 		addTags: (params, init) => {
-			const sk = resolveSessionKeyForTrackMutation(config, params.sk, 'addTags');
+			const sk = resolveSessionKeyForTrackMutation(config, params.sk, 'addTags')
 			return signedPost(config, 'track.addTags', {
 				params: {
 					artist: params.artist,
 					track: params.track,
 					tags: params.tags.join(','),
-					sk
+					sk,
 				},
-				init
-			}).then(() => undefined);
+				init,
+			}).then(() => undefined)
 		},
 		removeTag: (params, init) => {
-			const sk = resolveSessionKeyForTrackMutation(config, params.sk, 'removeTag');
+			const sk = resolveSessionKeyForTrackMutation(config, params.sk, 'removeTag')
 			return signedPost(config, 'track.removeTag', {
 				params: {
 					artist: params.artist,
 					track: params.track,
 					tag: params.tag,
-					sk
+					sk,
 				},
-				init
-			}).then(() => undefined);
+				init,
+			}).then(() => undefined)
 		},
 		love: (params, init) => {
-			const sk = resolveSessionKeyForTrackMutation(config, params.sk, 'love');
+			const sk = resolveSessionKeyForTrackMutation(config, params.sk, 'love')
 			return signedPost(config, 'track.love', {
 				params: { artist: params.artist, track: params.track, sk },
-				init
-			}).then(() => undefined);
+				init,
+			}).then(() => undefined)
 		},
 		unlove: (params, init) => {
-			const sk = resolveSessionKeyForTrackMutation(config, params.sk, 'unlove');
+			const sk = resolveSessionKeyForTrackMutation(config, params.sk, 'unlove')
 			return signedPost(config, 'track.unlove', {
 				params: { artist: params.artist, track: params.track, sk },
-				init
-			}).then(() => undefined);
+				init,
+			}).then(() => undefined)
 		},
 		updateNowPlaying: (params, init) => {
-			const sk = resolveSessionKeyForNowPlaying(config, params.sk);
+			const sk = resolveSessionKeyForNowPlaying(config, params.sk)
 			return signedPost<TrackUpdateNowPlayingResponse>(config, 'track.updateNowPlaying', {
 				params: {
 					artist: params.artist,
@@ -354,10 +322,10 @@ export function createTrackService(config: LastFmConfig): TrackService {
 					mbid: params.mbid,
 					duration: params.duration,
 					albumArtist: params.albumArtist,
-					sk
+					sk,
 				},
-				init
-			});
-		}
-	};
+				init,
+			})
+		},
+	}
 }

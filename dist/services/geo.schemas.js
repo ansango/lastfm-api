@@ -1,9 +1,9 @@
-import { z } from "zod";
-import { artistNameSchema, countrySchema, durationSchema, imageSchema, itemsPerPageSchema, limitSchema, listenersSchema, locSchema, mbidSchema, pageSchema, rankSchema, totalPagesSchema, totalSchema, trackNameSchema, urlSchema } from "./schemas/index.js";
+import { z } from 'zod';
+import { artistNameSchema, countrySchema, durationSchema, imageSchema, itemsPerPageSchema, limitSchema, listenersSchema, locSchema, mbidSchema, pageSchema, rankSchema, totalPagesSchema, totalSchema, trackNameSchema, urlSchema, } from './schemas/index.js';
 export const geoGetTopArtistsRequestSchema = z.object({
     country: countrySchema,
     limit: limitSchema.optional(),
-    page: pageSchema.optional()
+    page: pageSchema.optional(),
 });
 export const geoGetTopArtistsResponseSchema = z.object({
     topartists: z.object({
@@ -12,22 +12,22 @@ export const geoGetTopArtistsResponseSchema = z.object({
             listeners: listenersSchema,
             mbid: mbidSchema,
             url: urlSchema,
-            image: z.array(imageSchema)
+            image: z.array(imageSchema),
         })),
-        "@attr": z.object({
+        '@attr': z.object({
             country: countrySchema,
             page: pageSchema,
             perPage: itemsPerPageSchema,
             totalPages: totalPagesSchema,
-            total: totalSchema
-        })
-    })
+            total: totalSchema,
+        }),
+    }),
 });
 export const geoGetTopTracksRequestSchema = z.object({
     country: countrySchema,
     location: locSchema.optional(),
     limit: limitSchema.optional(),
-    page: pageSchema.optional()
+    page: pageSchema.optional(),
 });
 export const geoGetTopTracksResponseSchema = z.object({
     tracks: z.object({
@@ -40,20 +40,20 @@ export const geoGetTopTracksResponseSchema = z.object({
             artist: z.object({
                 name: artistNameSchema,
                 mbid: mbidSchema,
-                url: urlSchema
+                url: urlSchema,
             }),
             image: z.array(imageSchema),
-            "@attr": z.object({
-                rank: rankSchema
-            })
+            '@attr': z.object({
+                rank: rankSchema,
+            }),
         })),
-        "@attr": z.object({
+        '@attr': z.object({
             country: countrySchema,
             page: pageSchema,
             perPage: itemsPerPageSchema,
             totalPages: totalPagesSchema,
-            total: totalSchema
-        })
-    })
+            total: totalSchema,
+        }),
+    }),
 });
 //# sourceMappingURL=geo.schemas.js.map

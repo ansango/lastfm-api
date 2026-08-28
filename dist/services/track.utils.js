@@ -23,7 +23,7 @@ export function buildScrobbleParams(config, { artist, track, album, timestamp, s
         artist,
         track,
         timestamp: String(timestamp),
-        sk: resolvedSk
+        sk: resolvedSk,
     };
     if (album)
         params.album = album;

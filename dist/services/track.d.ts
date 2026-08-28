@@ -1,5 +1,5 @@
-import type { BatchTracksScrobbleRequest, TrackAddTagsRequest, TrackGetCorrectionRequest, TrackGetCorrectionResponse, TrackGetInfoRequest, TrackGetInfoResponse, TrackLoveRequest, TrackRemoveTagRequest, TrackGetSimilarRequest, TrackGetSimilarResponse, TrackGetTagsRequest, TrackGetTagsResponse, TrackGetTopTagsRequest, TrackGetTopTagsResponse, TrackScrobbleRequest, TrackScrobbleResponse, TrackSearchRequest, TrackSearchResponse, TrackUpdateNowPlayingRequest, TrackUpdateNowPlayingResponse } from './track.schemas.js';
 import type { LastFmConfig } from '../config.js';
+import type { BatchTracksScrobbleRequest, TrackAddTagsRequest, TrackGetCorrectionRequest, TrackGetCorrectionResponse, TrackGetInfoRequest, TrackGetInfoResponse, TrackGetSimilarRequest, TrackGetSimilarResponse, TrackGetTagsRequest, TrackGetTagsResponse, TrackGetTopTagsRequest, TrackGetTopTagsResponse, TrackLoveRequest, TrackRemoveTagRequest, TrackScrobbleRequest, TrackScrobbleResponse, TrackSearchRequest, TrackSearchResponse, TrackUpdateNowPlayingRequest, TrackUpdateNowPlayingResponse } from './track.schemas.js';
 export interface TrackService {
     /**
      * Get the metadata for a track on Last.fm using the artist/track name or a musicbrainz id.

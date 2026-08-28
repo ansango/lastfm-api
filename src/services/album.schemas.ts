@@ -1,32 +1,32 @@
-import { z } from "zod";
+import { z } from 'zod'
 import {
-	tagNameSchema,
-	urlSchema,
-	artistNameSchema,
-	mbidSchema,
-	durationSchema,
-	nameSchema,
-	publishedSchema,
-	summarySchema,
-	contentSchema,
-	playcountSchema,
-	imageSchema,
 	albumNameSchema,
-	listenersSchema,
-	userNameSchema,
-	langSchema,
+	artistNameSchema,
+	contentSchema,
 	countSchema,
+	durationSchema,
+	forSchema,
+	imageSchema,
+	itemsPerPageSchema,
+	langSchema,
 	limitSchema,
+	listenersSchema,
+	mbidSchema,
+	nameSchema,
 	pageSchema,
-	textSchema,
+	playcountSchema,
+	publishedSchema,
 	roleSchema,
 	searchTermsSchema,
-	startPageSchema,
-	totalResultsSchema,
 	startIndexSchema,
-	itemsPerPageSchema,
-	forSchema,
-} from "./schemas/index.js";
+	startPageSchema,
+	summarySchema,
+	tagNameSchema,
+	textSchema,
+	totalResultsSchema,
+	urlSchema,
+	userNameSchema,
+} from './schemas/index.js'
 
 const albumTagSchema = z.object({
 	tag: z
@@ -35,7 +35,7 @@ const albumTagSchema = z.object({
 				z.object({
 					name: tagNameSchema,
 					url: urlSchema,
-				})
+				}),
 			),
 			z.object({
 				name: tagNameSchema,
@@ -43,13 +43,13 @@ const albumTagSchema = z.object({
 			}),
 		])
 		.optional(),
-});
+})
 
 const albumTrackArtistSchema = z.object({
 	name: artistNameSchema,
 	mbid: mbidSchema,
 	url: urlSchema,
-});
+})
 
 const albumTrackSchema = z.object({
 	track: z.array(
@@ -58,15 +58,15 @@ const albumTrackSchema = z.object({
 			name: nameSchema,
 			url: urlSchema,
 			artist: albumTrackArtistSchema,
-		})
+		}),
 	),
-});
+})
 
 const albumWikiSchema = z.object({
 	published: publishedSchema,
 	summary: summarySchema,
 	content: contentSchema,
-});
+})
 
 /**
  * Album
@@ -84,7 +84,7 @@ export const albumSchema = z.object({
 	listeners: listenersSchema,
 	wiki: albumWikiSchema,
 	userplaycount: playcountSchema.optional(),
-});
+})
 
 export const albumGetInfoRequestSchema = z.object({
 	artist: artistNameSchema,
@@ -92,18 +92,18 @@ export const albumGetInfoRequestSchema = z.object({
 	mbid: mbidSchema.optional(),
 	username: userNameSchema.optional(),
 	lang: langSchema.optional(),
-});
+})
 
 export const albumGetInfoResponseSchema = z.object({
 	album: albumSchema,
-});
+})
 
 export const albumGetTagsRequestSchema = z.object({
 	artist: artistNameSchema,
 	album: albumNameSchema,
 	mbid: mbidSchema.optional(),
 	user: userNameSchema,
-});
+})
 
 export const albumGetTagsResponseSchema = z.object({
 	tags: z.object({
@@ -111,20 +111,20 @@ export const albumGetTagsResponseSchema = z.object({
 			z.object({
 				name: tagNameSchema,
 				url: urlSchema,
-			})
+			}),
 		),
 	}),
-	"@attr": z.object({
+	'@attr': z.object({
 		album: albumNameSchema,
 		artist: artistNameSchema,
 	}),
-});
+})
 
 export const albumGetTopTagsRequestSchema = z.object({
 	artist: artistNameSchema,
 	album: albumNameSchema,
 	mbid: mbidSchema.optional(),
-});
+})
 
 export const albumGetTopTagsResponseSchema = z.object({
 	tags: z.object({
@@ -133,32 +133,32 @@ export const albumGetTopTagsResponseSchema = z.object({
 				name: tagNameSchema,
 				url: urlSchema,
 				count: countSchema,
-			})
+			}),
 		),
 	}),
-	"@attr": z.object({
+	'@attr': z.object({
 		album: albumNameSchema,
 		artist: artistNameSchema,
 	}),
-});
+})
 
 export const albumSearchRequestSchema = z.object({
 	album: albumNameSchema,
 	limit: limitSchema.optional(),
 	page: pageSchema.optional(),
-});
+})
 
 export const albumSearchResponseSchema = z.object({
 	results: z.object({
-		"opensearch:Query": z.object({
-			"#text": textSchema,
+		'opensearch:Query': z.object({
+			'#text': textSchema,
 			role: roleSchema,
 			searchTerms: searchTermsSchema,
 			startPage: startPageSchema,
 		}),
-		"opensearch:totalResults": totalResultsSchema,
-		"opensearch:startIndex": startIndexSchema,
-		"opensearch:itemsPerPage": itemsPerPageSchema,
+		'opensearch:totalResults': totalResultsSchema,
+		'opensearch:startIndex': startIndexSchema,
+		'opensearch:itemsPerPage': itemsPerPageSchema,
 		albummatches: z.object({
 			album: z.array(
 				z.object({
@@ -167,14 +167,14 @@ export const albumSearchResponseSchema = z.object({
 					url: urlSchema,
 					image: z.array(imageSchema),
 					mbid: mbidSchema,
-				})
+				}),
 			),
 		}),
-		"@attr": z.object({
+		'@attr': z.object({
 			for: forSchema,
 		}),
 	}),
-});
+})
 
 /**
  * Maximum number of tags accepted by `album.addTags` per the Last.fm
@@ -182,7 +182,7 @@ export const albumSearchResponseSchema = z.object({
  * specifically, but it matches the documented `track.addTags` /
  * `artist.addTags` cap.
  */
-export const MAX_ALBUM_TAGS_PER_ADD = 10;
+export const MAX_ALBUM_TAGS_PER_ADD = 10
 
 /**
  * Request shape for `album.addTags`. The `tags` array is sent on the
@@ -191,13 +191,13 @@ export const MAX_ALBUM_TAGS_PER_ADD = 10;
  * https://www.last.fm/api/show/album.addTags
  */
 export const albumAddTagsRequestSchema = z.object({
-    artist: artistNameSchema,
-    album: albumNameSchema,
-    tags: z.array(tagNameSchema).max(MAX_ALBUM_TAGS_PER_ADD, {
-        message: `album.addTags accepts at most ${MAX_ALBUM_TAGS_PER_ADD} tags per request`
-    }),
-    sk: z.string().optional()
-});
+	artist: artistNameSchema,
+	album: albumNameSchema,
+	tags: z.array(tagNameSchema).max(MAX_ALBUM_TAGS_PER_ADD, {
+		message: `album.addTags accepts at most ${MAX_ALBUM_TAGS_PER_ADD} tags per request`,
+	}),
+	sk: z.string().optional(),
+})
 
 /**
  * Request shape for `album.removeTag`. A single tag is removed per
@@ -205,29 +205,29 @@ export const albumAddTagsRequestSchema = z.object({
  * https://www.last.fm/api/show/album.removeTag
  */
 export const albumRemoveTagRequestSchema = z.object({
-    artist: artistNameSchema,
-    album: albumNameSchema,
-    tag: tagNameSchema,
-    sk: z.string().optional()
-});
+	artist: artistNameSchema,
+	album: albumNameSchema,
+	tag: tagNameSchema,
+	sk: z.string().optional(),
+})
 
 /**
  * Empty success payload for the void tag-mutation methods. The Last.fm
  * response has no useful domain content, so the schema accepts any
  * shape and we expose the inferred type as `void` at the call site.
  */
-export const albumTagMutationResponseSchema = z.unknown();
+export const albumTagMutationResponseSchema = z.unknown()
 
 // Inferred types
-export type Album = z.infer<typeof albumSchema>;
-export type AlbumGetInfoRequest = z.infer<typeof albumGetInfoRequestSchema>;
-export type AlbumGetInfoResponse = z.infer<typeof albumGetInfoResponseSchema>;
-export type AlbumGetTagsRequest = z.infer<typeof albumGetTagsRequestSchema>;
-export type AlbumGetTagsResponse = z.infer<typeof albumGetTagsResponseSchema>;
-export type AlbumGetTopTagsRequest = z.infer<typeof albumGetTopTagsRequestSchema>;
-export type AlbumGetTopTagsResponse = z.infer<typeof albumGetTopTagsResponseSchema>;
-export type AlbumSearchRequest = z.infer<typeof albumSearchRequestSchema>;
-export type AlbumSearchResponse = z.infer<typeof albumSearchResponseSchema>;
-export type AlbumAddTagsRequest = z.infer<typeof albumAddTagsRequestSchema>;
-export type AlbumRemoveTagRequest = z.infer<typeof albumRemoveTagRequestSchema>;
-export type AlbumTagMutationResponse = z.infer<typeof albumTagMutationResponseSchema>;
+export type Album = z.infer<typeof albumSchema>
+export type AlbumGetInfoRequest = z.infer<typeof albumGetInfoRequestSchema>
+export type AlbumGetInfoResponse = z.infer<typeof albumGetInfoResponseSchema>
+export type AlbumGetTagsRequest = z.infer<typeof albumGetTagsRequestSchema>
+export type AlbumGetTagsResponse = z.infer<typeof albumGetTagsResponseSchema>
+export type AlbumGetTopTagsRequest = z.infer<typeof albumGetTopTagsRequestSchema>
+export type AlbumGetTopTagsResponse = z.infer<typeof albumGetTopTagsResponseSchema>
+export type AlbumSearchRequest = z.infer<typeof albumSearchRequestSchema>
+export type AlbumSearchResponse = z.infer<typeof albumSearchResponseSchema>
+export type AlbumAddTagsRequest = z.infer<typeof albumAddTagsRequestSchema>
+export type AlbumRemoveTagRequest = z.infer<typeof albumRemoveTagRequestSchema>
+export type AlbumTagMutationResponse = z.infer<typeof albumTagMutationResponseSchema>

@@ -7,14 +7,13 @@
  * method. Signing and Last.fm transport are handled inside the package
  * itself; the tool only routes the call.
  */
-import { createRoute, type RouteConfig } from '@hono/zod-openapi';
-import type { Context } from 'hono';
-import { z } from 'zod';
+import { createRoute, type RouteConfig } from '@hono/zod-openapi'
+import type { Context } from 'hono'
+import { z } from 'zod'
+import type { LastFmClient } from '../../../src/client.js'
+import type { MethodMeta } from '../../../src/method-registry.js'
 
-import type { MethodMeta } from '../../../src/method-registry.js';
-import type { LastFmClient } from '../../../src/client.js';
-
-const ERROR_SCHEMA = z.object({ message: z.string() }).openapi('LastFmError');
+const ERROR_SCHEMA = z.object({ message: z.string() }).openapi('LastFmError')
 
 /**
  * Optional session-key header, surfaced in the OpenAPI spec for every
@@ -28,10 +27,10 @@ const SESSION_KEY_HEADER = z
 			.string()
 			.optional()
 			.describe(
-				'Session key returned by `auth.getMobileSession`. Required for write methods. Not persisted — pass it on every request.'
-			)
+				'Session key returned by `auth.getMobileSession`. Required for write methods. Not persisted — pass it on every request.',
+			),
 	})
-	.openapi('LastFmSessionKeyHeader');
+	.openapi('LastFmSessionKeyHeader')
 
 /**
  * Convert a method name like `getTopTags` to a path-friendly segment
@@ -39,7 +38,7 @@ const SESSION_KEY_HEADER = z
  * naturally (`/track/get-top-tags` instead of `/track/getTopTags`).
  */
 function kebab(name: string): string {
-	return name.replace(/[A-Z]/g, (c) => `-${c.toLowerCase()}`);
+	return name.replace(/[A-Z]/g, (c) => `-${c.toLowerCase()}`)
 }
 
 /**
@@ -48,23 +47,20 @@ function kebab(name: string): string {
  * wants a narrower `ZodObject | ZodPipe` so we cast at the boundary.
  * Runtime validation is unchanged.
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function buildRoute(meta: MethodMeta): RouteConfig {
-	const path = `/${meta.ns}/${kebab(meta.name)}`;
-	const tag = meta.ns;
-	const schema = meta.schema as any;
-	const response = meta.response as any;
+	const path = `/${meta.ns}/${kebab(meta.name)}`
+	const tag = meta.ns
+	const schema = meta.schema as any
+	const response = meta.response as any
 
 	const request: Record<string, unknown> =
-		meta.bodyKind === 'json'
-			? { body: { content: { 'application/json': { schema } } } }
-			: { query: schema };
+		meta.bodyKind === 'json' ? { body: { content: { 'application/json': { schema } } } } : { query: schema }
 
 	// Surface the session-key header for write methods so Scalar's
 	// "Try it" form has an input for it. Read methods (no sk) skip this
 	// to keep the form clean.
 	if (meta.requiresSession) {
-		request['headers'] = SESSION_KEY_HEADER;
+		request.headers = SESSION_KEY_HEADER
 	}
 
 	return createRoute({
@@ -78,18 +74,18 @@ export function buildRoute(meta: MethodMeta): RouteConfig {
 		responses: {
 			200: {
 				description: 'Last.fm response (validated against the Zod response schema)',
-				content: { 'application/json': { schema: response } }
+				content: { 'application/json': { schema: response } },
 			},
 			400: {
 				description: 'Invalid request parameters (Zod validation failed)',
-				content: { 'application/json': { schema: ERROR_SCHEMA } }
+				content: { 'application/json': { schema: ERROR_SCHEMA } },
 			},
 			500: {
 				description: 'Last.fm error envelope or transport failure',
-				content: { 'application/json': { schema: ERROR_SCHEMA } }
-			}
-		}
-	});
+				content: { 'application/json': { schema: ERROR_SCHEMA } },
+			},
+		},
+	})
 }
 
 /**
@@ -98,7 +94,6 @@ export function buildRoute(meta: MethodMeta): RouteConfig {
  * request shape; the `bodyKind` discriminator selects the right
  * `c.req.valid(...)` target at runtime.
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function buildHandler(meta: MethodMeta, client: LastFmClient): any {
 	return async (c: Context) => {
 		// Hono's `valid()` takes a target key ('json' or 'query'). The
@@ -106,21 +101,18 @@ export function buildHandler(meta: MethodMeta, client: LastFmClient): any {
 		// `c.req` to bypass the route-inferred narrowing — the runtime
 		// check is correct, but TypeScript can't know the right key from
 		// a generic Context.
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		const req = c.req as any;
-		const params = (
-			meta.bodyKind === 'json' ? req.valid('json') : req.valid('query')
-		) as Record<string, unknown>;
+		const req = c.req as any
+		const params = (meta.bodyKind === 'json' ? req.valid('json') : req.valid('query')) as Record<string, unknown>
 
 		// Resolve the session key from the per-request `x-lastfm-sk`
 		// header (preferred), the request body, or the `LASTFM_SESSION_KEY`
 		// env var. Header wins because it's the only path Scalar's
 		// "Try it" form exposes for `sk` without restarting the tool.
 		// The tool never writes the key to disk.
-		const headerSk = (c.req.header('x-lastfm-sk') ?? '').trim();
-		const bodySk = typeof params['sk'] === 'string' ? (params['sk'] as string).trim() : '';
-		const envSk = (process.env['LASTFM_SESSION_KEY'] ?? '').trim();
-		const sk = headerSk || bodySk || envSk || undefined;
+		const headerSk = (c.req.header('x-lastfm-sk') ?? '').trim()
+		const bodySk = typeof params.sk === 'string' ? (params.sk as string).trim() : ''
+		const envSk = (process.env.LASTFM_SESSION_KEY ?? '').trim()
+		const sk = headerSk || bodySk || envSk || undefined
 
 		// Invoke the package method via the env-derived client. The
 		// package internally handles api_key, sharedSecret and sk —
@@ -128,16 +120,16 @@ export function buildHandler(meta: MethodMeta, client: LastFmClient): any {
 		// still works because createClient sets it as `sessionKey` on
 		// the config, but signedPost will throw if it's missing.
 		try {
-			const fn = meta.resolve(client);
+			const fn = meta.resolve(client)
 			// Build the params object with sk folded in for write methods
 			// (the package reads sk from the per-call config, not the
 			// method params). For read methods sk is ignored.
-			const callParams = meta.requiresSession ? { ...params, sk } : params;
-			const result = await fn(callParams, undefined);
-			return c.json(result, 200);
+			const callParams = meta.requiresSession ? { ...params, sk } : params
+			const result = await fn(callParams, undefined)
+			return c.json(result, 200)
 		} catch (err) {
-			const message = err instanceof Error ? err.message : 'Unknown error';
-			return c.json({ message }, 500);
+			const message = err instanceof Error ? err.message : 'Unknown error'
+			return c.json({ message }, 500)
 		}
-	};
+	}
 }

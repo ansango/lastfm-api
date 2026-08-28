@@ -83,8 +83,8 @@ export const CANONICAL_METHODS = [
 	// auth (3)
 	'auth.getSession',
 	'auth.getToken',
-	'auth.getMobileSession'
-] as const;
+	'auth.getMobileSession',
+] as const
 
-export type CanonicalMethodId = (typeof CANONICAL_METHODS)[number];
-export type Namespace = CanonicalMethodId extends `${infer N}.${string}` ? N : never;
+export type CanonicalMethodId = (typeof CANONICAL_METHODS)[number]
+export type Namespace = CanonicalMethodId extends `${infer N}.${string}` ? N : never

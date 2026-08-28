@@ -1,4 +1,4 @@
-import { fetcher, buildUrl, signedPost, LastFmApiError } from '../utils.js';
+import { buildUrl, fetcher, LastFmApiError, signedPost } from '../utils.js';
 function resolveSessionKeyForTagMutation(config, requestSk, action) {
     const sk = requestSk ?? config.sessionKey;
     if (!sk) {
@@ -14,9 +14,9 @@ export function createAlbumService(config) {
                 artist: params.artist,
                 album: params.album,
                 tags: params.tags.join(','),
-                sk
+                sk,
             },
-            init
+            init,
         }).then(() => undefined);
     };
     const removeTagImpl = (params, init) => {
@@ -26,9 +26,9 @@ export function createAlbumService(config) {
                 artist: params.artist,
                 album: params.album,
                 tag: params.tag,
-                sk
+                sk,
             },
-            init
+            init,
         }).then(() => undefined);
     };
     return {
@@ -37,7 +37,7 @@ export function createAlbumService(config) {
         getTopTags: (params, init) => fetcher(buildUrl(config, 'album.getTopTags', params), init),
         search: (params, init) => fetcher(buildUrl(config, 'album.search', params), init),
         addTags: addTagsImpl,
-        removeTag: removeTagImpl
+        removeTag: removeTagImpl,
     };
 }
 //# sourceMappingURL=album.js.map
