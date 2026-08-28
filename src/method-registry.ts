@@ -39,6 +39,7 @@ import * as tagSchemas from './core/schemas/tag.schemas.js'
 import * as trackSchemas from './core/schemas/track.schemas.js'
 import * as userSchemas from './core/schemas/user.schemas.js'
 import * as insightsSchemas from './insights/schemas.js'
+import * as reportsSchemas from './reports/schemas.js'
 
 // -- Types ----------------------------------------------------------------
 
@@ -178,6 +179,12 @@ const NS_CONFIG: Readonly<Record<string, NamespaceConfig>> = {
 		kind: 'insights',
 		group: 'Insights & Analytics Engine',
 	},
+	reports: {
+		methods: REGISTRY_PROBE.reports as unknown as ServiceMethods,
+		schemas: reportsSchemas,
+		kind: 'extension',
+		group: 'Reports & Wrapped',
+	},
 }
 
 const NS_DEFAULTS: Readonly<
@@ -193,6 +200,7 @@ const NS_DEFAULTS: Readonly<
 	library: { httpMethod: 'GET', bodyKind: 'query', requiresSession: false, requiresSignature: false },
 	auth: { httpMethod: 'GET', bodyKind: 'query', requiresSession: false, requiresSignature: true },
 	insights: { httpMethod: 'GET', bodyKind: 'query', requiresSession: false, requiresSignature: false },
+	reports: { httpMethod: 'GET', bodyKind: 'query', requiresSession: false, requiresSignature: false },
 }
 
 /**
@@ -322,6 +330,20 @@ const SPECIAL: Readonly<
 		description:
 			'Compares 3 to 10 users simultaneously, computing pairwise Jaccard compatibility, consensus artists heard across the group, and identifying taste anchors and outliers.',
 	},
+	'reports.getWrapped': {
+		summary: 'reports.getWrapped (@ansango/lastfm-api)',
+		description:
+			'Generates a comprehensive Year in Review / Wrapped report including seasonal listening breakdown, top entities, and busiest day.',
+	},
+	'reports.getMilestones': {
+		summary: 'reports.getMilestones (@ansango/lastfm-api)',
+		description:
+			'Detects historical scrobble milestone achievements and projects the estimated date for the next target.',
+	},
+	'reports.getMonthlyDigest': {
+		summary: 'reports.getMonthlyDigest (@ansango/lastfm-api)',
+		description: 'Generates a monthly digest bulletin comparing listening activity to the previous month.',
+	},
 }
 
 // -- Builder -------------------------------------------------------------
@@ -416,7 +438,9 @@ export const INSIGHTS_METHODS = [
 	'insights.compareTasteGroup',
 ] as const
 
-export const ALL_REGISTRY_METHODS = [...CANONICAL_METHODS, ...INSIGHTS_METHODS] as const
+export const REPORTS_METHODS = ['reports.getWrapped', 'reports.getMilestones', 'reports.getMonthlyDigest'] as const
+
+export const ALL_REGISTRY_METHODS = [...CANONICAL_METHODS, ...INSIGHTS_METHODS, ...REPORTS_METHODS] as const
 
 const registry: Record<string, Record<string, MethodMeta>> = {}
 for (const id of ALL_REGISTRY_METHODS) {

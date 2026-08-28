@@ -20,6 +20,9 @@ export * from './core/services/index.js'
 export type * from './insights/index.js'
 // Insights service & schemas
 export * from './insights/index.js'
+export type * from './reports/index.js'
+// Reports service & schemas
+export * from './reports/index.js'
 
 // Utilities
 export { buildAuthUrl, buildUrl, fetcher, generateSignature, LastFmApiError, parseLastFmResponse } from './utils.js'
