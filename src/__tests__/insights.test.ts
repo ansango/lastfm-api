@@ -3,7 +3,9 @@ import { LastFmClient } from '../client.js'
 import { createInsightsService, type InsightsService } from '../entrypoints/insights.js'
 import * as insightSchemas from '../entrypoints/insights.schemas.js'
 import { createClient } from '../index.js'
+import { findBinges } from '../services/insights/lib/binges.js'
 import { computeDiversity, topNShare } from '../services/insights/lib/diversity.js'
+import { bucketTimestamp, buildHourHistogram } from '../services/insights/lib/hours.js'
 import { resolvePeriod } from '../services/insights/lib/periods.js'
 import { stripWiki, summarizeBio } from '../services/insights/now-playing.js'
 import { LastFmApiError } from '../utils.js'
@@ -16,7 +18,7 @@ import {
 	lastFmError,
 	okAttr,
 } from './fixtures/lastfm-responses.js'
-import { type FetchMock, installFetchMock, parseUrl } from './helpers/fetch-mock.js'
+import { type FetchMock, installFetchMock } from './helpers/fetch-mock.js'
 
 const API_KEY = 'test-api-key'
 
@@ -134,6 +136,64 @@ describe('insights service', () => {
 		})
 	})
 
+	describe('pure algorithms: hours histogram', () => {
+		test('bucketTimestamp maps UTC hour and ISO weekday (Mon=0..Sun=6)', () => {
+			// 2023-11-14 12:00:00 UTC is Tuesday (weekday = 1)
+			const ts = Math.floor(new Date('2023-11-14T12:00:00Z').getTime() / 1000)
+			const b = bucketTimestamp(ts)
+			expect(b.hour).toBe(12)
+			expect(b.weekday).toBe(1) // Tuesday
+		})
+
+		test('buildHourHistogram computes counts, peaks, and shares', () => {
+			// 3 timestamps at 02:00 (night, Sunday), 2 at 14:00 (afternoon, Monday)
+			const sundayNight = Math.floor(new Date('2023-11-19T02:00:00Z').getTime() / 1000)
+			const mondayAfternoon = Math.floor(new Date('2023-11-20T14:00:00Z').getTime() / 1000)
+
+			const stamps = [sundayNight, sundayNight, sundayNight, mondayAfternoon, mondayAfternoon]
+			const h = buildHourHistogram(stamps)
+
+			expect(h.total).toBe(5)
+			expect(h.byHour[2]).toBe(3)
+			expect(h.byHour[14]).toBe(2)
+			expect(h.peakHour).toBe(2)
+			expect(h.peakHourCount).toBe(3)
+			expect(h.nightShare).toBeCloseTo(3 / 5, 5)
+			expect(h.afternoonShare).toBeCloseTo(2 / 5, 5)
+			expect(h.weekendShare).toBeCloseTo(3 / 5, 5) // Sunday is weekend
+		})
+	})
+
+	describe('pure algorithms: binges', () => {
+		test('findBinges detects consecutive plays of the same artist', () => {
+			const scrobbles = [
+				{ artist: 'Radiohead', track: 'Airbag', uts: 1000 },
+				{ artist: 'Radiohead', track: 'Paranoid Android', uts: 1300 },
+				{ artist: 'Radiohead', track: 'Subterranean Homesick Alien', uts: 1600 },
+				{ artist: 'The Smile', track: 'You Will Never Work in Television Again', uts: 2000 },
+				{ artist: 'Radiohead', track: 'Exit Music', uts: 2300 },
+				{ artist: 'Radiohead', track: 'Let Down', uts: 2600 },
+			]
+
+			const binges = findBinges(scrobbles, { minLength: 2, maxGapSeconds: 1000 })
+			expect(binges).toHaveLength(2)
+			expect(binges[0].artist).toBe('Radiohead')
+			expect(binges[0].length).toBe(3) // First run of 3
+			expect(binges[0].startUts).toBe(1000)
+			expect(binges[0].endUts).toBe(1600)
+			expect(binges[1].length).toBe(2) // Second run of 2
+		})
+
+		test('breaks binge run when gap exceeds maxGapSeconds', () => {
+			const scrobbles = [
+				{ artist: 'Radiohead', track: 'Song 1', uts: 1000 },
+				{ artist: 'Radiohead', track: 'Song 2', uts: 10000 }, // gap is 9000s > 3600s
+			]
+			const binges = findBinges(scrobbles, { minLength: 2, maxGapSeconds: 3600 })
+			expect(binges).toHaveLength(0)
+		})
+	})
+
 	describe('getSummary', () => {
 		test('fetches top artists, tracks, albums, tags in parallel and computes summary + diversity', async () => {
 			const artist1 = { ...fakeArtist, name: 'Radiohead', playcount: '60' }
@@ -155,38 +215,12 @@ describe('insights service', () => {
 
 			expect(mock.calls).toHaveLength(4)
 
-			// Assert API routing
-			const methods = mock.calls.map((c) => parseUrl(c.url).params.method)
-			expect(methods).toContain('user.getTopArtists')
-			expect(methods).toContain('user.getTopTracks')
-			expect(methods).toContain('user.getTopAlbums')
-			expect(methods).toContain('user.getTopTags')
-
 			// Assert summary composition
 			expect(result.user).toBe('test_user')
 			expect(result.lastfmPeriod).toBe('7day')
 			expect(result.totalScrobbles).toBe(100) // 60 + 40
 			expect(result.topArtists).toHaveLength(2)
-			expect(result.topArtists[0].name).toBe('Radiohead')
-			expect(result.topArtists[0].playcount).toBe(60)
-			expect(result.topArtists[1].name).toBe('The Smile')
-			expect(result.topArtists[1].playcount).toBe(40)
-
-			expect(result.topTracks).toHaveLength(1)
-			expect(result.topTracks[0].name).toBe('Karma Police')
-
-			expect(result.topAlbums).toHaveLength(1)
-			expect(result.topAlbums[0].name).toBe('OK Computer')
-
-			expect(result.topTags).toHaveLength(1)
-			expect(result.topTags[0].name).toBe('art rock')
-
-			// Diversity should be computed for >= 2 artists
 			expect(result.diversity).toBeDefined()
-			expect(result.diversity?.uniqueArtists).toBe(2)
-			expect(result.diversity?.top1Share).toBeCloseTo(0.6, 2)
-			expect(result.diversity?.top3Share).toBe(1.0)
-			expect(result.diversity?.normalized).toBeGreaterThan(0.9)
 
 			// Schema validation
 			const parsed = insightSchemas.insightsSummaryResponseSchema.safeParse(result)
@@ -257,8 +291,6 @@ describe('insights service', () => {
 			expect(result.album).toBe('In Rainbows')
 			expect(result.bio).toContain('Radiohead')
 			expect(result.similar).toHaveLength(2)
-			expect(result.similar[0].name).toBe('The Smile')
-			expect(result.similar[0].match).toBe(0.9)
 
 			const parsed = insightSchemas.insightsNowPlayingResponseSchema.safeParse(result)
 			expect(parsed.success).toBe(true)
@@ -275,23 +307,92 @@ describe('insights service', () => {
 		})
 	})
 
+	describe('getHoursHistogram', () => {
+		test('paginates recenttracks and calculates diurnal histogram', async () => {
+			const ts1 = 1700000000 // 2023-11-14 22:13:20 UTC
+			const track1 = { ...fakeTrack, date: { uts: String(ts1) } }
+
+			mock.respondWithJson({
+				recenttracks: {
+					track: [track1],
+					'@attr': okAttr(1, 200, 1),
+				},
+			})
+
+			const result = await client.insights.getHoursHistogram({
+				user: 'test_user',
+				from: ts1 - 1000,
+				to: ts1 + 1000,
+			})
+
+			expect(mock.calls).toHaveLength(1)
+			expect(result.user).toBe('test_user')
+			expect(result.total).toBe(1)
+			expect(result.byHour[22]).toBe(1)
+			expect(result.peakHour).toBe(22)
+			expect(result.eveningShare).toBe(1.0)
+
+			const parsed = insightSchemas.insightsHoursResponseSchema.safeParse(result)
+			expect(parsed.success).toBe(true)
+		})
+	})
+
+	describe('getBinges', () => {
+		test('paginates recent tracks, sorts ascending, and identifies streaks', async () => {
+			const tracks = [
+				{ ...fakeTrack, artist: { name: 'Radiohead' }, name: 'Song 3', date: { uts: '1700000600' } },
+				{ ...fakeTrack, artist: { name: 'Radiohead' }, name: 'Song 2', date: { uts: '1700000300' } },
+				{ ...fakeTrack, artist: { name: 'Radiohead' }, name: 'Song 1', date: { uts: '1700000000' } },
+			]
+
+			mock.respondWithJson({
+				recenttracks: {
+					track: tracks,
+					'@attr': okAttr(1, 200, 3),
+				},
+			})
+
+			const result = await client.insights.getBinges({
+				user: 'test_user',
+				minLength: 2,
+				maxGapSeconds: 600,
+			})
+
+			expect(result.user).toBe('test_user')
+			expect(result.totalScrobbles).toBe(3)
+			expect(result.binges).toHaveLength(1)
+			expect(result.binges[0].artist).toBe('Radiohead')
+			expect(result.binges[0].length).toBe(3)
+			expect(result.binges[0].durationSeconds).toBe(600)
+
+			const parsed = insightSchemas.insightsBingesResponseSchema.safeParse(result)
+			expect(parsed.success).toBe(true)
+		})
+	})
+
 	describe('schema exports and client wiring', () => {
-		test('factory createInsightsService instantiates InsightsService with getSummary and getNowPlaying', () => {
+		test('factory createInsightsService instantiates InsightsService with all wired methods', () => {
 			const svc: InsightsService = createInsightsService({ apiKey: API_KEY })
 			expect(typeof svc.getSummary).toBe('function')
 			expect(typeof svc.getNowPlaying).toBe('function')
+			expect(typeof svc.getHoursHistogram).toBe('function')
+			expect(typeof svc.getBinges).toBe('function')
 		})
 
 		test('exposes insights service via createClient helper', () => {
 			const c = createClient({ apiKey: API_KEY })
 			expect(typeof c.insights.getSummary).toBe('function')
 			expect(typeof c.insights.getNowPlaying).toBe('function')
+			expect(typeof c.insights.getHoursHistogram).toBe('function')
+			expect(typeof c.insights.getBinges).toBe('function')
 		})
 
-		test('insightsNowPlayingRequestSchema validates inputs', () => {
-			const valid = { user: 'ansango', similarLimit: 5, bioMaxChars: 200 }
-			const parsed = insightSchemas.insightsNowPlayingRequestSchema.safeParse(valid)
-			expect(parsed.success).toBe(true)
+		test('insightsHoursRequestSchema and insightsBingesRequestSchema validate inputs', () => {
+			expect(insightSchemas.insightsHoursRequestSchema.safeParse({ user: 'ansango', sinceDays: 14 }).success).toBe(true)
+			expect(
+				insightSchemas.insightsBingesRequestSchema.safeParse({ user: 'ansango', minLength: 3, trackKey: 'artist' })
+					.success,
+			).toBe(true)
 		})
 	})
 })

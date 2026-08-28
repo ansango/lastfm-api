@@ -1,7 +1,13 @@
 import type { LastFmConfig } from '../config.js'
+import { getBinges } from './insights/binges.js'
+import { getHoursHistogram } from './insights/hours.js'
 import { getNowPlaying } from './insights/now-playing.js'
 import { getSummary } from './insights/summary.js'
 import type {
+	InsightsBingesRequest,
+	InsightsBingesResponse,
+	InsightsHoursRequest,
+	InsightsHoursResponse,
 	InsightsNowPlayingRequest,
 	InsightsNowPlayingResponse,
 	InsightsSummaryRequest,
@@ -34,6 +40,26 @@ export interface InsightsService {
 	 * @returns {Promise<InsightsNowPlayingResponse>}
 	 */
 	getNowPlaying: (params: InsightsNowPlayingRequest, init?: RequestInit) => Promise<InsightsNowPlayingResponse>
+
+	/**
+	 * Buckets a user's recent scrobbles by hour-of-day (0..23) and weekday (0..6),
+	 * calculating diurnal distribution and peak listening times.
+	 *
+	 * @param {InsightsHoursRequest} params
+	 * @param {RequestInit} [init]
+	 * @returns {Promise<InsightsHoursResponse>}
+	 */
+	getHoursHistogram: (params: InsightsHoursRequest, init?: RequestInit) => Promise<InsightsHoursResponse>
+
+	/**
+	 * Detects binge listening streaks (consecutive plays of the same artist or track)
+	 * across a user's recent scrobbles.
+	 *
+	 * @param {InsightsBingesRequest} params
+	 * @param {RequestInit} [init]
+	 * @returns {Promise<InsightsBingesResponse>}
+	 */
+	getBinges: (params: InsightsBingesRequest, init?: RequestInit) => Promise<InsightsBingesResponse>
 }
 
 /**
@@ -43,5 +69,7 @@ export function createInsightsService(config: LastFmConfig): InsightsService {
 	return {
 		getSummary: (params, init) => getSummary(config, params, init),
 		getNowPlaying: (params, init) => getNowPlaying(config, params, init),
+		getHoursHistogram: (params, init) => getHoursHistogram(config, params, init),
+		getBinges: (params, init) => getBinges(config, params, init),
 	}
 }
