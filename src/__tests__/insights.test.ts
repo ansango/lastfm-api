@@ -717,6 +717,66 @@ describe('insights service', () => {
 		})
 	})
 
+	describe('getForgottenFavorites', () => {
+		test('identifies historical top artists absent from recent listening', async () => {
+			const histArtists = [
+				{ ...fakeArtist, name: 'The Smiths', playcount: '350' },
+				{ ...fakeArtist, name: 'Radiohead', playcount: '300' },
+			]
+			const recentArtists = [{ ...fakeArtist, name: 'Radiohead', playcount: '25' }]
+
+			mock.respondWithJson({ topartists: { artist: histArtists, '@attr': okAttr() } })
+			mock.respondWithJson({ topartists: { artist: recentArtists, '@attr': okAttr() } })
+
+			const result = await client.insights.getForgottenFavorites({
+				user: 'test_user',
+				historicPeriod: '12month',
+				recentPeriod: '1month',
+			})
+
+			expect(mock.calls).toHaveLength(2)
+			expect(result.user).toBe('test_user')
+			expect(result.totalForgotten).toBe(1)
+			expect(result.forgottenArtists[0].name).toBe('The Smiths')
+			expect(result.forgottenArtists[0].historicPlaycount).toBe(350)
+			expect(result.forgottenArtists[0].historicRank).toBe(1)
+
+			const parsed = insightSchemas.insightsForgottenFavoritesResponseSchema.safeParse(result)
+			expect(parsed.success).toBe(true)
+		})
+	})
+
+	describe('getObsessions', () => {
+		test('detects high-density obsession window in recent track stream', async () => {
+			const tracks = [
+				{ ...fakeTrack, artist: { name: 'Fontaines D.C.' }, name: 'Starburster', date: { uts: '1700000000' } },
+				{ ...fakeTrack, artist: { name: 'Fontaines D.C.' }, name: 'Starburster', date: { uts: '1700000200' } },
+				{ ...fakeTrack, artist: { name: 'Fontaines D.C.' }, name: 'In The Modern World', date: { uts: '1700000400' } },
+				{ ...fakeTrack, artist: { name: 'Fontaines D.C.' }, name: 'Starburster', date: { uts: '1700000600' } },
+				{ ...fakeTrack, artist: { name: 'Other Band' }, name: 'Song X', date: { uts: '1700000800' } },
+			]
+
+			mock.respondWithJson({ recenttracks: { track: tracks, '@attr': okAttr(1, 200, 5) } })
+
+			const result = await client.insights.getObsessions({
+				user: 'test_user',
+				windowSize: 5,
+				thresholdRatio: 0.5,
+			})
+
+			expect(result.user).toBe('test_user')
+			expect(result.totalScrobblesInspected).toBe(5)
+			expect(result.obsessions).toHaveLength(1)
+			expect(result.obsessions[0].artist).toBe('Fontaines D.C.')
+			expect(result.obsessions[0].density).toBe(0.8)
+			expect(result.obsessions[0].track).toBe('Starburster')
+			expect(result.mostObsessiveArtist).toBe('Fontaines D.C.')
+
+			const parsed = insightSchemas.insightsObsessionsResponseSchema.safeParse(result)
+			expect(parsed.success).toBe(true)
+		})
+	})
+
 	describe('schema exports and client wiring', () => {
 		test('factory createInsightsService instantiates InsightsService with all wired methods', () => {
 			const svc: InsightsService = createInsightsService({ apiKey: API_KEY })
@@ -730,6 +790,8 @@ describe('insights service', () => {
 			expect(typeof svc.getPersonality).toBe('function')
 			expect(typeof svc.compareUsers).toBe('function')
 			expect(typeof svc.getObscurityScore).toBe('function')
+			expect(typeof svc.getForgottenFavorites).toBe('function')
+			expect(typeof svc.getObsessions).toBe('function')
 		})
 
 		test('exposes insights service via createClient helper', () => {
@@ -744,6 +806,8 @@ describe('insights service', () => {
 			expect(typeof c.insights.getPersonality).toBe('function')
 			expect(typeof c.insights.compareUsers).toBe('function')
 			expect(typeof c.insights.getObscurityScore).toBe('function')
+			expect(typeof c.insights.getForgottenFavorites).toBe('function')
+			expect(typeof c.insights.getObsessions).toBe('function')
 		})
 
 		test('insightsCompareRequestSchema validates inputs', () => {
@@ -755,6 +819,26 @@ describe('insights service', () => {
 		test('insightsObscurityRequestSchema validates inputs', () => {
 			expect(
 				insightSchemas.insightsObscurityRequestSchema.safeParse({ user: 'alice', period: '7day', limit: 20 }).success,
+			).toBe(true)
+		})
+
+		test('insightsForgottenFavoritesRequestSchema validates inputs', () => {
+			expect(
+				insightSchemas.insightsForgottenFavoritesRequestSchema.safeParse({
+					user: 'alice',
+					historicPeriod: '12month',
+					recentPeriod: '1month',
+				}).success,
+			).toBe(true)
+		})
+
+		test('insightsObsessionsRequestSchema validates inputs', () => {
+			expect(
+				insightSchemas.insightsObsessionsRequestSchema.safeParse({
+					user: 'alice',
+					thresholdRatio: 0.4,
+					windowSize: 25,
+				}).success,
 			).toBe(true)
 		})
 	})

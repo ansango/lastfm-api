@@ -363,6 +363,55 @@ export const insightsObscurityResponseSchema = z.object({
 	artists: z.array(insightObscureArtistSchema),
 })
 
+// Forgotten Favorites schemas
+export const insightForgottenArtistSchema = z.object({
+	name: artistNameSchema,
+	historicPlaycount: z.number().int().nonnegative(),
+	historicRank: z.number().int().positive(),
+	url: urlSchema.optional(),
+})
+
+export const insightsForgottenFavoritesRequestSchema = z.object({
+	user: userNameSchema,
+	historicPeriod: insightsPeriodSchema.optional(),
+	recentPeriod: insightsPeriodSchema.optional(),
+	limit: limitSchema.optional(),
+})
+
+export const insightsForgottenFavoritesResponseSchema = z.object({
+	user: userNameSchema,
+	historicPeriod: z.string(),
+	recentPeriod: z.string(),
+	totalForgotten: z.number().int().nonnegative(),
+	forgottenArtists: z.array(insightForgottenArtistSchema),
+})
+
+// Obsessions schemas
+export const insightObsessionEpisodeSchema = z.object({
+	artist: artistNameSchema,
+	track: trackNameSchema.optional(),
+	scrobbles: z.number().int().positive(),
+	totalInWindow: z.number().int().positive(),
+	density: z.number(),
+	startTime: z.number().int().positive(),
+	endTime: z.number().int().positive(),
+	durationHours: z.number(),
+})
+
+export const insightsObsessionsRequestSchema = z.object({
+	user: userNameSchema,
+	limit: limitSchema.optional(),
+	thresholdRatio: z.number().min(0.1).max(1).optional(),
+	windowSize: z.number().int().min(5).max(100).optional(),
+})
+
+export const insightsObsessionsResponseSchema = z.object({
+	user: userNameSchema,
+	totalScrobblesInspected: z.number().int().nonnegative(),
+	obsessions: z.array(insightObsessionEpisodeSchema),
+	mostObsessiveArtist: artistNameSchema.nullable(),
+})
+
 // Schema naming convention aliases for registry lookup
 export const insightsGetSummaryRequestSchema = insightsSummaryRequestSchema
 export const insightsGetSummaryResponseSchema = insightsSummaryResponseSchema
@@ -386,6 +435,10 @@ export const insightsGetCompareUsersRequestSchema = insightsCompareRequestSchema
 export const insightsGetCompareUsersResponseSchema = insightsCompareResponseSchema
 export const insightsGetObscurityScoreRequestSchema = insightsObscurityRequestSchema
 export const insightsGetObscurityScoreResponseSchema = insightsObscurityResponseSchema
+export const insightsGetForgottenFavoritesRequestSchema = insightsForgottenFavoritesRequestSchema
+export const insightsGetForgottenFavoritesResponseSchema = insightsForgottenFavoritesResponseSchema
+export const insightsGetObsessionsRequestSchema = insightsObsessionsRequestSchema
+export const insightsGetObsessionsResponseSchema = insightsObsessionsResponseSchema
 
 // Inferred types
 export type InsightsPeriod = z.infer<typeof insightsPeriodSchema>
@@ -443,3 +496,13 @@ export type InsightsObscurityRequest = z.infer<typeof insightsObscurityRequestSc
 export type InsightsObscurityResponse = z.infer<typeof insightsObscurityResponseSchema>
 export type InsightsGetObscurityScoreRequest = InsightsObscurityRequest
 export type InsightsGetObscurityScoreResponse = InsightsObscurityResponse
+export type InsightForgottenArtist = z.infer<typeof insightForgottenArtistSchema>
+export type InsightsForgottenFavoritesRequest = z.infer<typeof insightsForgottenFavoritesRequestSchema>
+export type InsightsForgottenFavoritesResponse = z.infer<typeof insightsForgottenFavoritesResponseSchema>
+export type InsightsGetForgottenFavoritesRequest = InsightsForgottenFavoritesRequest
+export type InsightsGetForgottenFavoritesResponse = InsightsForgottenFavoritesResponse
+export type InsightObsessionEpisode = z.infer<typeof insightObsessionEpisodeSchema>
+export type InsightsObsessionsRequest = z.infer<typeof insightsObsessionsRequestSchema>
+export type InsightsObsessionsResponse = z.infer<typeof insightsObsessionsResponseSchema>
+export type InsightsGetObsessionsRequest = InsightsObsessionsRequest
+export type InsightsGetObsessionsResponse = InsightsObsessionsResponse
