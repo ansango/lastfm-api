@@ -226,8 +226,12 @@ function buildMethodMeta(id: string): MethodMeta {
 	}
 }
 
+export const INSIGHTS_METHODS = ['insights.getSummary'] as const
+
+export const ALL_REGISTRY_METHODS = [...CANONICAL_METHODS, ...INSIGHTS_METHODS] as const
+
 const registry: Record<string, Record<string, MethodMeta>> = {}
-for (const id of CANONICAL_METHODS) {
+for (const id of ALL_REGISTRY_METHODS) {
 	const meta = buildMethodMeta(id)
 	let bucket = registry[meta.ns]
 	if (!bucket) {
