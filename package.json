@@ -82,6 +82,14 @@
 			"import": "./dist/entrypoints/auth.schemas.js",
 			"types": "./dist/entrypoints/auth.schemas.d.ts"
 		},
+		"./insights": {
+			"import": "./dist/entrypoints/insights.js",
+			"types": "./dist/entrypoints/insights.d.ts"
+		},
+		"./insights/schemas": {
+			"import": "./dist/entrypoints/insights.schemas.js",
+			"types": "./dist/entrypoints/insights.schemas.d.ts"
+		},
 		"./schemas": {
 			"import": "./dist/entrypoints/base.schemas.js",
 			"types": "./dist/entrypoints/base.schemas.d.ts"

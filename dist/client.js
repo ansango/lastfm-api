@@ -1,5 +1,5 @@
 import { createConfig, getGlobalConfig } from './config.js';
-import { createAlbumService, createArtistService, createAuthService, createChartService, createGeoService, createLibraryService, createTagService, createTrackService, createUserService, } from './services/index.js';
+import { createAlbumService, createArtistService, createAuthService, createChartService, createGeoService, createInsightsService, createLibraryService, createTagService, createTrackService, createUserService, } from './services/index.js';
 /**
  * Last.fm API Client
  *
@@ -29,6 +29,7 @@ export class LastFmClient {
     geo;
     library;
     auth;
+    insights;
     config;
     constructor(config) {
         this.config = config ? createConfig(config) : getGlobalConfig();
@@ -42,6 +43,7 @@ export class LastFmClient {
         this.geo = createGeoService(this.config);
         this.library = createLibraryService(this.config);
         this.auth = createAuthService(this.config);
+        this.insights = createInsightsService(this.config);
     }
     /**
      * Get the current configuration (read-only)

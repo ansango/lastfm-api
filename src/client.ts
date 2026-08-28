@@ -10,11 +10,13 @@ import {
 	createAuthService,
 	createChartService,
 	createGeoService,
+	createInsightsService,
 	createLibraryService,
 	createTagService,
 	createTrackService,
 	createUserService,
 	type GeoService,
+	type InsightsService,
 	type LibraryService,
 	type TagService,
 	type TrackService,
@@ -50,6 +52,7 @@ export class LastFmClient {
 	public readonly geo: GeoService
 	public readonly library: LibraryService
 	public readonly auth: AuthService
+	public readonly insights: InsightsService
 
 	private readonly config: LastFmConfig
 
@@ -66,6 +69,7 @@ export class LastFmClient {
 		this.geo = createGeoService(this.config)
 		this.library = createLibraryService(this.config)
 		this.auth = createAuthService(this.config)
+		this.insights = createInsightsService(this.config)
 	}
 
 	/**

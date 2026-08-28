@@ -87,8 +87,10 @@ jobs:
             await import('./dist/index.js');
             await import('./dist/entrypoints/artist.js');
             await import('./dist/entrypoints/track.js');
+            await import('./dist/entrypoints/insights.js');
             await import('./dist/entrypoints/artist.schemas.js');
             await import('./dist/entrypoints/track.schemas.js');
+            await import('./dist/entrypoints/insights.schemas.js');
             console.log('smoke: ok');
           })().catch((e) => { console.error(e); process.exit(1); });
           "

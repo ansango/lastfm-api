@@ -8,7 +8,8 @@ export * from './services/auth.schemas.js';
 export * from './services/chart.schemas.js';
 export * from './services/geo.schemas.js';
 // Servicios (para uso avanzado)
-export { createAlbumService, createArtistService, createAuthService, createChartService, createGeoService, createLibraryService, createTagService, createTrackService, createUserService, } from './services/index.js';
+export { createAlbumService, createArtistService, createAuthService, createChartService, createGeoService, createInsightsService, createLibraryService, createTagService, createTrackService, createUserService, } from './services/index.js';
+export * from './services/insights.schemas.js';
 export * from './services/library.schemas.js';
 export * from './services/schemas/index.js';
 export * from './services/tag.schemas.js';
