@@ -35,6 +35,7 @@ import * as artistSchemas from './services/artist.schemas.js'
 import * as authSchemas from './services/auth.schemas.js'
 import * as chartSchemas from './services/chart.schemas.js'
 import * as geoSchemas from './services/geo.schemas.js'
+import * as insightsSchemas from './services/insights.schemas.js'
 import * as librarySchemas from './services/library.schemas.js'
 import * as tagSchemas from './services/tag.schemas.js'
 import * as trackSchemas from './services/track.schemas.js'
@@ -116,6 +117,7 @@ const NS_CONFIG: Readonly<Record<string, NamespaceConfig>> = {
 	geo: { methods: REGISTRY_PROBE.geo as unknown as ServiceMethods, schemas: geoSchemas },
 	library: { methods: REGISTRY_PROBE.library as unknown as ServiceMethods, schemas: librarySchemas },
 	auth: { methods: REGISTRY_PROBE.auth as unknown as ServiceMethods, schemas: authSchemas },
+	insights: { methods: REGISTRY_PROBE.insights as unknown as ServiceMethods, schemas: insightsSchemas },
 }
 
 const NS_DEFAULTS: Readonly<
@@ -130,6 +132,7 @@ const NS_DEFAULTS: Readonly<
 	geo: { httpMethod: 'GET', bodyKind: 'query', requiresSession: false, requiresSignature: false },
 	library: { httpMethod: 'GET', bodyKind: 'query', requiresSession: false, requiresSignature: false },
 	auth: { httpMethod: 'GET', bodyKind: 'query', requiresSession: false, requiresSignature: true },
+	insights: { httpMethod: 'GET', bodyKind: 'query', requiresSession: false, requiresSignature: false },
 }
 
 /**

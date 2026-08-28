@@ -26,6 +26,7 @@ export type {
 	AuthService,
 	ChartService,
 	GeoService,
+	InsightsService,
 	LibraryService,
 	TagService,
 	TrackService,
@@ -38,11 +39,14 @@ export {
 	createAuthService,
 	createChartService,
 	createGeoService,
+	createInsightsService,
 	createLibraryService,
 	createTagService,
 	createTrackService,
 	createUserService,
 } from './services/index.js'
+export type * from './services/insights.schemas.js'
+export * from './services/insights.schemas.js'
 export type * from './services/library.schemas.js'
 export * from './services/library.schemas.js'
 export type * from './services/schemas/index.js'
