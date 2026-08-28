@@ -212,25 +212,25 @@ describe('createApp: OpenAPI doc exposes the auth flow', () => {
 	})
 
 	test('auth tag description covers the callback URL setup prerequisite (#110)', async () => {
-		const app = createFullApp({ apiKey: 'test-key' });
-		const res = await app.request('/doc');
+		const app = createFullApp({ apiKey: 'test-key' })
+		const res = await app.request('/doc')
 		const body = (await res.json()) as {
-			tags?: Array<{ name: string; description?: string }>;
-		};
-		const authTag = body.tags?.find((t) => t.name === 'auth');
-		expect(authTag, 'auth tag must exist in /doc tags').toBeDefined();
+			tags?: Array<{ name: string; description?: string }>
+		}
+		const authTag = body.tags?.find((t) => t.name === 'auth')
+		expect(authTag, 'auth tag must exist in /doc tags').toBeDefined()
 		// The prerequisite is a labelled section (Prerequisite: ...), not
 		// just a one-line mention buried in a step.
-		expect(authTag?.description).toMatch(/Prerequisite.*[Cc]allback URL/);
+		expect(authTag?.description).toMatch(/Prerequisite.*[Cc]allback URL/)
 		// Link to the API account settings page so the user has a one-click
 		// path to configure it.
-		expect(authTag?.description).toContain('last.fm/api/account');
+		expect(authTag?.description).toContain('last.fm/api/account')
 		// Explain the "any URL works for the manual flow" gotcha so users
 		// don't think they need to register a real domain.
-		expect(authTag?.description).toMatch(/any URL works/);
+		expect(authTag?.description).toMatch(/any URL works/)
 		// Cross-reference the package README's full setup section.
-		expect(authTag?.description).toContain('callback-url-setup');
-	});
+		expect(authTag?.description).toContain('callback-url-setup')
+	})
 
 	test('/doc exposes the x-lastfm-sk header on write methods only', async () => {
 		const app = createFullApp({ apiKey: 'test-key' })
