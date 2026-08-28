@@ -101,8 +101,7 @@ export interface ArtistService {
 	 * **Authentication:** pass `sk` in `params.sk` (preferred for ad-hoc
 	 * calls) or set `sessionKey` on the `LastFmConfig` when constructing
 	 * the client (preferred for long-lived clients). Obtain a session key
-	 * via `auth.getToken` + the browser-based `auth.getSession` flow, or
-	 * via `auth.getMobileSession` (mobile-class API keys only).
+	 * via `auth.getToken` + the browser-based `auth.getSession` flow.
 	 *
 	 * @param {ArtistAddTagsRequest} params
 	 * @param {RequestInit} init
@@ -118,8 +117,7 @@ export interface ArtistService {
 	 *
 	 * **Authentication:** pass `sk` in `params.sk` (preferred for ad-hoc
 	 * calls) or set `sessionKey` on the `LastFmConfig` when constructing
-	 * the client. Obtain a session key via `auth.getToken` +
-	 * `auth.getSession`, or `auth.getMobileSession` (mobile-class only).
+	 * the client. Obtain a session key via `auth.getToken` + `auth.getSession`.
 	 *
 	 * @param {ArtistRemoveTagRequest} params
 	 * @param {RequestInit} init

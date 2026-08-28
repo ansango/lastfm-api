@@ -154,10 +154,6 @@ const SPECIAL: Readonly<
 	'track.unlove': { httpMethod: 'POST', bodyKind: 'json', requiresSession: true, requiresSignature: true },
 	'track.updateNowPlaying': { httpMethod: 'POST', bodyKind: 'json', requiresSession: true, requiresSignature: true },
 	'track.scrobble': { httpMethod: 'POST', bodyKind: 'json', requiresSession: true, requiresSignature: true },
-	// Auth: getMobileSession is POST + signed but does NOT need a session.
-	// Deprecated as of #105: only works for mobile-class API keys, which
-	// are not self-service. See src/services/auth.ts for the full note.
-	'auth.getMobileSession': { httpMethod: 'POST', bodyKind: 'json', requiresSession: false, deprecated: true },
 }
 
 // -- Builder -------------------------------------------------------------

@@ -27,7 +27,7 @@ const SESSION_KEY_HEADER = z
 			.string()
 			.optional()
 			.describe(
-				'Session key returned by `auth.getMobileSession`. Required for write methods. Not persisted — pass it on every request.',
+				"Session key for the authenticated user (`sk` in the Last.fm API). Optional — falls back to the body's `sk` field, then to the `LASTFM_SESSION_KEY` env var. Header wins. Obtain one via the browser auth flow: `GET /auth/get-token` (returns `{ token, authUrl }`), open `authUrl` in a browser, authorize, then `GET /auth/get-session?token=<token>` to exchange for the session key.",
 			),
 	})
 	.openapi('LastFmSessionKeyHeader')
