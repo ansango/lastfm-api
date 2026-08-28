@@ -63,17 +63,28 @@ export function buildRoute(meta: MethodMeta): RouteConfig {
 		request.headers = SESSION_KEY_HEADER
 	}
 
+	const isInsight = meta.ns === 'insights'
+	const defaultSummary = isInsight ? `${meta.id} (@ansango/lastfm-api)` : `${meta.id} (Last.fm)`
+	const defaultDescription = isInsight
+		? `Derived analytics method provided by @ansango/lastfm-api. See https://github.com/ansango/lastfm-api#insights--analytics-engine`
+		: `Wire endpoint: \`/?method=${meta.id}\`. See https://www.last.fm/api/show/${meta.id}`
+
+	const summary = meta.summary ?? defaultSummary
+	const description = meta.description ?? defaultDescription
+
 	return createRoute({
 		method: meta.httpMethod.toLowerCase() as 'get' | 'post',
 		path,
 		tags: [tag],
-		summary: `${meta.id} (Last.fm)`,
-		description: `Wire endpoint: \`/?method=${meta.id}\`. See https://www.last.fm/api/show/${meta.id}`,
+		summary,
+		description,
 		...(meta.deprecated ? { deprecated: true as const } : {}),
 		request: request as never,
 		responses: {
 			200: {
-				description: 'Last.fm response (validated against the Zod response schema)',
+				description: isInsight
+					? 'Analytical response payload (validated against Zod schema)'
+					: 'Last.fm response (validated against the Zod response schema)',
 				content: { 'application/json': { schema: response } },
 			},
 			400: {
@@ -81,7 +92,7 @@ export function buildRoute(meta: MethodMeta): RouteConfig {
 				content: { 'application/json': { schema: ERROR_SCHEMA } },
 			},
 			500: {
-				description: 'Last.fm error envelope or transport failure',
+				description: 'API error or transport failure',
 				content: { 'application/json': { schema: ERROR_SCHEMA } },
 			},
 		},
