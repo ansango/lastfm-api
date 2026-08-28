@@ -1,3 +1,3 @@
-export { createTrackService, type TrackService } from '../services/track.js'
-export type * from '../services/track.schemas.js'
-export * from '../services/track.schemas.js'
+export type * from '../core/schemas/track.schemas.js'
+export * from '../core/schemas/track.schemas.js'
+export { createTrackService, type TrackService } from '../core/services/track.js'

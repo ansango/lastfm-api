@@ -1,3 +1,3 @@
-export { type AlbumService, createAlbumService } from '../services/album.js'
-export type * from '../services/album.schemas.js'
-export * from '../services/album.schemas.js'
+export type * from '../core/schemas/album.schemas.js'
+export * from '../core/schemas/album.schemas.js'
+export { type AlbumService, createAlbumService } from '../core/services/album.js'

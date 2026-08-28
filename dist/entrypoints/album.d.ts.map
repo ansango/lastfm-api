@@ -1,1 +1,1 @@
-{"version":3,"file":"album.d.ts","sourceRoot":"","sources":["../../src/entrypoints/album.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,KAAK,YAAY,EAAE,kBAAkB,EAAE,MAAM,sBAAsB,CAAA;AAC5E,mBAAmB,8BAA8B,CAAA;AACjD,cAAc,8BAA8B,CAAA"}
+{"version":3,"file":"album.d.ts","sourceRoot":"","sources":["../../src/entrypoints/album.ts"],"names":[],"mappings":"AAAA,mBAAmB,kCAAkC,CAAA;AACrD,cAAc,kCAAkC,CAAA;AAChD,OAAO,EAAE,KAAK,YAAY,EAAE,kBAAkB,EAAE,MAAM,2BAA2B,CAAA"}

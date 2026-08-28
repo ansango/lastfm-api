@@ -1,2 +1,2 @@
-// Generated schema exports for insights service
-export * from '../services/insights.schemas.js'
+export type * from '../insights/schemas.js'
+export * from '../insights/schemas.js'

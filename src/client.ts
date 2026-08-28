@@ -10,18 +10,17 @@ import {
 	createAuthService,
 	createChartService,
 	createGeoService,
-	createInsightsService,
 	createLibraryService,
 	createTagService,
 	createTrackService,
 	createUserService,
 	type GeoService,
-	type InsightsService,
 	type LibraryService,
 	type TagService,
 	type TrackService,
 	type UserService,
-} from './services/index.js'
+} from './core/services/index.js'
+import { createInsightsService, type InsightsService } from './insights/index.js'
 
 /**
  * Last.fm API Client

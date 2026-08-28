@@ -1,3 +1,2 @@
-// Generated schema exports for artist service
-export * from '../services/artist.schemas.js';
+export * from '../core/schemas/artist.schemas.js';
 //# sourceMappingURL=artist.schemas.js.map

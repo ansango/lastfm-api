@@ -1,3 +1,3 @@
-export { createChartService } from '../services/chart.js';
-export * from '../services/chart.schemas.js';
+export * from '../core/schemas/chart.schemas.js';
+export { createChartService } from '../core/services/chart.js';
 //# sourceMappingURL=chart.js.map
