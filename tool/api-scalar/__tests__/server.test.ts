@@ -204,6 +204,10 @@ describe('createApp: OpenAPI doc exposes the auth flow', () => {
 		expect(authTag?.description).not.toContain('get-mobile-session')
 		// Should never say we ship the mobile flow.
 		expect(authTag?.description).not.toContain('we only ship the mobile flow')
+
+		const insightsTag = body.tags?.find((t) => t.name === 'insights')
+		expect(insightsTag, 'insights tag must exist in /doc tags').toBeDefined()
+		expect(insightsTag?.description).toContain('Shannon diversity')
 	})
 
 	test('auth.getMobileSession is no longer in /doc (removed in v4.0.0)', async () => {

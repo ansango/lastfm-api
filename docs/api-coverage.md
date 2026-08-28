@@ -2,7 +2,7 @@
 
 This document is the human-readable companion to `src/__tests__/inventory.test.ts`,
 which is the executable source of truth. The inventory test asserts that the
-package implements all 57 canonical Last.fm API methods and that each one is
+package implements all 56 canonical Last.fm API methods and that each one is
 callable on the `LastFmClient`.
 
 If you add or remove a method, update both this file and the inventory test
@@ -10,9 +10,11 @@ in the same PR.
 
 ## Summary
 
-- **Coverage: 57 / 57** canonical Last.fm methods across 9 namespaces.
+- **Canonical API Coverage: 56 / 56** canonical Last.fm methods across 9 namespaces.
+- **Insights & Analytics Engine: 9 / 9** higher-level derived methods under `client.insights`.
 - **Baseline: 43 / 57** at the start of epic #67.
 - **Gap closed by epic #67 (PRs #83–#89):** 14 new methods.
+- **Breaking removal in #117:** `auth.getMobileSession` removed (57 → 56).
 - **Wrappers and aliases** (e.g. `track.scrobbleMany`, `track.postTrackScrobble`)
   are intentionally **not counted** as separate canonical methods; they all
   target `track.scrobble`.
@@ -29,25 +31,25 @@ in the same PR.
 | `chart` | 3 | `getTopArtists`, `getTopTags`, `getTopTracks` |
 | `geo` | 2 | `getTopArtists`, `getTopTracks` |
 | `library` | 1 | `getArtists` |
-| `auth` | 3 | `getSession`, `getToken`¹, `getMobileSession`¹ |
-| **Total** | **57** | |
+| `auth` | 2 | `getSession`, `getToken`¹ |
+| **Canonical Total** | **56** | |
+| `insights` | 9 | `getSummary`, `getNowPlaying`, `getHoursHistogram`, `getBinges`, `getTrends`, `getDiscoveries`, `getMood`, `getPersonality`, `compareUsers` |
 
-¹ Added under epic #67 to close the gap from the 43/57 baseline.
+¹ Added under epic #67.
 ² Added under epic #67. Requires an authenticated session (`sk`).
 
 ## Transport classification
 
-Each method falls into one of three transport categories, all implemented in
+Each canonical method falls into one of three transport categories, all implemented in
 `src/utils.ts`:
 
 | Category | Transport | Methods | Signing | Session |
 |---|---|---|---|---|
-| Public unsigned GET | `buildUrl` + `fetcher` | 42 (all reads) | none | none |
-| Signed GET | `buildAuthUrl` + `fetcher` | 3 (`auth.getSession`, `auth.getToken`, future signed GETs) | `api_sig` | no |
-| Signed POST | `signedPost` | 12 (writes) | `api_sig` | yes for non-`getMobileSession` |
+| Public unsigned GET | `buildUrl` + `fetcher` | 44 (all reads) | none | none |
+| Signed GET | `buildAuthUrl` + `fetcher` | 2 (`auth.getSession`, `auth.getToken`) | `api_sig` | no |
+| Signed POST | `signedPost` | 10 (writes) | `api_sig` | yes |
 
-`auth.getMobileSession` is the one signed POST that does not require an
-existing session — it issues the session in the response.
+Derived `insights` methods compose these underlying services and return normalized, Zod-validated analytical payloads.
 
 ## Methods that require authentication
 

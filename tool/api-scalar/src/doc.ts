@@ -60,6 +60,11 @@ export function mountOpenAPI(app: OpenAPIHono, opts: { serverUrl?: string } = {}
 				name: 'auth',
 				description: AUTH_TAG_DESCRIPTION,
 			},
+			{
+				name: 'insights',
+				description:
+					'Higher-level analytical insights and derived metrics computed over Last.fm data (Shannon diversity, enriched now playing, diurnal histograms, binge runs, ranking differentials, discoveries, 2D mood classification, personality archetypes, and user comparison).',
+			},
 		],
 	})
 
