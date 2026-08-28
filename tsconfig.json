@@ -4,11 +4,6 @@
 		"module": "ESNext",
 		"lib": ["ES2022", "DOM"],
 		"moduleResolution": "bundler",
-		"declaration": true,
-		"declarationMap": true,
-		"sourceMap": true,
-		"outDir": "./dist",
-		"rootDir": "./src",
 		"strict": true,
 		"esModuleInterop": true,
 		"skipLibCheck": true,
@@ -16,15 +11,9 @@
 		"resolveJsonModule": true,
 		"allowSyntheticDefaultImports": true,
 		"isolatedModules": true,
-		"types": ["bun"]
+		"noEmit": true,
+		"types": ["bun", "node"]
 	},
-	"include": ["src/**/*"],
-	"exclude": [
-		"node_modules",
-		"dist",
-		"src/__tests__/**",
-		"src/**/__tests__/**",
-		"src/canonical-methods.ts",
-		"src/method-registry.ts"
-	]
+	"include": ["src/**/*", "tool/**/*", "scripts/**/*", "*.ts"],
+	"exclude": ["node_modules", "dist"]
 }

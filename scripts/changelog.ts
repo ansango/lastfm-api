@@ -190,8 +190,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 function main() {
 	const args = process.argv.slice(2)
-	let fromTag = args[args.indexOf('--from') + 1]
-	const toTag = args[args.indexOf('--to') + 1] || 'HEAD'
+	const fromIndex = args.indexOf('--from')
+	const toIndex = args.indexOf('--to')
+	let fromTag: string | undefined = fromIndex !== -1 ? args[fromIndex + 1] : undefined
+	const toTag = toIndex !== -1 ? args[toIndex + 1] : 'HEAD'
 
 	if (!fromTag) {
 		fromTag = getLatestTag()
