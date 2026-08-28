@@ -490,6 +490,53 @@ export const insightsAlbumHabitsResponseSchema = z.object({
 	longestSession: insightLongestSessionSchema.nullable(),
 })
 
+// Genre schemas
+export const insightGenreEntrySchema = z.object({
+	name: z.string(),
+	weight: z.number().nonnegative(),
+	percentage: z.number().nonnegative(),
+})
+
+export const insightsGenreBreakdownRequestSchema = z.object({
+	user: userNameSchema,
+	period: insightsPeriodSchema.optional(),
+	limit: limitSchema.optional(),
+	topGenresLimit: limitSchema.optional(),
+})
+
+export const insightsGenreBreakdownResponseSchema = z.object({
+	user: userNameSchema,
+	period: z.string(),
+	totalGenresDetected: z.number().int().nonnegative(),
+	hhiIndex: z.number().nonnegative(),
+	specializationLevel: z.enum(['Highly Concentrated', 'Moderately Diversified', 'Musical Omnivore']),
+	description: z.string(),
+	genres: z.array(insightGenreEntrySchema),
+})
+
+export const insightGenreShiftSchema = z.object({
+	name: z.string(),
+	currentPct: z.number().nonnegative(),
+	previousPct: z.number().nonnegative(),
+	deltaPct: z.number(),
+})
+
+export const insightsGenreEvolutionRequestSchema = z.object({
+	user: userNameSchema,
+	currentPeriod: insightsPeriodSchema.optional(),
+	previousPeriod: insightsPeriodSchema.optional(),
+	limit: limitSchema.optional(),
+})
+
+export const insightsGenreEvolutionResponseSchema = z.object({
+	user: userNameSchema,
+	currentPeriod: z.string(),
+	previousPeriod: z.string(),
+	risingGenres: z.array(insightGenreShiftSchema),
+	fadingGenres: z.array(insightGenreShiftSchema),
+	newGenres: z.array(z.object({ name: z.string(), currentPct: z.number().nonnegative() })),
+})
+
 // Schema naming convention aliases for registry lookup
 export const insightsGetSummaryRequestSchema = insightsSummaryRequestSchema
 export const insightsGetSummaryResponseSchema = insightsSummaryResponseSchema
@@ -527,6 +574,10 @@ export const insightsGetListeningHeatmapRequestSchema = insightsHeatmapRequestSc
 export const insightsGetListeningHeatmapResponseSchema = insightsHeatmapResponseSchema
 export const insightsGetAlbumHabitsRequestSchema = insightsAlbumHabitsRequestSchema
 export const insightsGetAlbumHabitsResponseSchema = insightsAlbumHabitsResponseSchema
+export const insightsGetGenreBreakdownRequestSchema = insightsGenreBreakdownRequestSchema
+export const insightsGetGenreBreakdownResponseSchema = insightsGenreBreakdownResponseSchema
+export const insightsGetGenreEvolutionRequestSchema = insightsGenreEvolutionRequestSchema
+export const insightsGetGenreEvolutionResponseSchema = insightsGenreEvolutionResponseSchema
 
 // Inferred types
 export type InsightsPeriod = z.infer<typeof insightsPeriodSchema>
@@ -613,3 +664,13 @@ export type InsightsAlbumHabitsRequest = z.infer<typeof insightsAlbumHabitsReque
 export type InsightsAlbumHabitsResponse = z.infer<typeof insightsAlbumHabitsResponseSchema>
 export type InsightsGetAlbumHabitsRequest = InsightsAlbumHabitsRequest
 export type InsightsGetAlbumHabitsResponse = InsightsAlbumHabitsResponse
+export type InsightGenreEntry = z.infer<typeof insightGenreEntrySchema>
+export type InsightsGenreBreakdownRequest = z.infer<typeof insightsGenreBreakdownRequestSchema>
+export type InsightsGenreBreakdownResponse = z.infer<typeof insightsGenreBreakdownResponseSchema>
+export type InsightsGetGenreBreakdownRequest = InsightsGenreBreakdownRequest
+export type InsightsGetGenreBreakdownResponse = InsightsGenreBreakdownResponse
+export type InsightGenreShift = z.infer<typeof insightGenreShiftSchema>
+export type InsightsGenreEvolutionRequest = z.infer<typeof insightsGenreEvolutionRequestSchema>
+export type InsightsGenreEvolutionResponse = z.infer<typeof insightsGenreEvolutionResponseSchema>
+export type InsightsGetGenreEvolutionRequest = InsightsGenreEvolutionRequest
+export type InsightsGetGenreEvolutionResponse = InsightsGenreEvolutionResponse

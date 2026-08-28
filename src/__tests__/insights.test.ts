@@ -871,6 +871,61 @@ describe('insights service', () => {
 		})
 	})
 
+	describe('getGenreBreakdown', () => {
+		test('filters noise tags and calculates HHI concentration index', async () => {
+			const topArtists = [{ ...fakeArtist, name: 'Fontaines D.C.', playcount: '100' }]
+			const tags = [
+				{ name: 'post-punk', count: 100 },
+				{ name: 'seen live', count: 80 }, // noise
+				{ name: 'indie rock', count: 50 },
+			]
+
+			mock.respondWithJson({ topartists: { artist: topArtists, '@attr': okAttr() } })
+			mock.respondWithJson({ toptags: { tag: tags, '@attr': { artist: 'Fontaines D.C.' } } })
+
+			const result = await client.insights.getGenreBreakdown({ user: 'test_user', limit: 10 })
+			expect(result.user).toBe('test_user')
+			expect(result.totalGenresDetected).toBe(2)
+			expect(result.genres[0].name).toBe('post-punk')
+			expect(result.genres.some((g) => g.name === 'seen live')).toBe(false)
+			expect(result.hhiIndex).toBeGreaterThan(0)
+
+			const parsed = insightSchemas.insightsGenreBreakdownResponseSchema.safeParse(result)
+			expect(parsed.success).toBe(true)
+		})
+	})
+
+	describe('getGenreEvolution', () => {
+		test('computes rising, fading, and new genres between periods', async () => {
+			const curArtists = [{ ...fakeArtist, name: 'Artist A', playcount: '50' }]
+			const prevArtists = [{ ...fakeArtist, name: 'Artist B', playcount: '50' }]
+
+			// Both getTopArtists calls fire first concurrently in Promise.all
+			mock.respondWithJson({ topartists: { artist: curArtists, '@attr': okAttr() } })
+			mock.respondWithJson({ topartists: { artist: prevArtists, '@attr': okAttr() } })
+			// Then both getTopTags calls fire
+			mock.respondWithJson({ toptags: { tag: [{ name: 'shoegaze', count: 100 }], '@attr': { artist: 'Artist A' } } })
+			mock.respondWithJson({ toptags: { tag: [{ name: 'post-punk', count: 100 }], '@attr': { artist: 'Artist B' } } })
+
+			const result = await client.insights.getGenreEvolution({
+				user: 'test_user',
+				currentPeriod: '1month',
+				previousPeriod: '12month',
+			})
+
+			expect(result.user).toBe('test_user')
+			expect(result.risingGenres).toHaveLength(1)
+			expect(result.risingGenres[0].name).toBe('shoegaze')
+			expect(result.fadingGenres).toHaveLength(1)
+			expect(result.fadingGenres[0].name).toBe('post-punk')
+			expect(result.newGenres).toHaveLength(1)
+			expect(result.newGenres[0].name).toBe('shoegaze')
+
+			const parsed = insightSchemas.insightsGenreEvolutionResponseSchema.safeParse(result)
+			expect(parsed.success).toBe(true)
+		})
+	})
+
 	describe('schema exports and client wiring', () => {
 		test('factory createInsightsService instantiates InsightsService with all wired methods', () => {
 			const svc: InsightsService = createInsightsService({ apiKey: API_KEY })
@@ -889,6 +944,8 @@ describe('insights service', () => {
 			expect(typeof svc.getListeningStreaks).toBe('function')
 			expect(typeof svc.getListeningHeatmap).toBe('function')
 			expect(typeof svc.getAlbumHabits).toBe('function')
+			expect(typeof svc.getGenreBreakdown).toBe('function')
+			expect(typeof svc.getGenreEvolution).toBe('function')
 		})
 
 		test('exposes insights service via createClient helper', () => {
@@ -908,6 +965,8 @@ describe('insights service', () => {
 			expect(typeof c.insights.getListeningStreaks).toBe('function')
 			expect(typeof c.insights.getListeningHeatmap).toBe('function')
 			expect(typeof c.insights.getAlbumHabits).toBe('function')
+			expect(typeof c.insights.getGenreBreakdown).toBe('function')
+			expect(typeof c.insights.getGenreEvolution).toBe('function')
 		})
 
 		test('insightsCompareRequestSchema validates inputs', () => {
@@ -956,6 +1015,23 @@ describe('insights service', () => {
 			expect(
 				insightSchemas.insightsAlbumHabitsRequestSchema.safeParse({ user: 'alice', limit: 200, minSessionTracks: 4 })
 					.success,
+			).toBe(true)
+		})
+
+		test('insightsGenreBreakdownRequestSchema validates inputs', () => {
+			expect(
+				insightSchemas.insightsGenreBreakdownRequestSchema.safeParse({ user: 'alice', period: '1month', limit: 20 })
+					.success,
+			).toBe(true)
+		})
+
+		test('insightsGenreEvolutionRequestSchema validates inputs', () => {
+			expect(
+				insightSchemas.insightsGenreEvolutionRequestSchema.safeParse({
+					user: 'alice',
+					currentPeriod: '1month',
+					previousPeriod: '12month',
+				}).success,
 			).toBe(true)
 		})
 	})
