@@ -173,6 +173,65 @@ export const insightsBingesResponseSchema = z.object({
 	binges: z.array(insightBingeItemSchema),
 })
 
+// Trends request & response schemas
+export const insightRankedItemSchema = z.object({
+	name: z.string(),
+	playcount: z.number().int().nonnegative(),
+})
+
+export const insightRankedWithDeltaSchema = z.object({
+	name: z.string(),
+	playcount: z.number().int().nonnegative(),
+	currentRank: z.number().int().positive(),
+	previousRank: z.number().int().positive().optional(),
+	deltaRank: z.number().int(),
+	deltaCount: z.number().int(),
+})
+
+export const insightsTrendsRequestSchema = z.object({
+	user: userNameSchema,
+	target: z.union([z.literal('artists'), z.literal('tracks'), z.literal('albums')]).optional(),
+	currentPeriod: insightsPeriodSchema.optional(),
+	previousPeriod: insightsPeriodSchema.optional(),
+	limit: limitSchema.optional(),
+	maxResults: z.number().int().positive().optional(),
+})
+
+export const insightsTrendsResponseSchema = z.object({
+	user: userNameSchema,
+	target: z.union([z.literal('artists'), z.literal('tracks'), z.literal('albums')]),
+	currentPeriod: z.string(),
+	previousPeriod: z.string(),
+	risers: z.array(insightRankedWithDeltaSchema),
+	fallers: z.array(insightRankedWithDeltaSchema),
+	newcomers: z.array(insightRankedWithDeltaSchema),
+	departures: z.array(insightRankedItemSchema),
+})
+
+// Discoveries request & response schemas
+export const insightDiscoveredArtistSchema = z.object({
+	name: artistNameSchema,
+	firstSeen: z.number().int().nonnegative(),
+})
+
+export const insightsDiscoveriesRequestSchema = z.object({
+	user: userNameSchema,
+	from: z.number().int().nonnegative().optional(),
+	to: z.number().int().nonnegative().optional(),
+	windowDays: z.number().int().positive().optional(),
+	baselineLimit: limitSchema.optional(),
+	maxResults: z.number().int().positive().optional(),
+	maxPages: z.number().int().positive().optional(),
+})
+
+export const insightsDiscoveriesResponseSchema = z.object({
+	user: userNameSchema,
+	windowDays: z.number().int().positive(),
+	baselineSize: z.number().int().nonnegative(),
+	totalDiscovered: z.number().int().nonnegative(),
+	discoveries: z.array(insightDiscoveredArtistSchema),
+})
+
 // Schema naming convention aliases for registry lookup
 export const insightsGetSummaryRequestSchema = insightsSummaryRequestSchema
 export const insightsGetSummaryResponseSchema = insightsSummaryResponseSchema
@@ -182,6 +241,10 @@ export const insightsGetHoursHistogramRequestSchema = insightsHoursRequestSchema
 export const insightsGetHoursHistogramResponseSchema = insightsHoursResponseSchema
 export const insightsGetBingesRequestSchema = insightsBingesRequestSchema
 export const insightsGetBingesResponseSchema = insightsBingesResponseSchema
+export const insightsGetTrendsRequestSchema = insightsTrendsRequestSchema
+export const insightsGetTrendsResponseSchema = insightsTrendsResponseSchema
+export const insightsGetDiscoveriesRequestSchema = insightsDiscoveriesRequestSchema
+export const insightsGetDiscoveriesResponseSchema = insightsDiscoveriesResponseSchema
 
 // Inferred types
 export type InsightsPeriod = z.infer<typeof insightsPeriodSchema>
@@ -207,3 +270,14 @@ export type InsightsBingesRequest = z.infer<typeof insightsBingesRequestSchema>
 export type InsightsBingesResponse = z.infer<typeof insightsBingesResponseSchema>
 export type InsightsGetBingesRequest = InsightsBingesRequest
 export type InsightsGetBingesResponse = InsightsBingesResponse
+export type InsightRankedItem = z.infer<typeof insightRankedItemSchema>
+export type InsightRankedWithDelta = z.infer<typeof insightRankedWithDeltaSchema>
+export type InsightsTrendsRequest = z.infer<typeof insightsTrendsRequestSchema>
+export type InsightsTrendsResponse = z.infer<typeof insightsTrendsResponseSchema>
+export type InsightsGetTrendsRequest = InsightsTrendsRequest
+export type InsightsGetTrendsResponse = InsightsTrendsResponse
+export type InsightDiscoveredArtist = z.infer<typeof insightDiscoveredArtistSchema>
+export type InsightsDiscoveriesRequest = z.infer<typeof insightsDiscoveriesRequestSchema>
+export type InsightsDiscoveriesResponse = z.infer<typeof insightsDiscoveriesResponseSchema>
+export type InsightsGetDiscoveriesRequest = InsightsDiscoveriesRequest
+export type InsightsGetDiscoveriesResponse = InsightsDiscoveriesResponse

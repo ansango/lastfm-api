@@ -1,17 +1,23 @@
 import type { LastFmConfig } from '../config.js'
 import { getBinges } from './insights/binges.js'
+import { getDiscoveries } from './insights/discoveries.js'
 import { getHoursHistogram } from './insights/hours.js'
 import { getNowPlaying } from './insights/now-playing.js'
 import { getSummary } from './insights/summary.js'
+import { getTrends } from './insights/trends.js'
 import type {
 	InsightsBingesRequest,
 	InsightsBingesResponse,
+	InsightsDiscoveriesRequest,
+	InsightsDiscoveriesResponse,
 	InsightsHoursRequest,
 	InsightsHoursResponse,
 	InsightsNowPlayingRequest,
 	InsightsNowPlayingResponse,
 	InsightsSummaryRequest,
 	InsightsSummaryResponse,
+	InsightsTrendsRequest,
+	InsightsTrendsResponse,
 } from './insights.schemas.js'
 
 /**
@@ -60,6 +66,26 @@ export interface InsightsService {
 	 * @returns {Promise<InsightsBingesResponse>}
 	 */
 	getBinges: (params: InsightsBingesRequest, init?: RequestInit) => Promise<InsightsBingesResponse>
+
+	/**
+	 * Calculates ranking differentials (risers, fallers, newcomers, departures)
+	 * between two time periods.
+	 *
+	 * @param {InsightsTrendsRequest} params
+	 * @param {RequestInit} [init]
+	 * @returns {Promise<InsightsTrendsResponse>}
+	 */
+	getTrends: (params: InsightsTrendsRequest, init?: RequestInit) => Promise<InsightsTrendsResponse>
+
+	/**
+	 * Detects newly discovered artists in a recent time window by comparing
+	 * against the user's historical baseline roster.
+	 *
+	 * @param {InsightsDiscoveriesRequest} params
+	 * @param {RequestInit} [init]
+	 * @returns {Promise<InsightsDiscoveriesResponse>}
+	 */
+	getDiscoveries: (params: InsightsDiscoveriesRequest, init?: RequestInit) => Promise<InsightsDiscoveriesResponse>
 }
 
 /**
@@ -71,5 +97,7 @@ export function createInsightsService(config: LastFmConfig): InsightsService {
 		getNowPlaying: (params, init) => getNowPlaying(config, params, init),
 		getHoursHistogram: (params, init) => getHoursHistogram(config, params, init),
 		getBinges: (params, init) => getBinges(config, params, init),
+		getTrends: (params, init) => getTrends(config, params, init),
+		getDiscoveries: (params, init) => getDiscoveries(config, params, init),
 	}
 }
