@@ -8,6 +8,7 @@ import { getMood } from './insights/mood.js'
 import { getNowPlaying } from './insights/now-playing.js'
 import { getObscurityScore } from './insights/obscurity.js'
 import { getPersonality } from './insights/personality.js'
+import { getListeningHeatmap, getListeningStreaks } from './insights/streaks.js'
 import { getSummary } from './insights/summary.js'
 import { getTrends } from './insights/trends.js'
 import type {
@@ -19,6 +20,8 @@ import type {
 	InsightsDiscoveriesResponse,
 	InsightsForgottenFavoritesRequest,
 	InsightsForgottenFavoritesResponse,
+	InsightsHeatmapRequest,
+	InsightsHeatmapResponse,
 	InsightsHoursRequest,
 	InsightsHoursResponse,
 	InsightsMoodRequest,
@@ -31,6 +34,8 @@ import type {
 	InsightsObsessionsResponse,
 	InsightsPersonalityRequest,
 	InsightsPersonalityResponse,
+	InsightsStreaksRequest,
+	InsightsStreaksResponse,
 	InsightsSummaryRequest,
 	InsightsSummaryResponse,
 	InsightsTrendsRequest,
@@ -166,6 +171,25 @@ export interface InsightsService {
 	 * @returns {Promise<InsightsObsessionsResponse>}
 	 */
 	getObsessions: (params: InsightsObsessionsRequest, init?: RequestInit) => Promise<InsightsObsessionsResponse>
+
+	/**
+	 * Calculates consecutive daily listening streaks, longest continuous streaks, and dry spells.
+	 *
+	 * @param {InsightsStreaksRequest} params
+	 * @param {RequestInit} [init]
+	 * @returns {Promise<InsightsStreaksResponse>}
+	 */
+	getListeningStreaks: (params: InsightsStreaksRequest, init?: RequestInit) => Promise<InsightsStreaksResponse>
+
+	/**
+	 * Generates a daily listening heatmap formatted with normalized intensity levels (0..4)
+	 * suitable for GitHub-style calendar contribution representations.
+	 *
+	 * @param {InsightsHeatmapRequest} params
+	 * @param {RequestInit} [init]
+	 * @returns {Promise<InsightsHeatmapResponse>}
+	 */
+	getListeningHeatmap: (params: InsightsHeatmapRequest, init?: RequestInit) => Promise<InsightsHeatmapResponse>
 }
 
 /**
@@ -185,5 +209,7 @@ export function createInsightsService(config: LastFmConfig): InsightsService {
 		getObscurityScore: (params, init) => getObscurityScore(config, params, init),
 		getForgottenFavorites: (params, init) => getForgottenFavorites(config, params, init),
 		getObsessions: (params, init) => getObsessions(config, params, init),
+		getListeningStreaks: (params, init) => getListeningStreaks(config, params, init),
+		getListeningHeatmap: (params, init) => getListeningHeatmap(config, params, init),
 	}
 }

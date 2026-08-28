@@ -777,6 +777,49 @@ describe('insights service', () => {
 		})
 	})
 
+	describe('getListeningStreaks', () => {
+		test('computes consecutive streak days and dry spells', async () => {
+			// Day 1: 2024-01-01 (1704067200), Day 2: 2024-01-02 (1704153600), Day 4: 2024-01-04 (1704326400)
+			const tracks = [
+				{ ...fakeTrack, date: { uts: '1704326400' } }, // Jan 4
+				{ ...fakeTrack, date: { uts: '1704153600' } }, // Jan 2
+				{ ...fakeTrack, date: { uts: '1704067200' } }, // Jan 1
+			]
+
+			mock.respondWithJson({ recenttracks: { track: tracks, '@attr': okAttr(1, 200, 3) } })
+
+			const result = await client.insights.getListeningStreaks({ user: 'test_user' })
+			expect(result.user).toBe('test_user')
+			expect(result.longestStreakDays).toBe(2) // Jan 1 & 2
+			expect(result.longestDrySpellDays).toBe(1) // Jan 3
+			expect(result.activeDaysCount).toBe(3)
+			expect(result.totalDaysEvaluated).toBe(4)
+
+			const parsed = insightSchemas.insightsStreaksResponseSchema.safeParse(result)
+			expect(parsed.success).toBe(true)
+		})
+	})
+
+	describe('getListeningHeatmap', () => {
+		test('generates calendar days with intensity levels 0..4', async () => {
+			const tracks = [
+				{ ...fakeTrack, date: { uts: String(Math.floor(Date.now() / 1000)) } },
+				{ ...fakeTrack, date: { uts: String(Math.floor(Date.now() / 1000) - 100) } },
+			]
+
+			mock.respondWithJson({ recenttracks: { track: tracks, '@attr': okAttr(1, 200, 2) } })
+
+			const result = await client.insights.getListeningHeatmap({ user: 'test_user', days: 14 })
+			expect(result.user).toBe('test_user')
+			expect(result.totalScrobbles).toBe(2)
+			expect(result.days).toHaveLength(14)
+			expect(result.maxDailyCount).toBeGreaterThanOrEqual(1)
+
+			const parsed = insightSchemas.insightsHeatmapResponseSchema.safeParse(result)
+			expect(parsed.success).toBe(true)
+		})
+	})
+
 	describe('schema exports and client wiring', () => {
 		test('factory createInsightsService instantiates InsightsService with all wired methods', () => {
 			const svc: InsightsService = createInsightsService({ apiKey: API_KEY })
@@ -792,6 +835,8 @@ describe('insights service', () => {
 			expect(typeof svc.getObscurityScore).toBe('function')
 			expect(typeof svc.getForgottenFavorites).toBe('function')
 			expect(typeof svc.getObsessions).toBe('function')
+			expect(typeof svc.getListeningStreaks).toBe('function')
+			expect(typeof svc.getListeningHeatmap).toBe('function')
 		})
 
 		test('exposes insights service via createClient helper', () => {
@@ -808,6 +853,8 @@ describe('insights service', () => {
 			expect(typeof c.insights.getObscurityScore).toBe('function')
 			expect(typeof c.insights.getForgottenFavorites).toBe('function')
 			expect(typeof c.insights.getObsessions).toBe('function')
+			expect(typeof c.insights.getListeningStreaks).toBe('function')
+			expect(typeof c.insights.getListeningHeatmap).toBe('function')
 		})
 
 		test('insightsCompareRequestSchema validates inputs', () => {
@@ -839,6 +886,16 @@ describe('insights service', () => {
 					thresholdRatio: 0.4,
 					windowSize: 25,
 				}).success,
+			).toBe(true)
+		})
+
+		test('insightsStreaksRequestSchema validates inputs', () => {
+			expect(insightSchemas.insightsStreaksRequestSchema.safeParse({ user: 'alice', limit: 500 }).success).toBe(true)
+		})
+
+		test('insightsHeatmapRequestSchema validates inputs', () => {
+			expect(
+				insightSchemas.insightsHeatmapRequestSchema.safeParse({ user: 'alice', days: 30, limit: 500 }).success,
 			).toBe(true)
 		})
 	})
