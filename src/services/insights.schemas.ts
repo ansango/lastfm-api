@@ -117,11 +117,71 @@ export const insightsNowPlayingResponseSchema = z.object({
 	),
 })
 
+// Hours Histogram request & response schemas
+export const insightsHoursRequestSchema = z.object({
+	user: userNameSchema,
+	from: z.number().int().nonnegative().optional(),
+	to: z.number().int().nonnegative().optional(),
+	sinceDays: z.number().int().positive().optional(),
+	maxPages: z.number().int().positive().optional(),
+})
+
+export const insightsHoursResponseSchema = z.object({
+	user: userNameSchema,
+	from: z.number().int().nonnegative().optional(),
+	to: z.number().int().nonnegative(),
+	total: z.number().int().nonnegative(),
+	byHour: z.array(z.number().int().nonnegative()),
+	byWeekday: z.array(z.number().int().nonnegative()),
+	peakHour: z.number().int().nullable(),
+	peakHourCount: z.number().int().nonnegative(),
+	peakWeekday: z.number().int().nullable(),
+	peakWeekdayCount: z.number().int().nonnegative(),
+	peakWeekdayLabel: z.string().nullable(),
+	nightShare: z.number(),
+	morningShare: z.number(),
+	afternoonShare: z.number(),
+	eveningShare: z.number(),
+	weekendShare: z.number(),
+})
+
+// Binges request & response schemas
+export const insightBingeItemSchema = z.object({
+	artist: artistNameSchema,
+	track: trackNameSchema.optional(),
+	length: z.number().int().positive(),
+	startUts: z.number().int().nonnegative(),
+	endUts: z.number().int().nonnegative(),
+	durationSeconds: z.number().int().nonnegative(),
+})
+
+export const insightsBingesRequestSchema = z.object({
+	user: userNameSchema,
+	from: z.number().int().nonnegative().optional(),
+	to: z.number().int().nonnegative().optional(),
+	sinceDays: z.number().int().positive().optional(),
+	minLength: z.number().int().positive().optional(),
+	maxGapSeconds: z.number().int().positive().optional(),
+	trackKey: z.union([z.literal('artist'), z.literal('track'), z.boolean()]).optional(),
+	maxResults: z.number().int().positive().optional(),
+	maxPages: z.number().int().positive().optional(),
+})
+
+export const insightsBingesResponseSchema = z.object({
+	user: userNameSchema,
+	totalScrobbles: z.number().int().nonnegative(),
+	binges: z.array(insightBingeItemSchema),
+})
+
 // Schema naming convention aliases for registry lookup
 export const insightsGetSummaryRequestSchema = insightsSummaryRequestSchema
 export const insightsGetSummaryResponseSchema = insightsSummaryResponseSchema
 export const insightsGetNowPlayingRequestSchema = insightsNowPlayingRequestSchema
 export const insightsGetNowPlayingResponseSchema = insightsNowPlayingResponseSchema
+export const insightsGetHoursHistogramRequestSchema = insightsHoursRequestSchema
+export const insightsGetHoursHistogramResponseSchema = insightsHoursResponseSchema
+export const insightsGetBingesRequestSchema = insightsBingesRequestSchema
+export const insightsGetBingesResponseSchema = insightsBingesResponseSchema
 
 // Inferred types
 export type InsightsPeriod = z.infer<typeof insightsPeriodSchema>
@@ -138,3 +198,12 @@ export type InsightsNowPlayingRequest = z.infer<typeof insightsNowPlayingRequest
 export type InsightsNowPlayingResponse = z.infer<typeof insightsNowPlayingResponseSchema>
 export type InsightsGetNowPlayingRequest = InsightsNowPlayingRequest
 export type InsightsGetNowPlayingResponse = InsightsNowPlayingResponse
+export type InsightsHoursRequest = z.infer<typeof insightsHoursRequestSchema>
+export type InsightsHoursResponse = z.infer<typeof insightsHoursResponseSchema>
+export type InsightsGetHoursHistogramRequest = InsightsHoursRequest
+export type InsightsGetHoursHistogramResponse = InsightsHoursResponse
+export type InsightBingeItem = z.infer<typeof insightBingeItemSchema>
+export type InsightsBingesRequest = z.infer<typeof insightsBingesRequestSchema>
+export type InsightsBingesResponse = z.infer<typeof insightsBingesResponseSchema>
+export type InsightsGetBingesRequest = InsightsBingesRequest
+export type InsightsGetBingesResponse = InsightsBingesResponse
