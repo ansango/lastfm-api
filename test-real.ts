@@ -146,7 +146,7 @@ async function testModularImport() {
 	console.log('━'.repeat(50))
 
 	try {
-		const { createTrackService } = await import('./dist/services/track.js')
+		const { createTrackService } = await import('./src/entrypoints/track.js')
 
 		const trackService = createTrackService({
 			apiKey: process.env.LASTFM_API_KEY!,
@@ -159,7 +159,7 @@ async function testModularImport() {
 		})
 
 		console.log('✓ Track search results:')
-		trackSearch.results.trackmatches.track.forEach((track, i) => {
+		trackSearch.results.trackmatches.track.forEach((track: { name: string; artist: string }, i: number) => {
 			console.log(`  ${i + 1}. ${track.name} by ${track.artist}`)
 		})
 	} catch (error) {

@@ -1,2 +1,2 @@
-// Generated schema exports for tag service
-export * from '../services/tag.schemas.js'
+export type * from '../core/schemas/tag.schemas.js'
+export * from '../core/schemas/tag.schemas.js'

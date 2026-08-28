@@ -55,7 +55,49 @@ export function mountOpenAPI(app: OpenAPIHono, opts: { serverUrl?: string } = {}
 				'Interactive API explorer for @ansango/lastfm-api. All canonical Last.fm methods and Insights analytics are wired declaratively from the method registry; "Try it" calls the real Last.fm API via the package.',
 		},
 		servers: [{ url: serverUrl, description: 'Local docs server' }],
+		'x-tagGroups': [
+			{
+				name: 'Last.fm Core API',
+				tags: ['user', 'artist', 'album', 'track', 'tag', 'chart', 'geo', 'library', 'auth'],
+			},
+			{
+				name: 'Insights & Analytics Engine',
+				tags: ['insights'],
+			},
+		],
 		tags: [
+			{
+				name: 'user',
+				description: 'Official Last.fm user profile, scrobbles, top charts, and social relationships.',
+			},
+			{
+				name: 'artist',
+				description: 'Official Last.fm artist metadata, discography, tags, and corrections.',
+			},
+			{
+				name: 'album',
+				description: 'Official Last.fm album metadata, tracklists, and tag operations.',
+			},
+			{
+				name: 'track',
+				description: 'Official Last.fm track info, scrobbling (single & batch), love/unlove, and now playing.',
+			},
+			{
+				name: 'tag',
+				description: 'Official Last.fm community tag exploration and top charts.',
+			},
+			{
+				name: 'chart',
+				description: 'Official Last.fm global top charts for artists and tracks.',
+			},
+			{
+				name: 'geo',
+				description: 'Official Last.fm geo-localized top charts by country.',
+			},
+			{
+				name: 'library',
+				description: 'Official Last.fm user library queries.',
+			},
 			{
 				name: 'auth',
 				description: AUTH_TAG_DESCRIPTION,
@@ -63,7 +105,7 @@ export function mountOpenAPI(app: OpenAPIHono, opts: { serverUrl?: string } = {}
 			{
 				name: 'insights',
 				description:
-					'Higher-level analytical insights and derived metrics computed over Last.fm data (Shannon diversity, enriched now playing, diurnal histograms, binge runs, ranking differentials, discoveries, 2D mood classification, personality archetypes, and user comparison).',
+					'Higher-level analytical insights and derived metrics computed over Last.fm data (Shannon diversity, enriched now playing, diurnal histograms, binge runs, ranking differentials, discoveries, 2D mood classification, personality archetypes, obscurity scores, forgotten favorites, obsessions, streaks, heatmaps, album habits, genre breakdown & evolution, smart recommendations, bridge artists, and taste group clustering).',
 			},
 		],
 	})

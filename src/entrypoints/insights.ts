@@ -1,3 +1,3 @@
-export { createInsightsService, type InsightsService } from '../services/insights.js'
-export type * from '../services/insights.schemas.js'
-export * from '../services/insights.schemas.js'
+export { createInsightsService, type InsightsService } from '../insights/index.js'
+export type * from '../insights/schemas.js'
+export * from '../insights/schemas.js'

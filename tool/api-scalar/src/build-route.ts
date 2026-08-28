@@ -63,11 +63,11 @@ export function buildRoute(meta: MethodMeta): RouteConfig {
 		request.headers = SESSION_KEY_HEADER
 	}
 
-	const isInsight = meta.ns === 'insights'
-	const defaultSummary = isInsight ? `${meta.id} (@ansango/lastfm-api)` : `${meta.id} (Last.fm)`
-	const defaultDescription = isInsight
-		? `Derived analytics method provided by @ansango/lastfm-api. See https://github.com/ansango/lastfm-api#insights--analytics-engine`
-		: `Wire endpoint: \`/?method=${meta.id}\`. See https://www.last.fm/api/show/${meta.id}`
+	const isCore = meta.kind === 'core'
+	const defaultSummary = isCore ? `${meta.id} (Last.fm)` : `${meta.id} (@ansango/lastfm-api)`
+	const defaultDescription = isCore
+		? `Wire endpoint: \`/?method=${meta.id}\`. See https://www.last.fm/api/show/${meta.id}`
+		: `Derived analytics method provided by @ansango/lastfm-api (${meta.group}).`
 
 	const summary = meta.summary ?? defaultSummary
 	const description = meta.description ?? defaultDescription
@@ -82,9 +82,9 @@ export function buildRoute(meta: MethodMeta): RouteConfig {
 		request: request as never,
 		responses: {
 			200: {
-				description: isInsight
-					? 'Analytical response payload (validated against Zod schema)'
-					: 'Last.fm response (validated against the Zod response schema)',
+				description: isCore
+					? 'Last.fm response (validated against the Zod response schema)'
+					: 'Analytical response payload (validated against Zod schema)',
 				content: { 'application/json': { schema: response } },
 			},
 			400: {

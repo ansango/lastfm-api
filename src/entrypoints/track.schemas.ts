@@ -1,2 +1,2 @@
-// Generated schema exports for track service
-export * from '../services/track.schemas.js'
+export type * from '../core/schemas/track.schemas.js'
+export * from '../core/schemas/track.schemas.js'

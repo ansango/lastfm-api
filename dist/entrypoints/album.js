@@ -1,3 +1,3 @@
-export { createAlbumService } from '../services/album.js';
-export * from '../services/album.schemas.js';
+export * from '../core/schemas/album.schemas.js';
+export { createAlbumService } from '../core/services/album.js';
 //# sourceMappingURL=album.js.map

@@ -1,3 +1,3 @@
-export { createGeoService } from '../services/geo.js';
-export * from '../services/geo.schemas.js';
+export * from '../core/schemas/geo.schemas.js';
+export { createGeoService } from '../core/services/geo.js';
 //# sourceMappingURL=geo.js.map

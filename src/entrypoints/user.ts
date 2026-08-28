@@ -1,3 +1,3 @@
-export { createUserService, type UserService } from '../services/user.js'
-export type * from '../services/user.schemas.js'
-export * from '../services/user.schemas.js'
+export type * from '../core/schemas/user.schemas.js'
+export * from '../core/schemas/user.schemas.js'
+export { createUserService, type UserService } from '../core/services/user.js'

@@ -32,6 +32,8 @@ describe('method-registry: shape', () => {
 			expect(typeof fn, `${m.id} resolved fn`).toBe('function')
 			expect(typeof m.schema.safeParse, `${m.id} schema.safeParse`).toBe('function')
 			expect(typeof m.response.safeParse, `${m.id} response.safeParse`).toBe('function')
+			expect(m.kind === 'core' || m.kind === 'insights' || m.kind === 'extension').toBe(true)
+			expect(typeof m.group).toBe('string')
 		}
 	})
 

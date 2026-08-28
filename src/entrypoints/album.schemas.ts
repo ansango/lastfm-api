@@ -1,2 +1,2 @@
-// Generated schema exports for album service
-export * from '../services/album.schemas.js'
+export type * from '../core/schemas/album.schemas.js'
+export * from '../core/schemas/album.schemas.js'

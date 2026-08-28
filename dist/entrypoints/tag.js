@@ -1,3 +1,3 @@
-export { createTagService } from '../services/tag.js';
-export * from '../services/tag.schemas.js';
+export * from '../core/schemas/tag.schemas.js';
+export { createTagService } from '../core/services/tag.js';
 //# sourceMappingURL=tag.js.map

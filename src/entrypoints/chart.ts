@@ -1,3 +1,3 @@
-export { type ChartService, createChartService } from '../services/chart.js'
-export type * from '../services/chart.schemas.js'
-export * from '../services/chart.schemas.js'
+export type * from '../core/schemas/chart.schemas.js'
+export * from '../core/schemas/chart.schemas.js'
+export { type ChartService, createChartService } from '../core/services/chart.js'
