@@ -977,6 +977,41 @@ describe('insights service', () => {
 		})
 	})
 
+	describe('compareTasteGroup', () => {
+		test('computes pairwise matrix, consensus artists, and outlier for 3 users', async () => {
+			const userAArtists = [
+				{ ...fakeArtist, name: 'The Beatles', playcount: '100' },
+				{ ...fakeArtist, name: 'Radiohead', playcount: '80' },
+			]
+			const userBArtists = [
+				{ ...fakeArtist, name: 'The Beatles', playcount: '90' },
+				{ ...fakeArtist, name: 'Pink Floyd', playcount: '70' },
+			]
+			const userCArtists = [{ ...fakeArtist, name: 'Techno Artist', playcount: '50' }]
+
+			// Calls for userA, userB, userC
+			mock.respondWithJson({ topartists: { artist: userAArtists, '@attr': okAttr() } })
+			mock.respondWithJson({ topartists: { artist: userBArtists, '@attr': okAttr() } })
+			mock.respondWithJson({ topartists: { artist: userCArtists, '@attr': okAttr() } })
+
+			const result = await client.insights.compareTasteGroup({
+				users: ['alice', 'bob', 'charlie'],
+				period: 'overall',
+			})
+
+			expect(mock.calls).toHaveLength(3)
+			expect(result.users).toEqual(['alice', 'bob', 'charlie'])
+			expect(result.pairwiseMatrix).toHaveLength(3) // AB, AC, BC
+			expect(result.consensusArtists).toHaveLength(1)
+			expect(result.consensusArtists[0].name).toBe('The Beatles')
+			expect(result.consensusArtists[0].listenerCount).toBe(2)
+			expect(result.groupOutlier?.user).toBe('charlie')
+
+			const parsed = insightSchemas.insightsCompareTasteGroupResponseSchema.safeParse(result)
+			expect(parsed.success).toBe(true)
+		})
+	})
+
 	describe('schema exports and client wiring', () => {
 		test('factory createInsightsService instantiates InsightsService with all wired methods', () => {
 			const svc: InsightsService = createInsightsService({ apiKey: API_KEY })
@@ -999,6 +1034,7 @@ describe('insights service', () => {
 			expect(typeof svc.getGenreEvolution).toBe('function')
 			expect(typeof svc.getSmartRecommendations).toBe('function')
 			expect(typeof svc.getBridgeArtists).toBe('function')
+			expect(typeof svc.compareTasteGroup).toBe('function')
 		})
 
 		test('exposes insights service via createClient helper', () => {
@@ -1022,6 +1058,7 @@ describe('insights service', () => {
 			expect(typeof c.insights.getGenreEvolution).toBe('function')
 			expect(typeof c.insights.getSmartRecommendations).toBe('function')
 			expect(typeof c.insights.getBridgeArtists).toBe('function')
+			expect(typeof c.insights.compareTasteGroup).toBe('function')
 		})
 
 		test('insightsCompareRequestSchema validates inputs', () => {
@@ -1100,6 +1137,15 @@ describe('insights service', () => {
 		test('insightsBridgeArtistsRequestSchema validates inputs', () => {
 			expect(
 				insightSchemas.insightsBridgeArtistsRequestSchema.safeParse({ tagA: 'punk', tagB: 'disco', limit: 10 }).success,
+			).toBe(true)
+		})
+
+		test('insightsCompareTasteGroupRequestSchema validates inputs', () => {
+			expect(
+				insightSchemas.insightsCompareTasteGroupRequestSchema.safeParse({
+					users: ['alice', 'bob', 'carol'],
+					period: 'overall',
+				}).success,
 			).toBe(true)
 		})
 	})
