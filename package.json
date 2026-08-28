@@ -114,6 +114,14 @@
 			"import": "./dist/entrypoints/playlists.schemas.js",
 			"types": "./dist/entrypoints/playlists.schemas.d.ts"
 		},
+		"./exporter": {
+			"import": "./dist/entrypoints/exporter.js",
+			"types": "./dist/entrypoints/exporter.d.ts"
+		},
+		"./exporter/schemas": {
+			"import": "./dist/entrypoints/exporter.schemas.js",
+			"types": "./dist/entrypoints/exporter.schemas.d.ts"
+		},
 		"./schemas": {
 			"import": "./dist/entrypoints/base.schemas.js",
 			"types": "./dist/entrypoints/base.schemas.d.ts"

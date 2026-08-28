@@ -9,6 +9,8 @@ export * from './core/pagination.js';
 export * from './core/schemas/index.js';
 // Core services & schemas
 export * from './core/services/index.js';
+// Exporter service & schemas
+export * from './exporter/index.js';
 // Insights service & schemas
 export * from './insights/index.js';
 // Playlists service & schemas

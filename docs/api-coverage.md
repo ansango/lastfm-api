@@ -34,6 +34,9 @@ in the same PR.
 | `auth` | 2 | `getSession`, `getToken`¹ |
 | **Canonical Total** | **56** | |
 | `insights` | 20 | `getSummary`, `getNowPlaying`, `getHoursHistogram`, `getBinges`, `getTrends`, `getDiscoveries`, `getMood`, `getPersonality`, `compareUsers`, `getObscurityScore`, `getForgottenFavorites`, `getObsessions`, `getListeningStreaks`, `getListeningHeatmap`, `getAlbumHabits`, `getGenreBreakdown`, `getGenreEvolution`, `getSmartRecommendations`, `getBridgeArtists`, `compareTasteGroup` |
+| `reports` | 3 | `getWrapped`, `getMilestones`, `getMonthlyDigest` |
+| `playlists` | 1 | `generate` |
+| `exporter` | 3 | `exportScrobbles`, `exportLovedTracks`, `exportLibrary` |
 
 ¹ Added under epic #67.
 ² Added under epic #67. Requires an authenticated session (`sk`).

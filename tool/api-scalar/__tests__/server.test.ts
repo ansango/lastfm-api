@@ -45,7 +45,7 @@ describe('createApp: shape', () => {
 		expect(typeof app.fetch).toBe('function')
 	})
 
-	test('GET /doc returns valid OpenAPI 3.0 JSON with 80 paths and x-tagGroups', async () => {
+	test('GET /doc returns valid OpenAPI 3.0 JSON with 83 paths and x-tagGroups', async () => {
 		const app = createFullApp({ apiKey: 'test-key' })
 		const res = await app.request('/doc')
 		expect(res.status).toBe(200)
@@ -55,13 +55,14 @@ describe('createApp: shape', () => {
 			'x-tagGroups'?: Array<{ name: string; tags: string[] }>
 		}
 		expect(body.openapi).toBe('3.0.0')
-		expect(Object.keys(body.paths).length).toBe(80)
+		expect(Object.keys(body.paths).length).toBe(83)
 		expect(body['x-tagGroups']).toBeDefined()
-		expect(body['x-tagGroups']?.length).toBe(4)
+		expect(body['x-tagGroups']?.length).toBe(5)
 		expect(body['x-tagGroups']?.[0].name).toBe('Last.fm Core API')
 		expect(body['x-tagGroups']?.[1].name).toBe('Insights & Analytics Engine')
 		expect(body['x-tagGroups']?.[2].name).toBe('Reports & Wrapped')
 		expect(body['x-tagGroups']?.[3].name).toBe('Smart Playlists Generator')
+		expect(body['x-tagGroups']?.[4].name).toBe('Data Exporter & Backup')
 	})
 
 	test('GET / returns the Scalar HTML page', async () => {

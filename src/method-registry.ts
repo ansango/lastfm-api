@@ -38,6 +38,7 @@ import * as librarySchemas from './core/schemas/library.schemas.js'
 import * as tagSchemas from './core/schemas/tag.schemas.js'
 import * as trackSchemas from './core/schemas/track.schemas.js'
 import * as userSchemas from './core/schemas/user.schemas.js'
+import * as exporterSchemas from './exporter/schemas.js'
 import * as insightsSchemas from './insights/schemas.js'
 import * as playlistsSchemas from './playlists/schemas.js'
 import * as reportsSchemas from './reports/schemas.js'
@@ -192,6 +193,12 @@ const NS_CONFIG: Readonly<Record<string, NamespaceConfig>> = {
 		kind: 'extension',
 		group: 'Smart Playlists Generator',
 	},
+	exporter: {
+		methods: REGISTRY_PROBE.exporter as unknown as ServiceMethods,
+		schemas: exporterSchemas,
+		kind: 'extension',
+		group: 'Data Exporter & Backup',
+	},
 }
 
 const NS_DEFAULTS: Readonly<
@@ -209,6 +216,7 @@ const NS_DEFAULTS: Readonly<
 	insights: { httpMethod: 'GET', bodyKind: 'query', requiresSession: false, requiresSignature: false },
 	reports: { httpMethod: 'GET', bodyKind: 'query', requiresSession: false, requiresSignature: false },
 	playlists: { httpMethod: 'GET', bodyKind: 'query', requiresSession: false, requiresSignature: false },
+	exporter: { httpMethod: 'GET', bodyKind: 'query', requiresSession: false, requiresSignature: false },
 }
 
 /**
@@ -357,6 +365,19 @@ const SPECIAL: Readonly<
 		description:
 			'Generates a smart playlist based on algorithmic rules (time-capsule, deep-cuts, heavy-rotation, discovery-radar) with ready-to-use M3U and CSV formats.',
 	},
+	'exporter.exportScrobbles': {
+		summary: 'exporter.exportScrobbles (@ansango/lastfm-api)',
+		description:
+			'Exports scrobble history with UTS checkpointing and multiple format engines (JSON, JSONL, CSV, ListenBrainz).',
+	},
+	'exporter.exportLovedTracks': {
+		summary: 'exporter.exportLovedTracks (@ansango/lastfm-api)',
+		description: 'Exports all loved tracks for a user in JSON or CSV format.',
+	},
+	'exporter.exportLibrary': {
+		summary: 'exporter.exportLibrary (@ansango/lastfm-api)',
+		description: 'Exports a user artist library with playcounts and metadata in JSON or CSV format.',
+	},
 }
 
 // -- Builder -------------------------------------------------------------
@@ -455,11 +476,18 @@ export const REPORTS_METHODS = ['reports.getWrapped', 'reports.getMilestones', '
 
 export const PLAYLISTS_METHODS = ['playlists.generate'] as const
 
+export const EXPORTER_METHODS = [
+	'exporter.exportScrobbles',
+	'exporter.exportLovedTracks',
+	'exporter.exportLibrary',
+] as const
+
 export const ALL_REGISTRY_METHODS = [
 	...CANONICAL_METHODS,
 	...INSIGHTS_METHODS,
 	...REPORTS_METHODS,
 	...PLAYLISTS_METHODS,
+	...EXPORTER_METHODS,
 ] as const
 
 const registry: Record<string, Record<string, MethodMeta>> = {}

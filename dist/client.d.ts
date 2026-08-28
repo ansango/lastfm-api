@@ -1,5 +1,6 @@
 import type { LastFmConfig } from './config.js';
 import { type AlbumService, type ArtistService, type AuthService, type ChartService, type GeoService, type LibraryService, type TagService, type TrackService, type UserService } from './core/services/index.js';
+import { type ExporterService } from './exporter/index.js';
 import { type InsightsService } from './insights/index.js';
 import { type PlaylistsService } from './playlists/index.js';
 import { type ReportsService } from './reports/index.js';
@@ -35,6 +36,7 @@ export declare class LastFmClient {
     readonly insights: InsightsService;
     readonly reports: ReportsService;
     readonly playlists: PlaylistsService;
+    readonly exporter: ExporterService;
     private readonly config;
     constructor(config?: Partial<LastFmConfig>);
     /**
