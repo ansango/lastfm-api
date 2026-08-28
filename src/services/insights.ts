@@ -2,7 +2,9 @@ import type { LastFmConfig } from '../config.js'
 import { getBinges } from './insights/binges.js'
 import { getDiscoveries } from './insights/discoveries.js'
 import { getHoursHistogram } from './insights/hours.js'
+import { getMood } from './insights/mood.js'
 import { getNowPlaying } from './insights/now-playing.js'
+import { getPersonality } from './insights/personality.js'
 import { getSummary } from './insights/summary.js'
 import { getTrends } from './insights/trends.js'
 import type {
@@ -12,8 +14,12 @@ import type {
 	InsightsDiscoveriesResponse,
 	InsightsHoursRequest,
 	InsightsHoursResponse,
+	InsightsMoodRequest,
+	InsightsMoodResponse,
 	InsightsNowPlayingRequest,
 	InsightsNowPlayingResponse,
+	InsightsPersonalityRequest,
+	InsightsPersonalityResponse,
 	InsightsSummaryRequest,
 	InsightsSummaryResponse,
 	InsightsTrendsRequest,
@@ -86,6 +92,26 @@ export interface InsightsService {
 	 * @returns {Promise<InsightsDiscoveriesResponse>}
 	 */
 	getDiscoveries: (params: InsightsDiscoveriesRequest, init?: RequestInit) => Promise<InsightsDiscoveriesResponse>
+
+	/**
+	 * Classifies a user's emotional mood profile (energy vs. valence coordinates,
+	 * quadrant, and top genre categories) based on community tags.
+	 *
+	 * @param {InsightsMoodRequest} params
+	 * @param {RequestInit} [init]
+	 * @returns {Promise<InsightsMoodResponse>}
+	 */
+	getMood: (params: InsightsMoodRequest, init?: RequestInit) => Promise<InsightsMoodResponse>
+
+	/**
+	 * Derives a holistic listener personality archetype (The Devotee, The Explorer,
+	 * The Drifter, The DJ, The Nocturnal, The Archivist) based on multidimensional feature vectors.
+	 *
+	 * @param {InsightsPersonalityRequest} params
+	 * @param {RequestInit} [init]
+	 * @returns {Promise<InsightsPersonalityResponse>}
+	 */
+	getPersonality: (params: InsightsPersonalityRequest, init?: RequestInit) => Promise<InsightsPersonalityResponse>
 }
 
 /**
@@ -99,5 +125,7 @@ export function createInsightsService(config: LastFmConfig): InsightsService {
 		getBinges: (params, init) => getBinges(config, params, init),
 		getTrends: (params, init) => getTrends(config, params, init),
 		getDiscoveries: (params, init) => getDiscoveries(config, params, init),
+		getMood: (params, init) => getMood(config, params, init),
+		getPersonality: (params, init) => getPersonality(config, params, init),
 	}
 }
