@@ -88,8 +88,7 @@ export interface TrackService {
 	 * ad-hoc calls) or set `sessionKey` on the `LastFmConfig` when
 	 * constructing the client (preferred for long-lived clients). Obtain a
 	 * session key via `auth.getToken` + the browser-based `auth.getSession`
-	 * flow (works for self-service API keys), or via `auth.getMobileSession`
-	 * (requires a mobile-class API key — not self-service).
+	 * flow (works for self-service API keys).
 	 *
 	 * @param {TrackScrobbleRequest} params - `artist`, `track`, `timestamp`, and optional `sk` and `album`
 	 * @param {RequestInit} init
@@ -130,8 +129,7 @@ export interface TrackService {
 	 * **Authentication:** pass `sk` in `params.sk` (preferred for ad-hoc
 	 * calls) or set `sessionKey` on the `LastFmConfig` when constructing
 	 * the client (preferred for long-lived clients). Obtain a session key
-	 * via `auth.getToken` + the browser-based `auth.getSession` flow, or
-	 * via `auth.getMobileSession` (mobile-class API keys only).
+	 * via `auth.getToken` + the browser-based `auth.getSession` flow.
 	 *
 	 * @param {TrackAddTagsRequest} params
 	 * @param {RequestInit} init
@@ -147,8 +145,7 @@ export interface TrackService {
 	 *
 	 * **Authentication:** pass `sk` in `params.sk` (preferred for ad-hoc
 	 * calls) or set `sessionKey` on the `LastFmConfig` when constructing
-	 * the client. Obtain a session key via `auth.getToken` +
-	 * `auth.getSession`, or `auth.getMobileSession` (mobile-class only).
+	 * the client. Obtain a session key via `auth.getToken` + `auth.getSession`.
 	 *
 	 * @param {TrackRemoveTagRequest} params
 	 * @param {RequestInit} init
@@ -165,8 +162,7 @@ export interface TrackService {
 	 *
 	 * **Authentication:** pass `sk` in `params.sk` (preferred for ad-hoc
 	 * calls) or set `sessionKey` on the `LastFmConfig` when constructing
-	 * the client. Obtain a session key via `auth.getToken` +
-	 * `auth.getSession`, or `auth.getMobileSession` (mobile-class only).
+	 * the client. Obtain a session key via `auth.getToken` + `auth.getSession`.
 	 *
 	 * @param {TrackLoveRequest} params
 	 * @param {RequestInit} init
@@ -182,8 +178,7 @@ export interface TrackService {
 	 *
 	 * **Authentication:** pass `sk` in `params.sk` (preferred for ad-hoc
 	 * calls) or set `sessionKey` on the `LastFmConfig` when constructing
-	 * the client. Obtain a session key via `auth.getToken` +
-	 * `auth.getSession`, or `auth.getMobileSession` (mobile-class only).
+	 * the client. Obtain a session key via `auth.getToken` + `auth.getSession`.
 	 *
 	 * @param {TrackUnloveRequest} params
 	 * @param {RequestInit} init
@@ -210,8 +205,7 @@ export interface TrackService {
 	 *
 	 * **Authentication:** pass `sk` in `params.sk` (preferred for ad-hoc
 	 * calls) or set `sessionKey` on the `LastFmConfig` when constructing
-	 * the client. Obtain a session key via `auth.getToken` +
-	 * `auth.getSession`, or `auth.getMobileSession` (mobile-class only).
+	 * the client. Obtain a session key via `auth.getToken` + `auth.getSession`.
 	 *
 	 * @param {TrackUpdateNowPlayingRequest} params
 	 * @param {RequestInit} init

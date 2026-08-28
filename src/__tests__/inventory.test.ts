@@ -6,14 +6,14 @@ import { LastFmClient } from '../client.js'
  * Tests that the package's exported client covers the canonical
  * Last.fm method inventory declared in `src/canonical-methods.ts`.
  *
- * The inventory list is the single source of truth for the "57/57"
- * coverage declared in the parent epic (#67), re-audited in #77,
- * and consumed by the docs tool via `src/method-registry.ts` (#92).
+ * The inventory list is the single source of truth for the "56/56"
+ * coverage declared in the parent epic (#67, #77, #92), updated in #117
+ * (BREAKING: `auth.getMobileSession` removed in v4.0.0).
  */
 
-describe('inventory: 57/57 canonical Last.fm methods', () => {
-	test('the inventory list itself contains exactly 57 entries', () => {
-		expect(CANONICAL_METHODS.length).toBe(57)
+describe('inventory: 56/56 canonical Last.fm methods', () => {
+	test('the inventory list itself contains exactly 56 entries', () => {
+		expect(CANONICAL_METHODS.length).toBe(56)
 	})
 
 	test('all canonical methods exist on the LastFmClient as callable functions', () => {
@@ -58,7 +58,7 @@ describe('inventory: 57/57 canonical Last.fm methods', () => {
 			chart: 3,
 			geo: 2,
 			library: 1,
-			auth: 3,
+			auth: 2,
 		}
 		const actual: Record<string, number> = {}
 		for (const canonical of CANONICAL_METHODS) {
