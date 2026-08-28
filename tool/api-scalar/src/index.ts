@@ -13,10 +13,16 @@
 import { config as loadEnv } from 'dotenv';
 import { createApp } from './server.js';
 import { mountOpenAPI } from './doc.js';
+import { validateOrExit } from './startup.js';
 
 // .env is optional; tools may inject via shell instead.
 // Resolve from this file's location up to the repo root: src/ → api-scalar/ → tool/ → root.
 loadEnv({ path: `${import.meta.dir}/../../../.env` });
+
+// Validate the env before building the Hono app. If LASTFM_API_KEY is
+// missing, `validateOrExit` prints a friendly error with the create-form
+// URL + a copy-pasteable `echo >> .env` snippet and process.exit(1)s.
+validateOrExit();
 
 const app = createApp();
 mountOpenAPI(app, { serverUrl: `http://localhost:${process.env['PORT'] ?? '3000'}` });
