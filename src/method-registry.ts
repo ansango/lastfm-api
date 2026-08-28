@@ -73,6 +73,10 @@ export interface MethodMeta {
 	 *  `createRoute({...})` will surface it with `deprecated: true`,
 	 *  which Scalar renders as a strikethrough on the operation). */
 	readonly deprecated?: boolean
+	/** Custom summary in OpenAPI spec. */
+	readonly summary?: string
+	/** Custom description in OpenAPI spec. */
+	readonly description?: string
 }
 
 export type MethodRegistry = Readonly<{
@@ -143,7 +147,12 @@ const NS_DEFAULTS: Readonly<
 const SPECIAL: Readonly<
 	Record<
 		string,
-		Partial<Pick<MethodMeta, 'httpMethod' | 'bodyKind' | 'requiresSession' | 'requiresSignature' | 'deprecated'>>
+		Partial<
+			Pick<
+				MethodMeta,
+				'httpMethod' | 'bodyKind' | 'requiresSession' | 'requiresSignature' | 'deprecated' | 'summary' | 'description'
+			>
+		>
 	>
 > = {
 	// Write methods: POST + signed + require session
@@ -157,6 +166,53 @@ const SPECIAL: Readonly<
 	'track.unlove': { httpMethod: 'POST', bodyKind: 'json', requiresSession: true, requiresSignature: true },
 	'track.updateNowPlaying': { httpMethod: 'POST', bodyKind: 'json', requiresSession: true, requiresSignature: true },
 	'track.scrobble': { httpMethod: 'POST', bodyKind: 'json', requiresSession: true, requiresSignature: true },
+
+	// Insights analytics methods (computed by @ansango/lastfm-api)
+	'insights.getSummary': {
+		summary: 'insights.getSummary (@ansango/lastfm-api)',
+		description:
+			'Aggregates a user’s listening summary for a given period (top artists, tracks, albums, tags) and calculates mathematical Shannon diversity metrics (Shannon entropy and concentration shares).',
+	},
+	'insights.getNowPlaying': {
+		summary: 'insights.getNowPlaying (@ansango/lastfm-api)',
+		description:
+			'Fetches the user’s current (or most recent) track and enriches it with artist biography (sanitized wiki/HTML) and similar artists with match scores.',
+	},
+	'insights.getHoursHistogram': {
+		summary: 'insights.getHoursHistogram (@ansango/lastfm-api)',
+		description:
+			'Buckets a user’s recent scrobbles by hour-of-day (0..23 UTC) and weekday (0..6 Mon-Sun), calculating diurnal distribution and peak listening times.',
+	},
+	'insights.getBinges': {
+		summary: 'insights.getBinges (@ansango/lastfm-api)',
+		description:
+			'Detects binge listening streaks (consecutive plays of the same artist or track) across a user’s recent scrobbles within a configurable maximum gap window.',
+	},
+	'insights.getTrends': {
+		summary: 'insights.getTrends (@ansango/lastfm-api)',
+		description:
+			'Calculates ranking differentials (risers, fallers, newcomers, departures) between two time periods with rank and count delta metrics.',
+	},
+	'insights.getDiscoveries': {
+		summary: 'insights.getDiscoveries (@ansango/lastfm-api)',
+		description:
+			'Detects newly discovered artists in a recent time window by comparing against the user’s historical baseline roster, sorted by first-seen timestamp.',
+	},
+	'insights.getMood': {
+		summary: 'insights.getMood (@ansango/lastfm-api)',
+		description:
+			'Classifies a user’s emotional mood profile (energy vs. valence coordinates on a 2D Cartesian plane, quadrant label, and top genre categories) based on community tags.',
+	},
+	'insights.getPersonality': {
+		summary: 'insights.getPersonality (@ansango/lastfm-api)',
+		description:
+			'Derives a holistic listener personality archetype (The Devotee, The Explorer, The Drifter, The DJ, The Nocturnal, The Archivist) based on multidimensional feature vectors.',
+	},
+	'insights.compareUsers': {
+		summary: 'insights.compareUsers (@ansango/lastfm-api)',
+		description:
+			'Compares two Last.fm users’ listening affinity using Jaccard similarity over mutual top artist rosters, returning shared artists ranked by mutual playcount weight.',
+	},
 }
 
 // -- Builder -------------------------------------------------------------
