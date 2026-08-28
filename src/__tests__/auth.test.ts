@@ -79,6 +79,26 @@ describe('auth service', () => {
 			expect(result.token).toBe('request-token-abc')
 		})
 
+		test('response includes a pre-built authUrl pointing at last.fm/api/auth', async () => {
+			mock.respondWithJson({ token: 'request-token-abc' })
+
+			const result = await client.auth.getToken()
+
+			expect(result.authUrl).toBe(`https://www.last.fm/api/auth/?api_key=${API_KEY}&token=request-token-abc`)
+		})
+
+		test('authUrl is independent of the network roundtrip (built from the returned token)', async () => {
+			// Verifies the authUrl is constructed from `response.token` (the value
+			// Last.fm gave us), not from a separate request. A custom Last.fm
+			// response token must propagate into the authUrl verbatim.
+			mock.respondWithJson({ token: 'a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4' })
+
+			const result = await client.auth.getToken()
+
+			expect(result.authUrl).toContain('token=a1b2c3d4e5f6a1b2c3d4e5f6a1b2c3d4')
+			expect(result.authUrl).toContain(`api_key=${API_KEY}`)
+		})
+
 		test('signature is reproducible from a fixed vector (method + api_key only)', async () => {
 			mock.respondWithJson({ token: 'tok' })
 

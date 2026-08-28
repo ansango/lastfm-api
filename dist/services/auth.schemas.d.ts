@@ -23,6 +23,7 @@ export declare const authGetSessionResponseSchema: z.ZodObject<{
 }, z.core.$strip>;
 export declare const authGetTokenResponseSchema: z.ZodObject<{
     token: z.ZodString;
+    authUrl: z.ZodOptional<z.ZodString>;
 }, z.core.$strip>;
 export declare const authGetMobileSessionResponseSchema: z.ZodObject<{
     session: z.ZodObject<{
