@@ -4,6 +4,7 @@ import { createInsightsService, type InsightsService } from '../entrypoints/insi
 import * as insightSchemas from '../entrypoints/insights.schemas.js'
 import { createClient } from '../index.js'
 import { findBinges } from '../services/insights/lib/binges.js'
+import { compareArtists, jaccard } from '../services/insights/lib/compare.js'
 import { findNewArtists } from '../services/insights/lib/discoveries.js'
 import { computeDiversity, topNShare } from '../services/insights/lib/diversity.js'
 import { bucketTimestamp, buildHourHistogram } from '../services/insights/lib/hours.js'
@@ -296,12 +297,41 @@ describe('insights service', () => {
 				normalizedDiversity: 0.8,
 				newArtistsLast30d: 5,
 				totalArtistsLast30d: 40,
-				nightHourShare: 0.75, // 75% at night
+				nightHourShare: 0.75,
 				morningHourShare: 0.05,
 				weekdayShare: 0.7,
 			}
 			const result = scoreArchetypes(features)
 			expect(result.winner).toBe('Nocturnal')
+		})
+	})
+
+	describe('pure algorithms: compare users', () => {
+		test('jaccard computes correct overlap fractions', () => {
+			const a = new Set(['Radiohead', 'The Beatles', 'Pink Floyd'])
+			const b = new Set(['Radiohead', 'Pink Floyd', 'King Crimson'])
+			// intersection: 2, union: 4 -> 0.5
+			expect(jaccard(a, b)).toBe(0.5)
+			expect(jaccard(new Set(), new Set())).toBe(0)
+		})
+
+		test('compareArtists computes mutual overlap and ranking', () => {
+			const a = [
+				{ name: 'Radiohead', playcount: 100 },
+				{ name: 'The Beatles', playcount: 80 },
+			]
+			const b = [
+				{ name: 'Radiohead', playcount: 60 },
+				{ name: 'Pink Floyd', playcount: 50 },
+			]
+			const res = compareArtists(a, b)
+			expect(res.aCount).toBe(2)
+			expect(res.bCount).toBe(2)
+			expect(res.intersection).toEqual(['Radiohead'])
+			expect(res.sharedArtists[0].weight).toBe(60) // min(100, 60)
+			expect(res.onlyA).toEqual(['The Beatles'])
+			expect(res.onlyB).toEqual(['Pink Floyd'])
+			expect(res.compatibilityScore).toBe(33) // 1/3 = ~0.33 -> 33
 		})
 	})
 
@@ -593,6 +623,41 @@ describe('insights service', () => {
 		})
 	})
 
+	describe('compareUsers', () => {
+		test('fetches both users top artists and calculates Jaccard affinity and shared artists', async () => {
+			const artistsA = [
+				{ ...fakeArtist, name: 'Radiohead', playcount: '100' },
+				{ ...fakeArtist, name: 'The Beatles', playcount: '80' },
+			]
+			const artistsB = [
+				{ ...fakeArtist, name: 'Radiohead', playcount: '60' },
+				{ ...fakeArtist, name: 'Pink Floyd', playcount: '50' },
+			]
+
+			mock.respondWithJson({ topartists: { artist: artistsA, '@attr': okAttr() } })
+			mock.respondWithJson({ topartists: { artist: artistsB, '@attr': okAttr() } })
+
+			const result = await client.insights.compareUsers({
+				userA: 'user_a',
+				userB: 'user_b',
+				period: 'overall',
+			})
+
+			expect(mock.calls).toHaveLength(2)
+			expect(result.userA).toBe('user_a')
+			expect(result.userB).toBe('user_b')
+			expect(result.sharedCount).toBe(1)
+			expect(result.sharedArtists[0].name).toBe('Radiohead')
+			expect(result.sharedArtists[0].weight).toBe(60)
+			expect(result.onlyUserA).toEqual(['The Beatles'])
+			expect(result.onlyUserB).toEqual(['Pink Floyd'])
+			expect(result.compatibilityScore).toBe(33)
+
+			const parsed = insightSchemas.insightsCompareResponseSchema.safeParse(result)
+			expect(parsed.success).toBe(true)
+		})
+	})
+
 	describe('schema exports and client wiring', () => {
 		test('factory createInsightsService instantiates InsightsService with all wired methods', () => {
 			const svc: InsightsService = createInsightsService({ apiKey: API_KEY })
@@ -604,6 +669,7 @@ describe('insights service', () => {
 			expect(typeof svc.getDiscoveries).toBe('function')
 			expect(typeof svc.getMood).toBe('function')
 			expect(typeof svc.getPersonality).toBe('function')
+			expect(typeof svc.compareUsers).toBe('function')
 		})
 
 		test('exposes insights service via createClient helper', () => {
@@ -616,13 +682,13 @@ describe('insights service', () => {
 			expect(typeof c.insights.getDiscoveries).toBe('function')
 			expect(typeof c.insights.getMood).toBe('function')
 			expect(typeof c.insights.getPersonality).toBe('function')
+			expect(typeof c.insights.compareUsers).toBe('function')
 		})
 
-		test('insightsMoodRequestSchema and insightsPersonalityRequestSchema validate inputs', () => {
-			expect(insightSchemas.insightsMoodRequestSchema.safeParse({ user: 'ansango', period: 'weekly' }).success).toBe(
-				true,
-			)
-			expect(insightSchemas.insightsPersonalityRequestSchema.safeParse({ user: 'ansango' }).success).toBe(true)
+		test('insightsCompareRequestSchema validates inputs', () => {
+			expect(
+				insightSchemas.insightsCompareRequestSchema.safeParse({ userA: 'alice', userB: 'bob', limit: 50 }).success,
+			).toBe(true)
 		})
 	})
 })

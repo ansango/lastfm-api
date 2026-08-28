@@ -1,5 +1,6 @@
 import type { LastFmConfig } from '../config.js'
 import { getBinges } from './insights/binges.js'
+import { compareUsers } from './insights/compare.js'
 import { getDiscoveries } from './insights/discoveries.js'
 import { getHoursHistogram } from './insights/hours.js'
 import { getMood } from './insights/mood.js'
@@ -10,6 +11,8 @@ import { getTrends } from './insights/trends.js'
 import type {
 	InsightsBingesRequest,
 	InsightsBingesResponse,
+	InsightsCompareRequest,
+	InsightsCompareResponse,
 	InsightsDiscoveriesRequest,
 	InsightsDiscoveriesResponse,
 	InsightsHoursRequest,
@@ -112,6 +115,16 @@ export interface InsightsService {
 	 * @returns {Promise<InsightsPersonalityResponse>}
 	 */
 	getPersonality: (params: InsightsPersonalityRequest, init?: RequestInit) => Promise<InsightsPersonalityResponse>
+
+	/**
+	 * Compares two Last.fm users' listening affinity using Jaccard similarity
+	 * over mutual top artist rosters.
+	 *
+	 * @param {InsightsCompareRequest} params
+	 * @param {RequestInit} [init]
+	 * @returns {Promise<InsightsCompareResponse>}
+	 */
+	compareUsers: (params: InsightsCompareRequest, init?: RequestInit) => Promise<InsightsCompareResponse>
 }
 
 /**
@@ -127,5 +140,6 @@ export function createInsightsService(config: LastFmConfig): InsightsService {
 		getDiscoveries: (params, init) => getDiscoveries(config, params, init),
 		getMood: (params, init) => getMood(config, params, init),
 		getPersonality: (params, init) => getPersonality(config, params, init),
+		compareUsers: (params, init) => compareUsers(config, params, init),
 	}
 }
