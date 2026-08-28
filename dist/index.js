@@ -5,6 +5,7 @@ export { createConfig, getGlobalConfig, resetGlobalConfig, setGlobalConfig, } fr
 // Canonical methods inventory
 export { CANONICAL_METHODS } from './core/canonical-methods.js';
 export { createCoreClient, LastFmCoreClient } from './core/client.js';
+export * from './core/pagination.js';
 export * from './core/schemas/index.js';
 // Core services & schemas
 export * from './core/services/index.js';
