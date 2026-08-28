@@ -1,4 +1,4 @@
-import { fetcher, buildUrl } from '../utils.js';
+import { buildUrl, fetcher } from '../utils.js';
 export function createUserService(config) {
     return {
         getFriends: (params, init) => fetcher(buildUrl(config, 'user.getFriends', params), init),
@@ -13,7 +13,7 @@ export function createUserService(config) {
         getWeeklyArtistChart: (params, init) => fetcher(buildUrl(config, 'user.getWeeklyArtistChart', params), init),
         getWeeklyChartList: (params, init) => fetcher(buildUrl(config, 'user.getWeeklyChartList', params), init),
         getWeeklyTrackChart: (params, init) => fetcher(buildUrl(config, 'user.getWeeklyTrackChart', params), init),
-        getPersonalTags: (params, init) => fetcher(buildUrl(config, 'user.getPersonalTags', params), init)
+        getPersonalTags: (params, init) => fetcher(buildUrl(config, 'user.getPersonalTags', params), init),
     };
 }
 //# sourceMappingURL=user.js.map

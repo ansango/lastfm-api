@@ -1,22 +1,22 @@
 {
-  "name": "@ansango/lastfm-api-tool",
-  "version": "0.0.0",
-  "private": true,
-  "type": "module",
-  "description": "Local Hono + Scalar docs server for @ansango/lastfm-api (HU1–HU4 of #92).",
-  "scripts": {
-    "dev": "bun run --hot src/index.ts",
-    "start": "bun run src/index.ts",
-    "test": "bun test __tests__",
-    "typecheck": "tsc --noEmit"
-  },
-  "dependencies": {
-    "@hono/zod-openapi": "^1.1.0",
-    "@scalar/hono-api-reference": "^0.9.0",
-    "hono": "^4.10.0",
-    "zod": "4.1.12"
-  },
-  "devDependencies": {
-    "@types/bun": "latest"
-  }
+	"name": "@ansango/lastfm-api-tool",
+	"version": "0.0.0",
+	"private": true,
+	"type": "module",
+	"description": "Local Hono + Scalar docs server for @ansango/lastfm-api (HU1–HU4 of #92).",
+	"scripts": {
+		"dev": "bun run --hot src/index.ts",
+		"start": "bun run src/index.ts",
+		"test": "bun test __tests__",
+		"typecheck": "tsc --noEmit"
+	},
+	"dependencies": {
+		"@hono/zod-openapi": "^1.1.0",
+		"@scalar/hono-api-reference": "^0.9.0",
+		"hono": "^4.10.0",
+		"zod": "4.1.12"
+	},
+	"devDependencies": {
+		"@types/bun": "latest"
+	}
 }

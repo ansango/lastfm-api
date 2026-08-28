@@ -1,9 +1,13 @@
+import type { LastFmConfig } from '../config.js'
+import { buildUrl, fetcher, LastFmApiError, signedPost } from '../utils.js'
 import type {
 	ArtistAddTagsRequest,
 	ArtistGetCorrectionRequest,
 	ArtistGetCorrectionResponse,
 	ArtistGetInfoRequest,
 	ArtistGetInfoResponse,
+	ArtistGetSimilarRequest,
+	ArtistGetSimilarResponse,
 	ArtistGetTagsRequest,
 	ArtistGetTagsResponse,
 	ArtistGetTopAlbumsRequest,
@@ -15,11 +19,7 @@ import type {
 	ArtistRemoveTagRequest,
 	ArtistSearchRequest,
 	ArtistSearchResponse,
-	ArtistGetSimilarRequest,
-	ArtistGetSimilarResponse
-} from './artist.schemas.js';
-import { fetcher, buildUrl, signedPost, LastFmApiError } from '../utils.js';
-import type { LastFmConfig } from '../config.js';
+} from './artist.schemas.js'
 
 export interface ArtistService {
 	/**
@@ -29,7 +29,7 @@ export interface ArtistService {
 	 * @returns {Promise<ArtistGetInfoResponse>}
 	 * https://www.last.fm/api/show/artist.getInfo
 	 */
-	getInfo: (params: ArtistGetInfoRequest, init?: RequestInit) => Promise<ArtistGetInfoResponse>;
+	getInfo: (params: ArtistGetInfoRequest, init?: RequestInit) => Promise<ArtistGetInfoResponse>
 	/**
 	 * Get the tags applied by an individual user to an artist on Last.fm.
 	 * @param {ArtistGetTagsRequest} params
@@ -37,7 +37,7 @@ export interface ArtistService {
 	 * @returns {Promise<ArtistGetTagsResponse>}
 	 * https://www.last.fm/api/show/artist.getTags
 	 * */
-	getTags: (params: ArtistGetTagsRequest, init?: RequestInit) => Promise<ArtistGetTagsResponse>;
+	getTags: (params: ArtistGetTagsRequest, init?: RequestInit) => Promise<ArtistGetTagsResponse>
 	/**
 	 * Get the similar artists for this artist on Last.fm, based on listening data.
 	 * @param {ArtistGetSimilarRequest} params
@@ -45,10 +45,7 @@ export interface ArtistService {
 	 * @returns {Promise<ArtistGetSimilarResponse>}
 	 * https://www.last.fm/api/show/artist.getSimilar
 	 * */
-	getSimilar: (
-		params: ArtistGetSimilarRequest,
-		init?: RequestInit
-	) => Promise<ArtistGetSimilarResponse>;
+	getSimilar: (params: ArtistGetSimilarRequest, init?: RequestInit) => Promise<ArtistGetSimilarResponse>
 	/**
 	 * Get the top tags for an artist on Last.fm, ordered by popularity.
 	 * @param {ArtistGetTopTagsRequest} params
@@ -56,10 +53,7 @@ export interface ArtistService {
 	 * @returns {Promise<ArtistGetTopTagsResponse>}
 	 * https://www.last.fm/api/show/artist.getTopTags
 	 * */
-	getTopTags: (
-		params: ArtistGetTopTagsRequest,
-		init?: RequestInit
-	) => Promise<ArtistGetTopTagsResponse>;
+	getTopTags: (params: ArtistGetTopTagsRequest, init?: RequestInit) => Promise<ArtistGetTopTagsResponse>
 	/**
 	 * Get the top albums for an artist on Last.fm, ordered by popularity.
 	 * @param {ArtistGetTopAlbumsRequest} params
@@ -67,10 +61,7 @@ export interface ArtistService {
 	 * @returns {Promise<ArtistGetTopAlbumsResponse>}
 	 * https://www.last.fm/api/show/artist.getTopAlbums
 	 * */
-	getTopAlbums: (
-		params: ArtistGetTopAlbumsRequest,
-		init?: RequestInit
-	) => Promise<ArtistGetTopAlbumsResponse>;
+	getTopAlbums: (params: ArtistGetTopAlbumsRequest, init?: RequestInit) => Promise<ArtistGetTopAlbumsResponse>
 	/**
 	 * Get the top tracks by an artist on Last.fm, ordered by popularity.
 	 * @param {ArtistGetTopTracksRequest} params
@@ -78,10 +69,7 @@ export interface ArtistService {
 	 * @returns {Promise<ArtistGetTopTracksResponse>}
 	 * https://www.last.fm/api/show/artist.getTopTracks
 	 * */
-	getTopTracks: (
-		params: ArtistGetTopTracksRequest,
-		init?: RequestInit
-	) => Promise<ArtistGetTopTracksResponse>;
+	getTopTracks: (params: ArtistGetTopTracksRequest, init?: RequestInit) => Promise<ArtistGetTopTracksResponse>
 	/**
 	 * Search for an artist by name. Returns artist matches sorted by relevance.
 	 * @param {ArtistSearchRequest} params
@@ -89,7 +77,7 @@ export interface ArtistService {
 	 * @returns {Promise<ArtistSearchResponse>}
 	 * https://www.last.fm/api/show/artist.search
 	 * */
-	search: (params: ArtistSearchRequest, init?: RequestInit) => Promise<ArtistSearchResponse>;
+	search: (params: ArtistSearchRequest, init?: RequestInit) => Promise<ArtistSearchResponse>
 	/**
 	 * Get the canonical correction for a misspelled or noncanonical artist
 	 * name. Returns the list of corrections Last.fm would apply to the
@@ -99,10 +87,7 @@ export interface ArtistService {
 	 * @returns {Promise<ArtistGetCorrectionResponse>}
 	 * https://www.last.fm/api/show/artist.getCorrection
 	 */
-	getCorrection: (
-		params: ArtistGetCorrectionRequest,
-		init?: RequestInit
-	) => Promise<ArtistGetCorrectionResponse>;
+	getCorrection: (params: ArtistGetCorrectionRequest, init?: RequestInit) => Promise<ArtistGetCorrectionResponse>
 	/**
 	 * Add one or more personal tags to an artist. Requires an
 	 * authenticated session.
@@ -124,7 +109,7 @@ export interface ArtistService {
 	 * @returns {Promise<void>}
 	 * https://www.last.fm/api/show/artist.addTags
 	 */
-	addTags: (params: ArtistAddTagsRequest, init?: RequestInit) => Promise<void>;
+	addTags: (params: ArtistAddTagsRequest, init?: RequestInit) => Promise<void>
 	/**
 	 * Remove a single personal tag from an artist. Requires an
 	 * authenticated session.
@@ -141,54 +126,52 @@ export interface ArtistService {
 	 * @returns {Promise<void>}
 	 * https://www.last.fm/api/show/artist.removeTag
 	 */
-	removeTag: (params: ArtistRemoveTagRequest, init?: RequestInit) => Promise<void>;
+	removeTag: (params: ArtistRemoveTagRequest, init?: RequestInit) => Promise<void>
 }
 
 function resolveSessionKeyForArtistTagMutation(
 	config: LastFmConfig,
 	requestSk: string | undefined,
-	action: 'addTags' | 'removeTag'
+	action: 'addTags' | 'removeTag',
 ): string {
-	const sk = requestSk ?? config.sessionKey;
+	const sk = requestSk ?? config.sessionKey
 	if (!sk) {
 		throw new LastFmApiError(
 			`A session key (\`sk\`) is required to artist.${action}. Pass \`sk\` in the request params or set \`sessionKey\` on the LastFmConfig.`,
-			0
-		);
+			0,
+		)
 	}
-	return sk;
+	return sk
 }
 
 export function createArtistService(config: LastFmConfig): ArtistService {
 	const addTagsImpl = (params: ArtistAddTagsRequest, init?: RequestInit) => {
-		const sk = resolveSessionKeyForArtistTagMutation(config, params.sk, 'addTags');
+		const sk = resolveSessionKeyForArtistTagMutation(config, params.sk, 'addTags')
 		return signedPost(config, 'artist.addTags', {
 			params: {
 				artist: params.artist,
 				tags: params.tags.join(','),
-				sk
+				sk,
 			},
-			init
-		}).then(() => undefined);
-	};
+			init,
+		}).then(() => undefined)
+	}
 
 	const removeTagImpl = (params: ArtistRemoveTagRequest, init?: RequestInit) => {
-		const sk = resolveSessionKeyForArtistTagMutation(config, params.sk, 'removeTag');
+		const sk = resolveSessionKeyForArtistTagMutation(config, params.sk, 'removeTag')
 		return signedPost(config, 'artist.removeTag', {
 			params: {
 				artist: params.artist,
 				tag: params.tag,
-				sk
+				sk,
 			},
-			init
-		}).then(() => undefined);
-	};
+			init,
+		}).then(() => undefined)
+	}
 
 	return {
-		getInfo: (params, init) =>
-			fetcher<ArtistGetInfoResponse>(buildUrl(config, 'artist.getInfo', params), init),
-		getTags: (params, init) =>
-			fetcher<ArtistGetTagsResponse>(buildUrl(config, 'artist.getTags', params), init),
+		getInfo: (params, init) => fetcher<ArtistGetInfoResponse>(buildUrl(config, 'artist.getInfo', params), init),
+		getTags: (params, init) => fetcher<ArtistGetTagsResponse>(buildUrl(config, 'artist.getTags', params), init),
 		getSimilar: (params, init) =>
 			fetcher<ArtistGetSimilarResponse>(buildUrl(config, 'artist.getSimilar', params), init),
 		getTopTags: (params, init) =>
@@ -197,14 +180,10 @@ export function createArtistService(config: LastFmConfig): ArtistService {
 			fetcher<ArtistGetTopAlbumsResponse>(buildUrl(config, 'artist.getTopAlbums', params), init),
 		getTopTracks: (params, init) =>
 			fetcher<ArtistGetTopTracksResponse>(buildUrl(config, 'artist.getTopTracks', params), init),
-		search: (params, init) =>
-			fetcher<ArtistSearchResponse>(buildUrl(config, 'artist.search', params), init),
+		search: (params, init) => fetcher<ArtistSearchResponse>(buildUrl(config, 'artist.search', params), init),
 		getCorrection: (params, init) =>
-			fetcher<ArtistGetCorrectionResponse>(
-				buildUrl(config, 'artist.getCorrection', params),
-				init
-			),
+			fetcher<ArtistGetCorrectionResponse>(buildUrl(config, 'artist.getCorrection', params), init),
 		addTags: addTagsImpl,
-		removeTag: removeTagImpl
-	};
+		removeTag: removeTagImpl,
+	}
 }

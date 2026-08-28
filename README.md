@@ -535,6 +535,16 @@ bun run test:unit
 # Run live integration (requires Last.fm credentials in .env)
 bun run test:integration:live
 
+# Lint (Biome — formatter + linter, single command)
+bun run lint
+
+# Auto-fix what Biome can (formatting, safe lint fixes)
+bun run lint:fix
+
+# Format only (no lint)
+bun run format
+bun run format:check
+
 # Run the local interactive docs server (Hono + Scalar, see #92)
 bun run tool:dev
 

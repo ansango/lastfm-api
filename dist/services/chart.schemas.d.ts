@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from 'zod';
 export declare const chartGetTopArtistsRequestSchema: z.ZodObject<{
     limit: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodNumber]>>;
     page: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodNumber]>>;
@@ -12,11 +12,11 @@ export declare const chartGetTopArtistsResponseSchema: z.ZodObject<{
             listeners: z.ZodString;
             url: z.ZodString;
             image: z.ZodArray<z.ZodObject<{
-                "#text": z.ZodString;
+                '#text': z.ZodString;
                 size: z.ZodUnion<readonly [z.ZodLiteral<"small">, z.ZodLiteral<"medium">, z.ZodLiteral<"large">, z.ZodLiteral<"extralarge">, z.ZodLiteral<"mega">]>;
             }, z.core.$strip>>;
         }, z.core.$strip>>;
-        "@attr": z.ZodObject<{
+        '@attr': z.ZodObject<{
             page: z.ZodUnion<readonly [z.ZodString, z.ZodNumber]>;
             perPage: z.ZodString;
             totalPages: z.ZodString;
@@ -36,7 +36,7 @@ export declare const chartGetTopTagsResponseSchema: z.ZodObject<{
             reach: z.ZodNumber;
             taggings: z.ZodString;
         }, z.core.$strip>>;
-        "@attr": z.ZodObject<{
+        '@attr': z.ZodObject<{
             page: z.ZodUnion<readonly [z.ZodString, z.ZodNumber]>;
             perPage: z.ZodString;
             totalPages: z.ZodString;
@@ -63,11 +63,11 @@ export declare const chartGetTopTracksResponseSchema: z.ZodObject<{
                 url: z.ZodString;
             }, z.core.$strip>;
             image: z.ZodArray<z.ZodObject<{
-                "#text": z.ZodString;
+                '#text': z.ZodString;
                 size: z.ZodUnion<readonly [z.ZodLiteral<"small">, z.ZodLiteral<"medium">, z.ZodLiteral<"large">, z.ZodLiteral<"extralarge">, z.ZodLiteral<"mega">]>;
             }, z.core.$strip>>;
         }, z.core.$strip>>;
-        "@attr": z.ZodObject<{
+        '@attr': z.ZodObject<{
             page: z.ZodUnion<readonly [z.ZodString, z.ZodNumber]>;
             perPage: z.ZodString;
             totalPages: z.ZodString;

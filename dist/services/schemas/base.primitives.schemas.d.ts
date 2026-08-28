@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from 'zod';
 export declare const nameSchema: z.ZodString;
 export declare const mbidSchema: z.ZodString;
 export declare const urlSchema: z.ZodString;

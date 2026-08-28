@@ -1,4 +1,4 @@
-import { z } from "zod";
+import type { z } from 'zod';
 export declare const artistNameSchema: z.ZodString;
 export declare const albumNameSchema: z.ZodString;
 export declare const tagNameSchema: z.ZodString;

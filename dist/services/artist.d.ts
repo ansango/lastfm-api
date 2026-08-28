@@ -1,5 +1,5 @@
-import type { ArtistAddTagsRequest, ArtistGetCorrectionRequest, ArtistGetCorrectionResponse, ArtistGetInfoRequest, ArtistGetInfoResponse, ArtistGetTagsRequest, ArtistGetTagsResponse, ArtistGetTopAlbumsRequest, ArtistGetTopAlbumsResponse, ArtistGetTopTagsRequest, ArtistGetTopTagsResponse, ArtistGetTopTracksRequest, ArtistGetTopTracksResponse, ArtistRemoveTagRequest, ArtistSearchRequest, ArtistSearchResponse, ArtistGetSimilarRequest, ArtistGetSimilarResponse } from './artist.schemas.js';
 import type { LastFmConfig } from '../config.js';
+import type { ArtistAddTagsRequest, ArtistGetCorrectionRequest, ArtistGetCorrectionResponse, ArtistGetInfoRequest, ArtistGetInfoResponse, ArtistGetSimilarRequest, ArtistGetSimilarResponse, ArtistGetTagsRequest, ArtistGetTagsResponse, ArtistGetTopAlbumsRequest, ArtistGetTopAlbumsResponse, ArtistGetTopTagsRequest, ArtistGetTopTagsResponse, ArtistGetTopTracksRequest, ArtistGetTopTracksResponse, ArtistRemoveTagRequest, ArtistSearchRequest, ArtistSearchResponse } from './artist.schemas.js';
 export interface ArtistService {
     /**
      * Get the metadata for an artist. Includes biography.

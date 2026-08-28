@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from 'zod';
 export declare const libraryGetArtistsRequestSchema: z.ZodObject<{
     user: z.ZodString;
     limit: z.ZodOptional<z.ZodUnion<readonly [z.ZodString, z.ZodNumber]>>;
@@ -9,7 +9,7 @@ export declare const libraryGetArtistsResponseSchema: z.ZodObject<{
         artist: z.ZodArray<z.ZodObject<{
             tagCount: z.ZodUnion<readonly [z.ZodString, z.ZodNumber]>;
             image: z.ZodArray<z.ZodObject<{
-                "#text": z.ZodString;
+                '#text': z.ZodString;
                 size: z.ZodUnion<readonly [z.ZodLiteral<"small">, z.ZodLiteral<"medium">, z.ZodLiteral<"large">, z.ZodLiteral<"extralarge">, z.ZodLiteral<"mega">]>;
             }, z.core.$strip>>;
             mbid: z.ZodString;
@@ -17,7 +17,7 @@ export declare const libraryGetArtistsResponseSchema: z.ZodObject<{
             playcount: z.ZodString;
             name: z.ZodString;
         }, z.core.$strip>>;
-        "@attr": z.ZodObject<{
+        '@attr': z.ZodObject<{
             user: z.ZodString;
             totalPages: z.ZodString;
             page: z.ZodUnion<readonly [z.ZodString, z.ZodNumber]>;

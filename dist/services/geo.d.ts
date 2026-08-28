@@ -1,5 +1,5 @@
-import type { GeoGetTopArtistsRequest, GeoGetTopArtistsResponse, GeoGetTopTracksRequest, GeoGetTopTracksResponse } from './geo.schemas.js';
 import type { LastFmConfig } from '../config.js';
+import type { GeoGetTopArtistsRequest, GeoGetTopArtistsResponse, GeoGetTopTracksRequest, GeoGetTopTracksResponse } from './geo.schemas.js';
 export interface GeoService {
     /**
      * Get the most popular artists on Last.fm by country.

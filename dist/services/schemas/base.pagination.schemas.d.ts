@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from 'zod';
 export declare const totalPagesSchema: z.ZodString;
 export declare const totalSchema: z.ZodUnion<readonly [z.ZodString, z.ZodNumber]>;
 export declare const pageSchema: z.ZodUnion<readonly [z.ZodString, z.ZodNumber]>;

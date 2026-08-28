@@ -1,11 +1,11 @@
 export interface LastFmConfig {
-	apiKey: string;
-	sharedSecret?: string;
-	sessionKey?: string;
-	baseUrl?: string;
+	apiKey: string
+	sharedSecret?: string
+	sessionKey?: string
+	baseUrl?: string
 }
 
-let globalConfig: LastFmConfig | null = null;
+let globalConfig: LastFmConfig | null = null
 
 /**
  * Carga configuración desde variables de entorno (solo Node.js)
@@ -16,10 +16,10 @@ function loadEnvConfig(): Partial<LastFmConfig> {
 			apiKey: process.env.LASTFM_API_KEY,
 			sharedSecret: process.env.LASTFM_SHARED_SECRET,
 			sessionKey: process.env.LASTFM_SESSION_KEY,
-			baseUrl: process.env.LASTFM_BASE_URL
-		};
+			baseUrl: process.env.LASTFM_BASE_URL,
+		}
 	}
-	return {};
+	return {}
 }
 
 /**
@@ -27,33 +27,31 @@ function loadEnvConfig(): Partial<LastFmConfig> {
  */
 function validateConfig(config: Partial<LastFmConfig>): config is LastFmConfig {
 	if (!config.apiKey) {
-		throw new Error(
-			'Last.fm API key is required. Provide it via config or LASTFM_API_KEY environment variable.'
-		);
+		throw new Error('Last.fm API key is required. Provide it via config or LASTFM_API_KEY environment variable.')
 	}
-	return true;
+	return true
 }
 
 /**
  * Crea una nueva configuración validada
  */
 export function createConfig(options: Partial<LastFmConfig> = {}): LastFmConfig {
-	const envConfig = loadEnvConfig();
+	const envConfig = loadEnvConfig()
 	const config = {
 		baseUrl: 'https://ws.audioscrobbler.com/2.0/',
 		...envConfig,
-		...options
-	};
+		...options,
+	}
 
-	validateConfig(config);
-	return config as LastFmConfig;
+	validateConfig(config)
+	return config as LastFmConfig
 }
 
 /**
  * Establece la configuración global
  */
 export function setGlobalConfig(config: Partial<LastFmConfig>): void {
-	globalConfig = createConfig(config);
+	globalConfig = createConfig(config)
 }
 
 /**
@@ -61,14 +59,14 @@ export function setGlobalConfig(config: Partial<LastFmConfig>): void {
  */
 export function getGlobalConfig(): LastFmConfig {
 	if (!globalConfig) {
-		globalConfig = createConfig();
+		globalConfig = createConfig()
 	}
-	return globalConfig;
+	return globalConfig
 }
 
 /**
  * Resetea la configuración global (útil para testing)
  */
 export function resetGlobalConfig(): void {
-	globalConfig = null;
+	globalConfig = null
 }

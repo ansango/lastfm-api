@@ -1,11 +1,11 @@
+import type { LastFmConfig } from '../config.js'
+import { buildUrl, fetcher } from '../utils.js'
 import type {
 	GeoGetTopArtistsRequest,
 	GeoGetTopArtistsResponse,
 	GeoGetTopTracksRequest,
-	GeoGetTopTracksResponse
-} from './geo.schemas.js';
-import { fetcher, buildUrl } from '../utils.js';
-import type { LastFmConfig } from '../config.js';
+	GeoGetTopTracksResponse,
+} from './geo.schemas.js'
 
 export interface GeoService {
 	/**
@@ -15,10 +15,7 @@ export interface GeoService {
 	 * @returns {Promise<GeoGetTopArtistsResponse>}
 	 * https://www.last.fm/api/show/geo.getTopArtists
 	 * */
-	getTopArtists: (
-		params: GeoGetTopArtistsRequest,
-		init?: RequestInit
-	) => Promise<GeoGetTopArtistsResponse>;
+	getTopArtists: (params: GeoGetTopArtistsRequest, init?: RequestInit) => Promise<GeoGetTopArtistsResponse>
 	/**
 	 * Get the most popular tracks on Last.fm by country.
 	 * @param {GeoGetTopTracksRequest} params
@@ -26,10 +23,7 @@ export interface GeoService {
 	 * @returns {Promise<GeoGetTopTracksResponse>}
 	 * https://www.last.fm/api/show/geo.getTopTracks
 	 * */
-	getTopTracks: (
-		params: GeoGetTopTracksRequest,
-		init?: RequestInit
-	) => Promise<GeoGetTopTracksResponse>;
+	getTopTracks: (params: GeoGetTopTracksRequest, init?: RequestInit) => Promise<GeoGetTopTracksResponse>
 }
 
 export function createGeoService(config: LastFmConfig): GeoService {
@@ -37,6 +31,6 @@ export function createGeoService(config: LastFmConfig): GeoService {
 		getTopArtists: (params, init) =>
 			fetcher<GeoGetTopArtistsResponse>(buildUrl(config, 'geo.getTopArtists', params), init),
 		getTopTracks: (params, init) =>
-			fetcher<GeoGetTopTracksResponse>(buildUrl(config, 'geo.getTopTracks', params), init)
-	};
+			fetcher<GeoGetTopTracksResponse>(buildUrl(config, 'geo.getTopTracks', params), init),
+	}
 }

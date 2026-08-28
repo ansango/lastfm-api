@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from 'zod';
 export declare const trackArtistSchema: z.ZodObject<{
     name: z.ZodString;
     mbid: z.ZodString;
@@ -10,10 +10,10 @@ export declare const trackAlbumSchema: z.ZodObject<{
     mbid: z.ZodString;
     url: z.ZodString;
     image: z.ZodArray<z.ZodObject<{
-        "#text": z.ZodString;
+        '#text': z.ZodString;
         size: z.ZodUnion<readonly [z.ZodLiteral<"small">, z.ZodLiteral<"medium">, z.ZodLiteral<"large">, z.ZodLiteral<"extralarge">, z.ZodLiteral<"mega">]>;
     }, z.core.$strip>>;
-    "@attr": z.ZodObject<{
+    '@attr': z.ZodObject<{
         position: z.ZodString;
     }, z.core.$strip>;
 }, z.core.$strip>;
@@ -50,10 +50,10 @@ export declare const trackSchema: z.ZodObject<{
         mbid: z.ZodString;
         url: z.ZodString;
         image: z.ZodArray<z.ZodObject<{
-            "#text": z.ZodString;
+            '#text': z.ZodString;
             size: z.ZodUnion<readonly [z.ZodLiteral<"small">, z.ZodLiteral<"medium">, z.ZodLiteral<"large">, z.ZodLiteral<"extralarge">, z.ZodLiteral<"mega">]>;
         }, z.core.$strip>>;
-        "@attr": z.ZodObject<{
+        '@attr': z.ZodObject<{
             position: z.ZodString;
         }, z.core.$strip>;
     }, z.core.$strip>;
@@ -95,10 +95,10 @@ export declare const trackGetInfoResponseSchema: z.ZodObject<{
             mbid: z.ZodString;
             url: z.ZodString;
             image: z.ZodArray<z.ZodObject<{
-                "#text": z.ZodString;
+                '#text': z.ZodString;
                 size: z.ZodUnion<readonly [z.ZodLiteral<"small">, z.ZodLiteral<"medium">, z.ZodLiteral<"large">, z.ZodLiteral<"extralarge">, z.ZodLiteral<"mega">]>;
             }, z.core.$strip>>;
-            "@attr": z.ZodObject<{
+            '@attr': z.ZodObject<{
                 position: z.ZodString;
             }, z.core.$strip>;
         }, z.core.$strip>;
@@ -137,11 +137,11 @@ export declare const trackGetSimilarResponseSchema: z.ZodObject<{
                 url: z.ZodString;
             }, z.core.$strip>;
             image: z.ZodArray<z.ZodObject<{
-                "#text": z.ZodString;
+                '#text': z.ZodString;
                 size: z.ZodUnion<readonly [z.ZodLiteral<"small">, z.ZodLiteral<"medium">, z.ZodLiteral<"large">, z.ZodLiteral<"extralarge">, z.ZodLiteral<"mega">]>;
             }, z.core.$strip>>;
         }, z.core.$strip>>;
-        "@attr": z.ZodObject<{
+        '@attr': z.ZodObject<{
             artist: z.ZodString;
         }, z.core.$strip>;
     }, z.core.$strip>;
@@ -158,7 +158,7 @@ export declare const trackGetTagsResponseSchema: z.ZodObject<{
             name: z.ZodString;
             url: z.ZodString;
         }, z.core.$strip>>;
-        "@attr": z.ZodObject<{
+        '@attr': z.ZodObject<{
             artist: z.ZodString;
             track: z.ZodString;
         }, z.core.$strip>;
@@ -176,7 +176,7 @@ export declare const trackGetTopTagsResponseSchema: z.ZodObject<{
             url: z.ZodString;
             count: z.ZodUnion<readonly [z.ZodString, z.ZodNumber]>;
         }, z.core.$strip>>;
-        "@attr": z.ZodObject<{
+        '@attr': z.ZodObject<{
             artist: z.ZodString;
             track: z.ZodString;
         }, z.core.$strip>;
@@ -190,15 +190,15 @@ export declare const trackSearchRequestSchema: z.ZodObject<{
 }, z.core.$strip>;
 export declare const trackSearchResponseSchema: z.ZodObject<{
     results: z.ZodObject<{
-        "opensearch:Query": z.ZodObject<{
-            "#text": z.ZodString;
+        'opensearch:Query': z.ZodObject<{
+            '#text': z.ZodString;
             role: z.ZodString;
             searchTerms: z.ZodString;
             startPage: z.ZodString;
         }, z.core.$strip>;
-        "opensearch:totalResults": z.ZodString;
-        "opensearch:startIndex": z.ZodString;
-        "opensearch:itemsPerPage": z.ZodString;
+        'opensearch:totalResults': z.ZodString;
+        'opensearch:startIndex': z.ZodString;
+        'opensearch:itemsPerPage': z.ZodString;
         trackmatches: z.ZodObject<{
             track: z.ZodArray<z.ZodObject<{
                 name: z.ZodString;
@@ -206,13 +206,13 @@ export declare const trackSearchResponseSchema: z.ZodObject<{
                 url: z.ZodString;
                 listeners: z.ZodString;
                 image: z.ZodArray<z.ZodObject<{
-                    "#text": z.ZodString;
+                    '#text': z.ZodString;
                     size: z.ZodUnion<readonly [z.ZodLiteral<"small">, z.ZodLiteral<"medium">, z.ZodLiteral<"large">, z.ZodLiteral<"extralarge">, z.ZodLiteral<"mega">]>;
                 }, z.core.$strip>>;
                 mbid: z.ZodString;
             }, z.core.$strip>>;
         }, z.core.$strip>;
-        "@attr": z.ZodObject<{
+        '@attr': z.ZodObject<{
             for: z.ZodString;
         }, z.core.$strip>;
     }, z.core.$strip>;
@@ -242,7 +242,7 @@ export declare const trackCorrectionSchema: z.ZodObject<{
     }, z.core.$strip>;
     artistcorrected: z.ZodOptional<z.ZodString>;
     trackcorrected: z.ZodOptional<z.ZodString>;
-    "@attr": z.ZodOptional<z.ZodObject<{
+    '@attr': z.ZodOptional<z.ZodObject<{
         index: z.ZodString;
     }, z.core.$strip>>;
 }, z.core.$strip>;
@@ -265,11 +265,11 @@ export declare const trackGetCorrectionResponseSchema: z.ZodObject<{
             }, z.core.$strip>;
             artistcorrected: z.ZodOptional<z.ZodString>;
             trackcorrected: z.ZodOptional<z.ZodString>;
-            "@attr": z.ZodOptional<z.ZodObject<{
+            '@attr': z.ZodOptional<z.ZodObject<{
                 index: z.ZodString;
             }, z.core.$strip>>;
         }, z.core.$strip>>;
-        "@attr": z.ZodOptional<z.ZodObject<{
+        '@attr': z.ZodOptional<z.ZodObject<{
             artist: z.ZodString;
             track: z.ZodString;
         }, z.core.$strip>>;
@@ -287,26 +287,26 @@ export declare const trackScrobbleResponseSchema: z.ZodObject<{
         scrobble: z.ZodObject<{
             artist: z.ZodObject<{
                 corrected: z.ZodString;
-                "#text": z.ZodString;
+                '#text': z.ZodString;
             }, z.core.$strip>;
             album: z.ZodObject<{
                 corrected: z.ZodString;
             }, z.core.$strip>;
             track: z.ZodObject<{
                 corrected: z.ZodString;
-                "#text": z.ZodString;
+                '#text': z.ZodString;
             }, z.core.$strip>;
             ignoredMessage: z.ZodObject<{
                 code: z.ZodString;
-                "#text": z.ZodString;
+                '#text': z.ZodString;
             }, z.core.$strip>;
             albumArtist: z.ZodObject<{
                 corrected: z.ZodString;
-                "#text": z.ZodString;
+                '#text': z.ZodString;
             }, z.core.$strip>;
             timestamp: z.ZodString;
         }, z.core.$strip>;
-        "@attr": z.ZodObject<{
+        '@attr': z.ZodObject<{
             accepted: z.ZodNumber;
             ignored: z.ZodNumber;
         }, z.core.$strip>;
@@ -392,7 +392,7 @@ export declare const trackUpdateNowPlayingRequestSchema: z.ZodObject<{
  */
 export declare const correctedTextFieldSchema: z.ZodObject<{
     corrected: z.ZodString;
-    "#text": z.ZodString;
+    '#text': z.ZodString;
 }, z.core.$strip>;
 /**
  * `{ corrected }` payload for fields that don't carry a `#text`
@@ -407,7 +407,7 @@ export declare const correctedFlagOnlyFieldSchema: z.ZodObject<{
  */
 export declare const nowPlayingIgnoredMessageSchema: z.ZodObject<{
     code: z.ZodString;
-    "#text": z.ZodString;
+    '#text': z.ZodString;
 }, z.core.$strip>;
 /**
  * Response root for `track.updateNowPlaying`. The `nowplaying` block
@@ -419,22 +419,22 @@ export declare const trackUpdateNowPlayingResponseSchema: z.ZodObject<{
     nowplaying: z.ZodObject<{
         track: z.ZodOptional<z.ZodObject<{
             corrected: z.ZodString;
-            "#text": z.ZodString;
+            '#text': z.ZodString;
         }, z.core.$strip>>;
         artist: z.ZodOptional<z.ZodObject<{
             corrected: z.ZodString;
-            "#text": z.ZodString;
+            '#text': z.ZodString;
         }, z.core.$strip>>;
         album: z.ZodOptional<z.ZodObject<{
             corrected: z.ZodString;
         }, z.core.$strip>>;
         albumArtist: z.ZodOptional<z.ZodObject<{
             corrected: z.ZodString;
-            "#text": z.ZodString;
+            '#text': z.ZodString;
         }, z.core.$strip>>;
         ignoredMessage: z.ZodObject<{
             code: z.ZodString;
-            "#text": z.ZodString;
+            '#text': z.ZodString;
         }, z.core.$strip>;
     }, z.core.$strip>;
 }, z.core.$strip>;

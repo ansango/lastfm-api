@@ -1,5 +1,5 @@
-import type { ChartGetTopArtistsRequest, ChartGetTopArtistsResponse, ChartGetTopTagsRequest, ChartGetTopTagsResponse, ChartGetTopTracksRequest, ChartGetTopTracksResponse } from './chart.schemas.js';
 import type { LastFmConfig } from '../config.js';
+import type { ChartGetTopArtistsRequest, ChartGetTopArtistsResponse, ChartGetTopTagsRequest, ChartGetTopTagsResponse, ChartGetTopTracksRequest, ChartGetTopTracksResponse } from './chart.schemas.js';
 export interface ChartService {
     /**
      * Get the top artists chart

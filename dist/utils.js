@@ -33,7 +33,7 @@ export async function parseLastFmResponse(response) {
     if (!response.ok) {
         throw new LastFmApiError(`HTTP Error: ${httpStatus} ${response.statusText}`, httpStatus, typeof body?.error === 'number' ? body.error : undefined);
     }
-    if (body && body.error) {
+    if (body?.error) {
         const code = typeof body?.error === 'number' ? body.error : undefined;
         throw new LastFmApiError(`Last.fm API Error ${body.error}: ${body.message ?? ''}`.trim(), httpStatus, code);
     }
@@ -55,7 +55,7 @@ export function buildUrl(config, method, params = {}) {
         method,
         api_key: config.apiKey,
         format: 'json',
-        ...cleanParams(params)
+        ...cleanParams(params),
     });
     return `${baseUrl}?${urlParams.toString()}`;
 }
@@ -91,14 +91,14 @@ export function buildAuthUrl(config, method, params = {}) {
     const authParams = {
         method,
         api_key: config.apiKey,
-        ...cleanParams(params)
+        ...cleanParams(params),
     };
     const signature = generateSignature(config, authParams);
     const baseUrl = config.baseUrl ?? DEFAULT_BASE_URL;
     const urlParams = new URLSearchParams({
         ...authParams,
         api_sig: signature,
-        format: 'json'
+        format: 'json',
     });
     return `${baseUrl}?${urlParams.toString()}`;
 }
@@ -168,7 +168,7 @@ export async function signedPost(config, method, options) {
     const sigInput = {
         method,
         api_key: config.apiKey,
-        ...cleanParams
+        ...cleanParams,
     };
     const sigString = Object.keys(sigInput)
         .sort()
@@ -191,13 +191,13 @@ export async function signedPost(config, method, options) {
     const callerHeaders = (options.init?.headers ?? {});
     const finalHeaders = {
         ...callerHeaders,
-        'Content-Type': 'application/x-www-form-urlencoded'
+        'Content-Type': 'application/x-www-form-urlencoded',
     };
     const finalInit = {
         ...options.init,
         method: 'POST',
         headers: finalHeaders,
-        body: body.toString()
+        body: body.toString(),
     };
     if (options.init?.signal) {
         finalInit.signal = options.init.signal;
