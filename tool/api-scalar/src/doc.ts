@@ -52,7 +52,7 @@ export function mountOpenAPI(app: OpenAPIHono, opts: { serverUrl?: string } = {}
 			title: `${PKG_NAME} — local docs server`,
 			version: PKG_VERSION,
 			description:
-				'Interactive API explorer for @ansango/lastfm-api. All 57 canonical Last.fm methods are wired declaratively from the method registry; "Try it" calls the real Last.fm API via the package.',
+				'Interactive API explorer for @ansango/lastfm-api. All canonical Last.fm methods and Insights analytics are wired declaratively from the method registry; "Try it" calls the real Last.fm API via the package.',
 		},
 		servers: [{ url: serverUrl, description: 'Local docs server' }],
 		tags: [
