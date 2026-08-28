@@ -73,6 +73,7 @@ export function buildRoute(meta: MethodMeta): RouteConfig {
 		tags: [tag],
 		summary: `${meta.id} (Last.fm)`,
 		description: `Wire endpoint: \`/?method=${meta.id}\`. See https://www.last.fm/api/show/${meta.id}`,
+		...(meta.deprecated ? { deprecated: true as const } : {}),
 		request: request as never,
 		responses: {
 			200: {
