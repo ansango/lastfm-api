@@ -11,7 +11,7 @@ functions — no method is hand-written, no schema is duplicated.
 
 ## What you get
 
-- `GET /` — the Scalar UI with all 57 methods grouped by namespace
+- `GET /` — the Scalar UI with all 56 methods grouped by namespace
 - `GET /doc` — the raw OpenAPI 3.0 JSON
 - `GET /<ns>/<method>` — the proxied endpoint, e.g. `GET /artist/get-info?artist=cher`
 - `POST /<ns>/<method>` — signed write methods, e.g. `POST /track/love`
@@ -69,14 +69,21 @@ All variables can also be passed via the shell — the server falls back to
 ## Auth flow
 
 The Scalar UI ships a brief auth guide in the `auth` tag's description.
-The full flow, end to end:
+The full flow, end to end, uses the **browser-based auth flow** (works for
+every self-service API key):
 
-**1. Get a session key** (one POST, no browser):
+**1. Get a session key** (three steps, requires a browser):
 
-- Open `POST /auth/get-mobile-session` in the Scalar UI
-- Fill `username` and `password` in the JSON body
-- Send → response contains `session.key` (e.g. `abcdef123456...`)
-- Copy it to your clipboard
+- Open `GET /auth/get-token` in the Scalar UI
+- Send → response contains `{ token, authUrl }` (e.g. `token: "abcdef123456..."`)
+- **Copy `authUrl` and open it in your browser** (you'll be prompted to
+  log in if you're not, then click **Allow access**). Last.fm redirects
+  to the callback URL configured on your API account with the same
+  `token` in the URL bar.
+- Copy that token from the URL bar
+- Open `GET /auth/get-session?token=<token>` in the Scalar UI, paste
+  the token, send → response contains `session.key`
+- Copy `session.key` (e.g. `xyz789...`)
 
 **2. Use it on write methods** (no persistence, per-request):
 
@@ -163,7 +170,7 @@ routing layer.
    session, JSON body), add an entry to the `SPECIAL` table in
    `src/method-registry.ts`.
 4. Run `bun run --cwd tool test` — the registry smoke tests verify all
-   57 methods are present, the SPECIAL table is consistent, and the
+   56 methods are present, the SPECIAL table is consistent, and the
    per-namespace count matches the inventory.
 
 That's it. The tool picks the new method up automatically.
@@ -193,4 +200,4 @@ any Bun-compatible host works.
 - Custom auth on the docs endpoint
 - Session persistence
 - Rate limiting
-- Modifying any of the 57 methods in the package
+- Modifying any of the 56 methods in the package

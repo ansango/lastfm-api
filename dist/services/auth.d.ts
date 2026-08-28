@@ -1,5 +1,5 @@
 import type { LastFmConfig } from '../config.js';
-import type { AuthGetMobileSessionRequest, AuthGetMobileSessionResponse, AuthGetSessionRequest, AuthGetSessionResponse, AuthGetTokenResponse } from './auth.schemas.js';
+import type { AuthGetSessionRequest, AuthGetSessionResponse, AuthGetTokenResponse } from './auth.schemas.js';
 export interface AuthService {
     /**
      * Get the session key for a user. Used for authenticating a user when scrobbling.
@@ -43,43 +43,6 @@ export interface AuthService {
      * https://www.last.fm/api/show/auth.getToken
      */
     getToken: (init?: RequestInit) => Promise<AuthGetTokenResponse>;
-    /**
-     * Get a mobile session for a user, exchanging a username/email and
-     * password for a session key. Returns the session to the caller; the
-     * client does not persist it.
-     *
-     * **Server-side / trusted environments only.** This method handles a
-     * password and the application's shared secret; it must never be used
-     * from a browser or any environment where the bundle is exposed.
-     *
-     * **Mobile-class API keys only.** Last.fm rejects this call with 403
-     * (`error: 4 — Authentication Failed`) for self-service web/desktop
-     * API keys. Self-service users should use the browser flow
-     * (`auth.getToken` + `auth.getSession`) instead. The Last.fm create
-     * form has no app-type selector; to obtain a mobile-class key you
-     * need to email `partners@last.fm` and ask for a reclassification.
-     *
-     * Requires HTTPS — a custom `baseUrl` over plain HTTP is rejected
-     * before any network call.
-     *
-     * Intentionally does not support the deprecated `authToken` /
-     * `md5(username + md5(password))` credential flow.
-     *
-     * @deprecated Last.fm restricts this method to **mobile-class API
-     * keys**, which are not exposed through the public self-service create
-     * form. Every self-service key defaults to "web", so this call returns
-     * `error: 4 — Authentication Failed` for almost all users. Use the
-     * browser flow (`auth.getToken` + `auth.getSession`) instead, which
-     * works for every self-service API key. See
-     * <https://www.last.fm/api/webauth> for the full flow. This method
-     * is still callable and will be removed in a future major release.
-     *
-     * @param {AuthGetMobileSessionRequest} params
-     * @param {RequestInit} init
-     * @returns {Promise<AuthGetMobileSessionResponse>}
-     * https://www.last.fm/api/show/auth.getMobileSession
-     */
-    getMobileSession: (params: AuthGetMobileSessionRequest, init?: RequestInit) => Promise<AuthGetMobileSessionResponse>;
 }
 export declare function createAuthService(config: LastFmConfig): AuthService;
 //# sourceMappingURL=auth.d.ts.map

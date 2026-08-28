@@ -3,7 +3,7 @@
  *
  * Verifies that:
  *  - `createApp()` returns an OpenAPIHono app with all 57 routes
- *  - `GET /doc` returns valid OpenAPI 3.0 JSON listing all 57 paths
+ *  - `GET /doc` returns valid OpenAPI 3.0 JSON listing all 56 paths
  *  - `GET /` returns the Scalar HTML page
  *  - One endpoint per namespace can be invoked and reaches the
  *    underlying package (with `globalThis.fetch` mocked)
@@ -45,13 +45,13 @@ describe('createApp: shape', () => {
 		expect(typeof app.fetch).toBe('function')
 	})
 
-	test('GET /doc returns valid OpenAPI 3.0 JSON with 57 paths', async () => {
+	test('GET /doc returns valid OpenAPI 3.0 JSON with 56 paths', async () => {
 		const app = createFullApp({ apiKey: 'test-key' })
 		const res = await app.request('/doc')
 		expect(res.status).toBe(200)
 		const body = (await res.json()) as { openapi: string; paths: Record<string, unknown> }
 		expect(body.openapi).toBe('3.0.0')
-		expect(Object.keys(body.paths).length).toBe(57)
+		expect(Object.keys(body.paths).length).toBe(56)
 	})
 
 	test('GET / returns the Scalar HTML page', async () => {
@@ -191,24 +191,23 @@ describe('createApp: OpenAPI doc exposes the auth flow', () => {
 		expect(authTag?.description).toContain('/auth/get-session')
 		// Still covers the per-request `sk` mechanism.
 		expect(authTag?.description).toContain('x-lastfm-sk')
-		// Demotes the mobile flow to a deprecated footnote.
-		expect(authTag?.description).toContain('Mobile flow')
-		expect(authTag?.description).toContain('deprecated')
 		// No-persistence guarantee preserved.
 		expect(authTag?.description).toContain('No persistence')
-		// No longer asserts "we only ship the mobile flow".
+		// No more mobile-flow mention (BREAKING removal in v4.0.0).
+		expect(authTag?.description).not.toContain('Mobile flow')
+		expect(authTag?.description).not.toContain('get-mobile-session')
+		// Should never say we ship the mobile flow.
 		expect(authTag?.description).not.toContain('we only ship the mobile flow')
 	})
 
-	test('auth.getMobileSession is marked deprecated in /doc', async () => {
+	test('auth.getMobileSession is no longer in /doc (removed in v4.0.0)', async () => {
 		const app = createFullApp({ apiKey: 'test-key' })
 		const res = await app.request('/doc')
 		const body = (await res.json()) as {
-			paths: Record<string, Record<string, { deprecated?: boolean }>>
+			paths: Record<string, Record<string, unknown>>
 		}
-		const op = body.paths['/auth/get-mobile-session']?.post
-		expect(op, 'POST /auth/get-mobile-session must exist').toBeDefined()
-		expect(op?.deprecated, 'auth.getMobileSession must be flagged deprecated').toBe(true)
+		const op = body.paths['/auth/get-mobile-session']
+		expect(op, 'POST /auth/get-mobile-session must NOT exist in /doc').toBeUndefined()
 	})
 
 	test('auth tag description covers the callback URL setup prerequisite (#110)', async () => {
