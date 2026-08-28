@@ -7,7 +7,9 @@ import { findBinges } from '../services/insights/lib/binges.js'
 import { findNewArtists } from '../services/insights/lib/discoveries.js'
 import { computeDiversity, topNShare } from '../services/insights/lib/diversity.js'
 import { bucketTimestamp, buildHourHistogram } from '../services/insights/lib/hours.js'
+import { classifyMood } from '../services/insights/lib/mood.js'
 import { resolvePeriod } from '../services/insights/lib/periods.js'
+import { scoreArchetypes } from '../services/insights/lib/personality.js'
 import { diffRankings } from '../services/insights/lib/trends.js'
 import { stripWiki, summarizeBio } from '../services/insights/now-playing.js'
 import { LastFmApiError } from '../utils.js'
@@ -140,7 +142,6 @@ describe('insights service', () => {
 
 	describe('pure algorithms: hours histogram', () => {
 		test('bucketTimestamp maps UTC hour and ISO weekday (Mon=0..Sun=6)', () => {
-			// 2023-11-14 12:00:00 UTC is Tuesday (weekday = 1)
 			const ts = Math.floor(new Date('2023-11-14T12:00:00Z').getTime() / 1000)
 			const b = bucketTimestamp(ts)
 			expect(b.hour).toBe(12)
@@ -148,7 +149,6 @@ describe('insights service', () => {
 		})
 
 		test('buildHourHistogram computes counts, peaks, and shares', () => {
-			// 3 timestamps at 02:00 (night, Sunday), 2 at 14:00 (afternoon, Monday)
 			const sundayNight = Math.floor(new Date('2023-11-19T02:00:00Z').getTime() / 1000)
 			const mondayAfternoon = Math.floor(new Date('2023-11-20T14:00:00Z').getTime() / 1000)
 
@@ -162,7 +162,7 @@ describe('insights service', () => {
 			expect(h.peakHourCount).toBe(3)
 			expect(h.nightShare).toBeCloseTo(3 / 5, 5)
 			expect(h.afternoonShare).toBeCloseTo(2 / 5, 5)
-			expect(h.weekendShare).toBeCloseTo(3 / 5, 5) // Sunday is weekend
+			expect(h.weekendShare).toBeCloseTo(3 / 5, 5)
 		})
 	})
 
@@ -180,16 +180,16 @@ describe('insights service', () => {
 			const binges = findBinges(scrobbles, { minLength: 2, maxGapSeconds: 1000 })
 			expect(binges).toHaveLength(2)
 			expect(binges[0].artist).toBe('Radiohead')
-			expect(binges[0].length).toBe(3) // First run of 3
+			expect(binges[0].length).toBe(3)
 			expect(binges[0].startUts).toBe(1000)
 			expect(binges[0].endUts).toBe(1600)
-			expect(binges[1].length).toBe(2) // Second run of 2
+			expect(binges[1].length).toBe(2)
 		})
 
 		test('breaks binge run when gap exceeds maxGapSeconds', () => {
 			const scrobbles = [
 				{ artist: 'Radiohead', track: 'Song 1', uts: 1000 },
-				{ artist: 'Radiohead', track: 'Song 2', uts: 10000 }, // gap is 9000s > 3600s
+				{ artist: 'Radiohead', track: 'Song 2', uts: 10000 },
 			]
 			const binges = findBinges(scrobbles, { minLength: 2, maxGapSeconds: 3600 })
 			expect(binges).toHaveLength(0)
@@ -199,27 +199,27 @@ describe('insights service', () => {
 	describe('pure algorithms: trends diff', () => {
 		test('diffRankings categorizes risers, fallers, newcomers, departures', () => {
 			const current = [
-				{ name: 'Artist A', playcount: 50 }, // was rank 2 (climbed to 1) -> riser
-				{ name: 'Artist C', playcount: 40 }, // was absent -> newcomer
-				{ name: 'Artist B', playcount: 30 }, // was rank 1 (dropped to 3) -> faller
+				{ name: 'Artist A', playcount: 50 },
+				{ name: 'Artist C', playcount: 40 },
+				{ name: 'Artist B', playcount: 30 },
 			]
 			const previous = [
 				{ name: 'Artist B', playcount: 80 },
 				{ name: 'Artist A', playcount: 40 },
-				{ name: 'Artist D', playcount: 20 }, // dropped out -> departure
+				{ name: 'Artist D', playcount: 20 },
 			]
 
 			const diff = diffRankings(current, previous)
 			expect(diff.risers).toHaveLength(1)
 			expect(diff.risers[0].name).toBe('Artist A')
-			expect(diff.risers[0].deltaRank).toBe(1) // from 2 to 1
+			expect(diff.risers[0].deltaRank).toBe(1)
 
 			expect(diff.newcomers).toHaveLength(1)
 			expect(diff.newcomers[0].name).toBe('Artist C')
 
 			expect(diff.fallers).toHaveLength(1)
 			expect(diff.fallers[0].name).toBe('Artist B')
-			expect(diff.fallers[0].deltaRank).toBe(-2) // from 1 to 3
+			expect(diff.fallers[0].deltaRank).toBe(-2)
 
 			expect(diff.departures).toHaveLength(1)
 			expect(diff.departures[0].name).toBe('Artist D')
@@ -242,6 +242,66 @@ describe('insights service', () => {
 			expect(discoveries[0].firstSeen).toBe(1200)
 			expect(discoveries[1].name).toBe('Black Country, New Road')
 			expect(discoveries[1].firstSeen).toBe(1500)
+		})
+	})
+
+	describe('pure algorithms: mood classifier', () => {
+		test('classifies euphoric and energetic tags', () => {
+			const tags = ['punk', 'happy', 'dance', 'punk rock']
+			const mood = classifyMood(tags)
+			expect(mood.axes.energy).toBeGreaterThan(0.2)
+			expect(mood.axes.valence).toBeGreaterThan(0.2)
+			expect(mood.label).toBe('euphoric & energetic')
+			expect(mood.categories).toContain('punk')
+			expect(mood.confidence).toBeGreaterThan(0.5)
+		})
+
+		test('classifies ambient and melancholic tags', () => {
+			const tags = ['ambient', 'sad', 'melancholy', 'drone']
+			const mood = classifyMood(tags)
+			expect(mood.axes.energy).toBeLessThan(-0.2)
+			expect(mood.axes.valence).toBeLessThan(-0.2)
+			expect(mood.label).toBe('melancholic & calm')
+			expect(mood.categories).toContain('ambient')
+		})
+	})
+
+	describe('pure algorithms: personality archetypes', () => {
+		test('scores Devotee highest when top1Share is very high', () => {
+			const features = {
+				totalScrobbles: 500,
+				uniqueArtists: 5,
+				top1Share: 0.75,
+				top3Share: 0.9,
+				top5Share: 1.0,
+				normalizedDiversity: 0.2,
+				newArtistsLast30d: 0,
+				totalArtistsLast30d: 5,
+				nightHourShare: 0.1,
+				morningHourShare: 0.2,
+				weekdayShare: 0.7,
+			}
+			const result = scoreArchetypes(features)
+			expect(result.winner).toBe('Devotee')
+			expect(result.scores.Devotee).toBeGreaterThan(0.7)
+		})
+
+		test('scores Nocturnal highest when night listening dominates', () => {
+			const features = {
+				totalScrobbles: 800,
+				uniqueArtists: 40,
+				top1Share: 0.1,
+				top3Share: 0.25,
+				top5Share: 0.35,
+				normalizedDiversity: 0.8,
+				newArtistsLast30d: 5,
+				totalArtistsLast30d: 40,
+				nightHourShare: 0.75, // 75% at night
+				morningHourShare: 0.05,
+				weekdayShare: 0.7,
+			}
+			const result = scoreArchetypes(features)
+			expect(result.winner).toBe('Nocturnal')
 		})
 	})
 
@@ -357,7 +417,7 @@ describe('insights service', () => {
 
 	describe('getHoursHistogram', () => {
 		test('paginates recenttracks and calculates diurnal histogram', async () => {
-			const ts1 = 1700000000 // 2023-11-14 22:13:20 UTC
+			const ts1 = 1700000000
 			const track1 = { ...fakeTrack, date: { uts: String(ts1) } }
 
 			mock.respondWithJson({
@@ -440,7 +500,7 @@ describe('insights service', () => {
 			expect(result.target).toBe('artists')
 			expect(result.risers).toHaveLength(1)
 			expect(result.risers[0].name).toBe('Radiohead')
-			expect(result.risers[0].deltaRank).toBe(1) // was rank 2, now 1
+			expect(result.risers[0].deltaRank).toBe(1)
 			expect(result.departures).toHaveLength(1)
 			expect(result.departures[0].name).toBe('The Smile')
 
@@ -477,6 +537,62 @@ describe('insights service', () => {
 		})
 	})
 
+	describe('getMood', () => {
+		test('fetches user tags & top artist tags, returns classified mood profile', async () => {
+			const topArtists = [{ ...fakeArtist, name: 'Idles' }]
+			const userTags = [{ ...fakeTag, name: 'punk' }]
+			const artistTags = [
+				{ ...fakeTag, name: 'post-punk' },
+				{ ...fakeTag, name: 'hardcore' },
+			]
+
+			mock.respondWithJson({ topartists: { artist: topArtists, '@attr': okAttr() } })
+			mock.respondWithJson({ toptags: { tag: userTags, '@attr': okAttr() } })
+			mock.respondWithJson({ toptags: { tag: artistTags, '@attr': okAttr() } })
+
+			const result = await client.insights.getMood({
+				user: 'test_user',
+				period: '7day',
+			})
+
+			expect(result.user).toBe('test_user')
+			expect(result.categories).toContain('punk')
+			expect(result.axes.energy).toBeGreaterThan(0)
+			expect(result.tagSourceCount).toBe(3)
+			expect(result.primarySource).toBe('mixed')
+
+			const parsed = insightSchemas.insightsMoodResponseSchema.safeParse(result)
+			expect(parsed.success).toBe(true)
+		})
+	})
+
+	describe('getPersonality', () => {
+		test('assembles features and returns listener archetype', async () => {
+			// 1. getSummary calls (topArtists, topTracks, topAlbums, topTags)
+			const artist1 = { ...fakeArtist, name: 'Radiohead', playcount: '80' }
+			mock.respondWithJson({ topartists: { artist: [artist1], '@attr': okAttr() } })
+			mock.respondWithJson({ toptracks: { track: [], '@attr': okAttr() } })
+			mock.respondWithJson({ topalbums: { album: [], '@attr': okAttr() } })
+			mock.respondWithJson({ toptags: { tag: [], '@attr': okAttr() } })
+
+			// 2. getHoursHistogram calls (recenttracks)
+			mock.respondWithJson({ recenttracks: { track: [], '@attr': okAttr() } })
+
+			// 3. getDiscoveries calls (overall topArtists baseline + recenttracks window)
+			mock.respondWithJson({ topartists: { artist: [artist1], '@attr': okAttr() } })
+			mock.respondWithJson({ recenttracks: { track: [], '@attr': okAttr() } })
+
+			const result = await client.insights.getPersonality({ user: 'test_user' })
+			expect(result.user).toBe('test_user')
+			expect(result.winner).toBeDefined()
+			expect(result.archetype.name).toBeDefined()
+			expect(result.features).toBeDefined()
+
+			const parsed = insightSchemas.insightsPersonalityResponseSchema.safeParse(result)
+			expect(parsed.success).toBe(true)
+		})
+	})
+
 	describe('schema exports and client wiring', () => {
 		test('factory createInsightsService instantiates InsightsService with all wired methods', () => {
 			const svc: InsightsService = createInsightsService({ apiKey: API_KEY })
@@ -486,6 +602,8 @@ describe('insights service', () => {
 			expect(typeof svc.getBinges).toBe('function')
 			expect(typeof svc.getTrends).toBe('function')
 			expect(typeof svc.getDiscoveries).toBe('function')
+			expect(typeof svc.getMood).toBe('function')
+			expect(typeof svc.getPersonality).toBe('function')
 		})
 
 		test('exposes insights service via createClient helper', () => {
@@ -496,15 +614,15 @@ describe('insights service', () => {
 			expect(typeof c.insights.getBinges).toBe('function')
 			expect(typeof c.insights.getTrends).toBe('function')
 			expect(typeof c.insights.getDiscoveries).toBe('function')
+			expect(typeof c.insights.getMood).toBe('function')
+			expect(typeof c.insights.getPersonality).toBe('function')
 		})
 
-		test('insightsTrendsRequestSchema and insightsDiscoveriesRequestSchema validate inputs', () => {
-			expect(insightSchemas.insightsTrendsRequestSchema.safeParse({ user: 'ansango', target: 'artists' }).success).toBe(
+		test('insightsMoodRequestSchema and insightsPersonalityRequestSchema validate inputs', () => {
+			expect(insightSchemas.insightsMoodRequestSchema.safeParse({ user: 'ansango', period: 'weekly' }).success).toBe(
 				true,
 			)
-			expect(
-				insightSchemas.insightsDiscoveriesRequestSchema.safeParse({ user: 'ansango', windowDays: 14 }).success,
-			).toBe(true)
+			expect(insightSchemas.insightsPersonalityRequestSchema.safeParse({ user: 'ansango' }).success).toBe(true)
 		})
 	})
 })

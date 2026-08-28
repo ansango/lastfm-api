@@ -233,6 +233,8 @@ export const INSIGHTS_METHODS = [
 	'insights.getBinges',
 	'insights.getTrends',
 	'insights.getDiscoveries',
+	'insights.getMood',
+	'insights.getPersonality',
 ] as const
 
 export const ALL_REGISTRY_METHODS = [...CANONICAL_METHODS, ...INSIGHTS_METHODS] as const
