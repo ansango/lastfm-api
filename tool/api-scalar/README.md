@@ -41,6 +41,11 @@ bun run tool:dev
 Then open <http://localhost:3000>. The Scalar UI loads at `/`, the OpenAPI
 spec is at `/doc`.
 
+If `LASTFM_API_KEY` is missing, the tool prints a friendly error with the
+create-account URL and a copy-pasteable `echo >> .env` snippet, then
+exits with code 1 — no stack trace, no surprise. See the [Startup errors](#startup-errors)
+section below.
+
 ## Configuration
 
 The tool reads `.env` from the repo root (the `dotenv` call resolves
@@ -92,6 +97,30 @@ sensitive in the same way and they're needed on every call anyway).
 1. `x-lastfm-sk` request header (the canonical Scalar path)
 2. `sk` field in the request body
 3. `LASTFM_SESSION_KEY` env var (fallback)
+
+## Startup errors
+
+If `LASTFM_API_KEY` is missing, the tool prints a friendly error pointing
+at the [Last.fm create-account form](https://www.last.fm/api/account/create)
+and a copy-pasteable `echo >> .env` snippet, then exits with code 1:
+
+```
+tool: missing LASTFM_API_KEY
+
+Every Last.fm call needs an API key. Register one for free at:
+  https://www.last.fm/api/account/create
+
+Then drop it into your repo-root .env:
+  # repo root (one level above tool/api-scalar/)
+  echo 'LASTFM_API_KEY=your-key-here' >> .env
+  echo 'LASTFM_SHARED_SECRET=your-secret-here' >> .env
+
+Restart `bun run tool:dev` after saving.
+```
+
+If `LASTFM_API_KEY` is set but `LASTFM_SHARED_SECRET` is not, the tool
+still starts (read methods work) and prints a warning that signed calls
+will 401 until you add the secret.
 
 ## How it works
 
