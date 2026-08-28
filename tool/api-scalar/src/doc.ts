@@ -24,7 +24,7 @@ const AUTH_TAG_DESCRIPTION = [
 	'',
 	'### Prerequisite: set your callback URL on the API account',
 	'',
-	'Before you authorize a token, set a **Callback URL** on your Last.fm API account at <https://www.last.fm/api/account>. Last.fm redirects to this URL with the token after you click **Allow access**. For the manual flow (default), any URL works — `http://localhost:3000/`, `http://example.com/`, even a string that doesn\'t resolve. The tool expects you to copy the token from the URL bar. If you skip this step the redirect lands on a Last.fm error page and the token is lost. See the [package README](https://github.com/ansango/lastfm-api#callback-url-setup-one-time-in-your-lastfm-account) for full setup steps.',
+	"Before you authorize a token, set a **Callback URL** on your Last.fm API account at <https://www.last.fm/api/account>. Last.fm redirects to this URL with the token after you click **Allow access**. For the manual flow (default), any URL works — `http://localhost:3000/`, `http://example.com/`, even a string that doesn't resolve. The tool expects you to copy the token from the URL bar. If you skip this step the redirect lands on a Last.fm error page and the token is lost. See the [package README](https://github.com/ansango/lastfm-api#callback-url-setup-one-time-in-your-lastfm-account) for full setup steps.",
 	'',
 	'### 1. Get a session key — web flow (recommended)',
 	'',
