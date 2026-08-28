@@ -1,5 +1,6 @@
 import { createConfig, getGlobalConfig } from './config.js';
-import { createAlbumService, createArtistService, createAuthService, createChartService, createGeoService, createInsightsService, createLibraryService, createTagService, createTrackService, createUserService, } from './services/index.js';
+import { createAlbumService, createArtistService, createAuthService, createChartService, createGeoService, createLibraryService, createTagService, createTrackService, createUserService, } from './core/services/index.js';
+import { createInsightsService } from './insights/index.js';
 /**
  * Last.fm API Client
  *

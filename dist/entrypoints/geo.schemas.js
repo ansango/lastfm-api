@@ -1,3 +1,2 @@
-// Generated schema exports for geo service
-export * from '../services/geo.schemas.js';
+export * from '../core/schemas/geo.schemas.js';
 //# sourceMappingURL=geo.schemas.js.map

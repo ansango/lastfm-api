@@ -10,6 +10,14 @@
 			"import": "./dist/index.js",
 			"types": "./dist/index.d.ts"
 		},
+		"./core": {
+			"import": "./dist/entrypoints/core.js",
+			"types": "./dist/entrypoints/core.d.ts"
+		},
+		"./core/schemas": {
+			"import": "./dist/entrypoints/core.schemas.js",
+			"types": "./dist/entrypoints/core.schemas.d.ts"
+		},
 		"./user": {
 			"import": "./dist/entrypoints/user.js",
 			"types": "./dist/entrypoints/user.d.ts"

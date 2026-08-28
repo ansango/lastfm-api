@@ -1,4 +1,4 @@
-export { type ArtistService, createArtistService } from '../services/artist.js';
-export type * from '../services/artist.schemas.js';
-export * from '../services/artist.schemas.js';
+export type * from '../core/schemas/artist.schemas.js';
+export * from '../core/schemas/artist.schemas.js';
+export { type ArtistService, createArtistService } from '../core/services/artist.js';
 //# sourceMappingURL=artist.d.ts.map

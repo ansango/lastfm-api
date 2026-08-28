@@ -1,2 +1,2 @@
-// Generated schema exports for library service
-export * from '../services/library.schemas.js'
+export type * from '../core/schemas/library.schemas.js'
+export * from '../core/schemas/library.schemas.js'

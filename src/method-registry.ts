@@ -27,24 +27,24 @@
  */
 
 import { type ZodTypeAny, z } from 'zod'
-
-import { CANONICAL_METHODS } from './canonical-methods.js'
 import type { LastFmClient } from './client.js'
-import * as albumSchemas from './services/album.schemas.js'
-import * as artistSchemas from './services/artist.schemas.js'
-import * as authSchemas from './services/auth.schemas.js'
-import * as chartSchemas from './services/chart.schemas.js'
-import * as geoSchemas from './services/geo.schemas.js'
-import * as insightsSchemas from './services/insights.schemas.js'
-import * as librarySchemas from './services/library.schemas.js'
-import * as tagSchemas from './services/tag.schemas.js'
-import * as trackSchemas from './services/track.schemas.js'
-import * as userSchemas from './services/user.schemas.js'
+import { CANONICAL_METHODS } from './core/canonical-methods.js'
+import * as albumSchemas from './core/schemas/album.schemas.js'
+import * as artistSchemas from './core/schemas/artist.schemas.js'
+import * as authSchemas from './core/schemas/auth.schemas.js'
+import * as chartSchemas from './core/schemas/chart.schemas.js'
+import * as geoSchemas from './core/schemas/geo.schemas.js'
+import * as librarySchemas from './core/schemas/library.schemas.js'
+import * as tagSchemas from './core/schemas/tag.schemas.js'
+import * as trackSchemas from './core/schemas/track.schemas.js'
+import * as userSchemas from './core/schemas/user.schemas.js'
+import * as insightsSchemas from './insights/schemas.js'
 
 // -- Types ----------------------------------------------------------------
 
 export type BodyKind = 'query' | 'json'
 export type HttpMethod = 'GET' | 'POST'
+export type NamespaceKind = 'core' | 'insights' | 'extension'
 
 export interface MethodMeta {
 	/** Canonical `namespace.method` id (e.g. `artist.getInfo`). */
@@ -53,6 +53,10 @@ export interface MethodMeta {
 	readonly ns: string
 	/** Method name (e.g. `getInfo`). */
 	readonly name: string
+	/** Category classification of the namespace. */
+	readonly kind: NamespaceKind
+	/** Human-readable group for OpenAPI and documentation. */
+	readonly group: string
 	/** Resolve the callable from a LastFmClient. The tool calls this
 	 *  per request so the method runs against the env-derived config
 	 *  (apiKey, sharedSecret, sessionKey) instead of a placeholder. */
@@ -109,19 +113,71 @@ type ServiceMethods = Readonly<Record<string, (...args: never[]) => unknown>>
 type NamespaceConfig = Readonly<{
 	methods: ServiceMethods
 	schemas: Record<string, unknown>
+	kind: NamespaceKind
+	group: string
 }>
 
 const NS_CONFIG: Readonly<Record<string, NamespaceConfig>> = {
-	artist: { methods: REGISTRY_PROBE.artist as unknown as ServiceMethods, schemas: artistSchemas },
-	album: { methods: REGISTRY_PROBE.album as unknown as ServiceMethods, schemas: albumSchemas },
-	track: { methods: REGISTRY_PROBE.track as unknown as ServiceMethods, schemas: trackSchemas },
-	user: { methods: REGISTRY_PROBE.user as unknown as ServiceMethods, schemas: userSchemas },
-	tag: { methods: REGISTRY_PROBE.tag as unknown as ServiceMethods, schemas: tagSchemas },
-	chart: { methods: REGISTRY_PROBE.chart as unknown as ServiceMethods, schemas: chartSchemas },
-	geo: { methods: REGISTRY_PROBE.geo as unknown as ServiceMethods, schemas: geoSchemas },
-	library: { methods: REGISTRY_PROBE.library as unknown as ServiceMethods, schemas: librarySchemas },
-	auth: { methods: REGISTRY_PROBE.auth as unknown as ServiceMethods, schemas: authSchemas },
-	insights: { methods: REGISTRY_PROBE.insights as unknown as ServiceMethods, schemas: insightsSchemas },
+	artist: {
+		methods: REGISTRY_PROBE.artist as unknown as ServiceMethods,
+		schemas: artistSchemas,
+		kind: 'core',
+		group: 'Last.fm Core API',
+	},
+	album: {
+		methods: REGISTRY_PROBE.album as unknown as ServiceMethods,
+		schemas: albumSchemas,
+		kind: 'core',
+		group: 'Last.fm Core API',
+	},
+	track: {
+		methods: REGISTRY_PROBE.track as unknown as ServiceMethods,
+		schemas: trackSchemas,
+		kind: 'core',
+		group: 'Last.fm Core API',
+	},
+	user: {
+		methods: REGISTRY_PROBE.user as unknown as ServiceMethods,
+		schemas: userSchemas,
+		kind: 'core',
+		group: 'Last.fm Core API',
+	},
+	tag: {
+		methods: REGISTRY_PROBE.tag as unknown as ServiceMethods,
+		schemas: tagSchemas,
+		kind: 'core',
+		group: 'Last.fm Core API',
+	},
+	chart: {
+		methods: REGISTRY_PROBE.chart as unknown as ServiceMethods,
+		schemas: chartSchemas,
+		kind: 'core',
+		group: 'Last.fm Core API',
+	},
+	geo: {
+		methods: REGISTRY_PROBE.geo as unknown as ServiceMethods,
+		schemas: geoSchemas,
+		kind: 'core',
+		group: 'Last.fm Core API',
+	},
+	library: {
+		methods: REGISTRY_PROBE.library as unknown as ServiceMethods,
+		schemas: librarySchemas,
+		kind: 'core',
+		group: 'Last.fm Core API',
+	},
+	auth: {
+		methods: REGISTRY_PROBE.auth as unknown as ServiceMethods,
+		schemas: authSchemas,
+		kind: 'core',
+		group: 'Last.fm Core API',
+	},
+	insights: {
+		methods: REGISTRY_PROBE.insights as unknown as ServiceMethods,
+		schemas: insightsSchemas,
+		kind: 'insights',
+		group: 'Insights & Analytics Engine',
+	},
 }
 
 const NS_DEFAULTS: Readonly<
@@ -283,7 +339,7 @@ function buildMethodMeta(id: string): MethodMeta {
 
 	const probe = cfg.methods[name]
 	if (typeof probe !== 'function') {
-		throw new Error(`method "${name}" is not exported from services/${ns}.ts (canonical id: ${id})`)
+		throw new Error(`method "${name}" is not exported from namespace "${ns}" (canonical id: ${id})`)
 	}
 
 	const pascalName = pascal(name)
@@ -302,7 +358,7 @@ function buildMethodMeta(id: string): MethodMeta {
 	}
 	if (!response) {
 		throw new Error(
-			`response schema "${responseKey}" not found in services/${ns}.schemas.ts. ` +
+			`response schema "${responseKey}" not found for namespace "${ns}". ` +
 				`Add a SPECIAL entry to override the lookup.`,
 		)
 	}
@@ -327,6 +383,8 @@ function buildMethodMeta(id: string): MethodMeta {
 		id,
 		ns,
 		name,
+		kind: cfg.kind,
+		group: cfg.group,
 		resolve,
 		schema,
 		response,

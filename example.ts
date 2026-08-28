@@ -53,7 +53,7 @@ async function example2() {
 async function example3() {
 	console.log('\n=== Example 3: Individual Services ===')
 
-	const { createAlbumService } = await import('./src/services/album.js')
+	const { createAlbumService } = await import('./src/core/services/album.js')
 
 	const albumService = createAlbumService({
 		apiKey: process.env.LASTFM_API_KEY || 'demo_key',
@@ -62,7 +62,7 @@ async function example3() {
 	try {
 		const albums = await albumService.search({ album: 'Believe', limit: 3 })
 		console.log('Album search results:')
-		albums.results.albummatches.album.forEach((album, i) => {
+		albums.results.albummatches.album.forEach((album: { name: string; artist: string }, i: number) => {
 			console.log(`${i + 1}. ${album.name} by ${album.artist}`)
 		})
 	} catch (error) {

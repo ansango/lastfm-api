@@ -1,6 +1,7 @@
 import { describe, expect, test } from 'bun:test'
 import { CANONICAL_METHODS } from '../canonical-methods.js'
 import { LastFmClient } from '../client.js'
+import { createCoreClient, LastFmCoreClient } from '../core/client.js'
 
 /**
  * Tests that the package's exported client covers the canonical
@@ -66,5 +67,27 @@ describe('inventory: 56/56 canonical Last.fm methods', () => {
 			actual[ns] = (actual[ns] ?? 0) + 1
 		}
 		expect(actual).toEqual(expected)
+	})
+
+	test('all canonical methods exist on LastFmCoreClient instance', () => {
+		const coreClient = createCoreClient({ apiKey: 'inventory-test' })
+		expect(coreClient instanceof LastFmCoreClient).toBe(true)
+		const namespaces: Record<string, Record<string, unknown>> = {
+			artist: coreClient.artist as unknown as Record<string, unknown>,
+			album: coreClient.album as unknown as Record<string, unknown>,
+			track: coreClient.track as unknown as Record<string, unknown>,
+			user: coreClient.user as unknown as Record<string, unknown>,
+			tag: coreClient.tag as unknown as Record<string, unknown>,
+			chart: coreClient.chart as unknown as Record<string, unknown>,
+			geo: coreClient.geo as unknown as Record<string, unknown>,
+			library: coreClient.library as unknown as Record<string, unknown>,
+			auth: coreClient.auth as unknown as Record<string, unknown>,
+		}
+
+		for (const canonical of CANONICAL_METHODS) {
+			const [ns, method] = canonical.split('.')
+			expect(namespaces[ns], `namespace ${ns} missing`).toBeDefined()
+			expect(typeof namespaces[ns][method], `${canonical} should be a function`).toBe('function')
+		}
 	})
 })

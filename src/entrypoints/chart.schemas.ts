@@ -1,2 +1,2 @@
-// Generated schema exports for chart service
-export * from '../services/chart.schemas.js'
+export type * from '../core/schemas/chart.schemas.js'
+export * from '../core/schemas/chart.schemas.js'
