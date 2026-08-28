@@ -85,6 +85,8 @@ jobs:
           node --input-type=module -e "
           (async () => {
             await import('./dist/index.js');
+            await import('./dist/entrypoints/core.js');
+            await import('./dist/entrypoints/core.schemas.js');
             await import('./dist/entrypoints/artist.js');
             await import('./dist/entrypoints/track.js');
             await import('./dist/entrypoints/insights.js');
