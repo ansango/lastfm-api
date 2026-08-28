@@ -106,6 +106,14 @@
 			"import": "./dist/entrypoints/reports.schemas.js",
 			"types": "./dist/entrypoints/reports.schemas.d.ts"
 		},
+		"./playlists": {
+			"import": "./dist/entrypoints/playlists.js",
+			"types": "./dist/entrypoints/playlists.d.ts"
+		},
+		"./playlists/schemas": {
+			"import": "./dist/entrypoints/playlists.schemas.js",
+			"types": "./dist/entrypoints/playlists.schemas.d.ts"
+		},
 		"./schemas": {
 			"import": "./dist/entrypoints/base.schemas.js",
 			"types": "./dist/entrypoints/base.schemas.d.ts"

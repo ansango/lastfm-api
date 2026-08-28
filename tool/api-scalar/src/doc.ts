@@ -68,6 +68,10 @@ export function mountOpenAPI(app: OpenAPIHono, opts: { serverUrl?: string } = {}
 				name: 'Reports & Wrapped',
 				tags: ['reports'],
 			},
+			{
+				name: 'Smart Playlists Generator',
+				tags: ['playlists'],
+			},
 		],
 		tags: [
 			{
@@ -115,6 +119,11 @@ export function mountOpenAPI(app: OpenAPIHono, opts: { serverUrl?: string } = {}
 				name: 'reports',
 				description:
 					'Year in Review / Wrapped reports, seasonal listening profiles, historical scrobble milestone tracker, and monthly comparative digests.',
+			},
+			{
+				name: 'playlists',
+				description:
+					'Algorithmic smart playlist generation (time capsule, deep cuts, heavy rotation, discovery radar) with M3U, CSV, and search-query formatters.',
 			},
 		],
 	})

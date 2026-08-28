@@ -39,6 +39,7 @@ import * as tagSchemas from './core/schemas/tag.schemas.js'
 import * as trackSchemas from './core/schemas/track.schemas.js'
 import * as userSchemas from './core/schemas/user.schemas.js'
 import * as insightsSchemas from './insights/schemas.js'
+import * as playlistsSchemas from './playlists/schemas.js'
 import * as reportsSchemas from './reports/schemas.js'
 
 // -- Types ----------------------------------------------------------------
@@ -185,6 +186,12 @@ const NS_CONFIG: Readonly<Record<string, NamespaceConfig>> = {
 		kind: 'extension',
 		group: 'Reports & Wrapped',
 	},
+	playlists: {
+		methods: REGISTRY_PROBE.playlists as unknown as ServiceMethods,
+		schemas: playlistsSchemas,
+		kind: 'extension',
+		group: 'Smart Playlists Generator',
+	},
 }
 
 const NS_DEFAULTS: Readonly<
@@ -201,6 +208,7 @@ const NS_DEFAULTS: Readonly<
 	auth: { httpMethod: 'GET', bodyKind: 'query', requiresSession: false, requiresSignature: true },
 	insights: { httpMethod: 'GET', bodyKind: 'query', requiresSession: false, requiresSignature: false },
 	reports: { httpMethod: 'GET', bodyKind: 'query', requiresSession: false, requiresSignature: false },
+	playlists: { httpMethod: 'GET', bodyKind: 'query', requiresSession: false, requiresSignature: false },
 }
 
 /**
@@ -344,6 +352,11 @@ const SPECIAL: Readonly<
 		summary: 'reports.getMonthlyDigest (@ansango/lastfm-api)',
 		description: 'Generates a monthly digest bulletin comparing listening activity to the previous month.',
 	},
+	'playlists.generate': {
+		summary: 'playlists.generate (@ansango/lastfm-api)',
+		description:
+			'Generates a smart playlist based on algorithmic rules (time-capsule, deep-cuts, heavy-rotation, discovery-radar) with ready-to-use M3U and CSV formats.',
+	},
 }
 
 // -- Builder -------------------------------------------------------------
@@ -440,7 +453,14 @@ export const INSIGHTS_METHODS = [
 
 export const REPORTS_METHODS = ['reports.getWrapped', 'reports.getMilestones', 'reports.getMonthlyDigest'] as const
 
-export const ALL_REGISTRY_METHODS = [...CANONICAL_METHODS, ...INSIGHTS_METHODS, ...REPORTS_METHODS] as const
+export const PLAYLISTS_METHODS = ['playlists.generate'] as const
+
+export const ALL_REGISTRY_METHODS = [
+	...CANONICAL_METHODS,
+	...INSIGHTS_METHODS,
+	...REPORTS_METHODS,
+	...PLAYLISTS_METHODS,
+] as const
 
 const registry: Record<string, Record<string, MethodMeta>> = {}
 for (const id of ALL_REGISTRY_METHODS) {
