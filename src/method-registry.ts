@@ -238,6 +238,11 @@ const SPECIAL: Readonly<
 		description:
 			'Generates a daily listening heatmap formatted with normalized intensity levels (0..4) suitable for GitHub-style calendar contribution representations.',
 	},
+	'insights.getAlbumHabits': {
+		summary: 'insights.getAlbumHabits (@ansango/lastfm-api)',
+		description:
+			'Analyzes sequential listening history to assess album completion, cohesion score (0-100), and listener profile (Album Purist vs Playlist Shuffler).',
+	},
 }
 
 // -- Builder -------------------------------------------------------------
@@ -322,6 +327,7 @@ export const INSIGHTS_METHODS = [
 	'insights.getObsessions',
 	'insights.getListeningStreaks',
 	'insights.getListeningHeatmap',
+	'insights.getAlbumHabits',
 ] as const
 
 export const ALL_REGISTRY_METHODS = [...CANONICAL_METHODS, ...INSIGHTS_METHODS] as const

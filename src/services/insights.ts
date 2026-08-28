@@ -1,4 +1,5 @@
 import type { LastFmConfig } from '../config.js'
+import { getAlbumHabits } from './insights/album-habits.js'
 import { getBinges } from './insights/binges.js'
 import { compareUsers } from './insights/compare.js'
 import { getForgottenFavorites, getObsessions } from './insights/decay.js'
@@ -12,6 +13,8 @@ import { getListeningHeatmap, getListeningStreaks } from './insights/streaks.js'
 import { getSummary } from './insights/summary.js'
 import { getTrends } from './insights/trends.js'
 import type {
+	InsightsAlbumHabitsRequest,
+	InsightsAlbumHabitsResponse,
 	InsightsBingesRequest,
 	InsightsBingesResponse,
 	InsightsCompareRequest,
@@ -190,6 +193,16 @@ export interface InsightsService {
 	 * @returns {Promise<InsightsHeatmapResponse>}
 	 */
 	getListeningHeatmap: (params: InsightsHeatmapRequest, init?: RequestInit) => Promise<InsightsHeatmapResponse>
+
+	/**
+	 * Analyzes sequential listening history to assess album completion, cohesion score (0-100),
+	 * and listener profile ('Album Purist' vs 'Playlist Shuffler').
+	 *
+	 * @param {InsightsAlbumHabitsRequest} params
+	 * @param {RequestInit} [init]
+	 * @returns {Promise<InsightsAlbumHabitsResponse>}
+	 */
+	getAlbumHabits: (params: InsightsAlbumHabitsRequest, init?: RequestInit) => Promise<InsightsAlbumHabitsResponse>
 }
 
 /**
@@ -211,5 +224,6 @@ export function createInsightsService(config: LastFmConfig): InsightsService {
 		getObsessions: (params, init) => getObsessions(config, params, init),
 		getListeningStreaks: (params, init) => getListeningStreaks(config, params, init),
 		getListeningHeatmap: (params, init) => getListeningHeatmap(config, params, init),
+		getAlbumHabits: (params, init) => getAlbumHabits(config, params, init),
 	}
 }

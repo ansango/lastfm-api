@@ -454,6 +454,42 @@ export const insightsHeatmapResponseSchema = z.object({
 	days: z.array(insightHeatmapDaySchema),
 })
 
+// Album Habits schemas
+export const insightAlbumSessionItemSchema = z.object({
+	artist: artistNameSchema,
+	album: z.string(),
+	sessionCount: z.number().int().positive(),
+	totalTracksPlayed: z.number().int().positive(),
+})
+
+export const insightLongestSessionSchema = z.object({
+	artist: artistNameSchema,
+	album: z.string(),
+	trackCount: z.number().int().positive(),
+	startTime: z.number().int().positive(),
+	endTime: z.number().int().positive(),
+	durationHours: z.number(),
+})
+
+export const insightsAlbumHabitsRequestSchema = z.object({
+	user: userNameSchema,
+	limit: limitSchema.optional(),
+	minSessionTracks: z.number().int().min(2).max(10).optional(),
+})
+
+export const insightsAlbumHabitsResponseSchema = z.object({
+	user: userNameSchema,
+	totalScrobblesInspected: z.number().int().nonnegative(),
+	cohesionScore: z.number(),
+	profile: z.enum(['Album Purist', 'Cohesive Listener', 'Mixed Mode', 'Playlist Shuffler']),
+	description: z.string(),
+	albumSessionCount: z.number().int().nonnegative(),
+	isolatedTracksCount: z.number().int().nonnegative(),
+	averageSessionLength: z.number(),
+	topAlbums: z.array(insightAlbumSessionItemSchema),
+	longestSession: insightLongestSessionSchema.nullable(),
+})
+
 // Schema naming convention aliases for registry lookup
 export const insightsGetSummaryRequestSchema = insightsSummaryRequestSchema
 export const insightsGetSummaryResponseSchema = insightsSummaryResponseSchema
@@ -489,6 +525,8 @@ export const insightsGetHeatmapRequestSchema = insightsHeatmapRequestSchema
 export const insightsGetHeatmapResponseSchema = insightsHeatmapResponseSchema
 export const insightsGetListeningHeatmapRequestSchema = insightsHeatmapRequestSchema
 export const insightsGetListeningHeatmapResponseSchema = insightsHeatmapResponseSchema
+export const insightsGetAlbumHabitsRequestSchema = insightsAlbumHabitsRequestSchema
+export const insightsGetAlbumHabitsResponseSchema = insightsAlbumHabitsResponseSchema
 
 // Inferred types
 export type InsightsPeriod = z.infer<typeof insightsPeriodSchema>
@@ -569,3 +607,9 @@ export type InsightsGetHeatmapRequest = InsightsHeatmapRequest
 export type InsightsGetHeatmapResponse = InsightsHeatmapResponse
 export type InsightsGetListeningHeatmapRequest = InsightsHeatmapRequest
 export type InsightsGetListeningHeatmapResponse = InsightsHeatmapResponse
+export type InsightAlbumSessionItem = z.infer<typeof insightAlbumSessionItemSchema>
+export type InsightLongestSession = z.infer<typeof insightLongestSessionSchema>
+export type InsightsAlbumHabitsRequest = z.infer<typeof insightsAlbumHabitsRequestSchema>
+export type InsightsAlbumHabitsResponse = z.infer<typeof insightsAlbumHabitsResponseSchema>
+export type InsightsGetAlbumHabitsRequest = InsightsAlbumHabitsRequest
+export type InsightsGetAlbumHabitsResponse = InsightsAlbumHabitsResponse

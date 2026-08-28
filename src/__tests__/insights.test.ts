@@ -820,6 +820,57 @@ describe('insights service', () => {
 		})
 	})
 
+	describe('getAlbumHabits', () => {
+		test('analyzes sequential album tracks and classifies listener profile', async () => {
+			const tracks = [
+				{
+					...fakeTrack,
+					artist: { name: 'Radiohead' },
+					album: { '#text': 'In Rainbows' },
+					name: '15 Step',
+					date: { uts: '1700000000' },
+				},
+				{
+					...fakeTrack,
+					artist: { name: 'Radiohead' },
+					album: { '#text': 'In Rainbows' },
+					name: 'Bodysnatchers',
+					date: { uts: '1700000200' },
+				},
+				{
+					...fakeTrack,
+					artist: { name: 'Radiohead' },
+					album: { '#text': 'In Rainbows' },
+					name: 'Nude',
+					date: { uts: '1700000400' },
+				},
+				{
+					...fakeTrack,
+					artist: { name: 'Single Artist' },
+					album: { '#text': 'Single Album' },
+					name: 'Track 1',
+					date: { uts: '1700000600' },
+				},
+			]
+
+			mock.respondWithJson({ recenttracks: { track: tracks, '@attr': okAttr(1, 200, 4) } })
+
+			const result = await client.insights.getAlbumHabits({ user: 'test_user', minSessionTracks: 3 })
+			expect(result.user).toBe('test_user')
+			expect(result.totalScrobblesInspected).toBe(4)
+			expect(result.cohesionScore).toBe(75)
+			expect(result.profile).toBe('Album Purist')
+			expect(result.albumSessionCount).toBe(1)
+			expect(result.isolatedTracksCount).toBe(1)
+			expect(result.topAlbums).toHaveLength(1)
+			expect(result.topAlbums[0].album).toBe('In Rainbows')
+			expect(result.longestSession?.trackCount).toBe(3)
+
+			const parsed = insightSchemas.insightsAlbumHabitsResponseSchema.safeParse(result)
+			expect(parsed.success).toBe(true)
+		})
+	})
+
 	describe('schema exports and client wiring', () => {
 		test('factory createInsightsService instantiates InsightsService with all wired methods', () => {
 			const svc: InsightsService = createInsightsService({ apiKey: API_KEY })
@@ -837,6 +888,7 @@ describe('insights service', () => {
 			expect(typeof svc.getObsessions).toBe('function')
 			expect(typeof svc.getListeningStreaks).toBe('function')
 			expect(typeof svc.getListeningHeatmap).toBe('function')
+			expect(typeof svc.getAlbumHabits).toBe('function')
 		})
 
 		test('exposes insights service via createClient helper', () => {
@@ -855,6 +907,7 @@ describe('insights service', () => {
 			expect(typeof c.insights.getObsessions).toBe('function')
 			expect(typeof c.insights.getListeningStreaks).toBe('function')
 			expect(typeof c.insights.getListeningHeatmap).toBe('function')
+			expect(typeof c.insights.getAlbumHabits).toBe('function')
 		})
 
 		test('insightsCompareRequestSchema validates inputs', () => {
@@ -896,6 +949,13 @@ describe('insights service', () => {
 		test('insightsHeatmapRequestSchema validates inputs', () => {
 			expect(
 				insightSchemas.insightsHeatmapRequestSchema.safeParse({ user: 'alice', days: 30, limit: 500 }).success,
+			).toBe(true)
+		})
+
+		test('insightsAlbumHabitsRequestSchema validates inputs', () => {
+			expect(
+				insightSchemas.insightsAlbumHabitsRequestSchema.safeParse({ user: 'alice', limit: 200, minSessionTracks: 4 })
+					.success,
 			).toBe(true)
 		})
 	})
