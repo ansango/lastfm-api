@@ -276,7 +276,7 @@ if (result.success) {
 
 ## Insights & Analytics Engine
 
-The package includes a built-in analytics engine providing 9 high-level derived views computed over Last.fm data:
+The package includes a comprehensive, built-in analytics engine providing 20 high-level derived views and statistical metrics computed over Last.fm data:
 
 ```typescript
 import { createClient } from '@ansango/lastfm-api';
@@ -319,6 +319,44 @@ console.log(`Archetype: ${personality.archetype.emoji} ${personality.archetype.n
 // 9. User-to-User Taste Clash (Jaccard Similarity)
 const comparison = await client.insights.compareUsers({ userA: 'ansango', userB: 'friend' });
 console.log(`Taste Compatibility: ${comparison.compatibilityScore}% (Jaccard: ${comparison.jaccard})`);
+
+// 10. Obscurity & Hipster Score (Hidden Gems & Mainstream Anchors)
+const obscurity = await client.insights.getObscurityScore({ user: 'ansango', limit: 20 });
+console.log(`Score: ${obscurity.obscurityScore}/100 (${obscurity.category})`);
+
+// 11. Forgotten Favorites (Revival Candidates)
+const forgotten = await client.insights.getForgottenFavorites({ user: 'ansango', historicPeriod: '12month', recentPeriod: '1month' });
+
+// 12. Listening Obsession Episodes
+const obsessions = await client.insights.getObsessions({ user: 'ansango', windowSize: 20, thresholdRatio: 0.35 });
+
+// 13. Consecutive Daily Streaks & Dry Spells
+const streaks = await client.insights.getListeningStreaks({ user: 'ansango' });
+console.log(`Longest Streak: ${streaks.longestStreakDays} days`);
+
+// 14. 365-Day Daily Heatmap
+const heatmap = await client.insights.getListeningHeatmap({ user: 'ansango', days: 90 });
+
+// 15. Album Habits & Cohesion Score (Album Purist vs Playlist Shuffler)
+const habits = await client.insights.getAlbumHabits({ user: 'ansango', minSessionTracks: 3 });
+console.log(`Cohesion: ${habits.cohesionScore}% (${habits.profile})`);
+
+// 16. Genre Breakdown with HHI Concentration Index
+const genres = await client.insights.getGenreBreakdown({ user: 'ansango', period: 'overall' });
+console.log(`Specialization: ${genres.specializationLevel} (HHI: ${genres.hhiIndex})`);
+
+// 17. Genre Evolution & Temporal Shifts (Rising, Fading, New)
+const evolution = await client.insights.getGenreEvolution({ user: 'ansango', currentPeriod: '1month', previousPeriod: '12month' });
+
+// 18. Smart Similarity Graph Recommendations
+const recs = await client.insights.getSmartRecommendations({ user: 'ansango', seedLimit: 5, limit: 10 });
+
+// 19. Bridge Artists Connecting Two Disparate Genres
+const bridges = await client.insights.getBridgeArtists({ tagA: 'post-punk', tagB: 'electronic' });
+
+// 20. Multi-User Taste Group Comparison (Consensus & Outlier Detection)
+const group = await client.insights.compareTasteGroup({ users: ['alice', 'bob', 'carol'], period: 'overall' });
+console.log(`Group Average Compatibility: ${group.groupAverageCompatibility}%`);
 ```
 
 ## Environment Variables

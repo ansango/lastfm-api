@@ -11,7 +11,7 @@ in the same PR.
 ## Summary
 
 - **Canonical API Coverage: 56 / 56** canonical Last.fm methods across 9 namespaces.
-- **Insights & Analytics Engine: 9 / 9** higher-level derived methods under `client.insights`.
+- **Insights & Analytics Engine: 20 / 20** higher-level derived methods under `client.insights`.
 - **Baseline: 43 / 57** at the start of epic #67.
 - **Gap closed by epic #67 (PRs #83–#89):** 14 new methods.
 - **Breaking removal in #117:** `auth.getMobileSession` removed (57 → 56).
@@ -33,7 +33,7 @@ in the same PR.
 | `library` | 1 | `getArtists` |
 | `auth` | 2 | `getSession`, `getToken`¹ |
 | **Canonical Total** | **56** | |
-| `insights` | 9 | `getSummary`, `getNowPlaying`, `getHoursHistogram`, `getBinges`, `getTrends`, `getDiscoveries`, `getMood`, `getPersonality`, `compareUsers` |
+| `insights` | 20 | `getSummary`, `getNowPlaying`, `getHoursHistogram`, `getBinges`, `getTrends`, `getDiscoveries`, `getMood`, `getPersonality`, `compareUsers`, `getObscurityScore`, `getForgottenFavorites`, `getObsessions`, `getListeningStreaks`, `getListeningHeatmap`, `getAlbumHabits`, `getGenreBreakdown`, `getGenreEvolution`, `getSmartRecommendations`, `getBridgeArtists`, `compareTasteGroup` |
 
 ¹ Added under epic #67.
 ² Added under epic #67. Requires an authenticated session (`sk`).
