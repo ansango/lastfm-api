@@ -1,6 +1,12 @@
 import type { LastFmConfig } from '../config.js'
+import { getNowPlaying } from './insights/now-playing.js'
 import { getSummary } from './insights/summary.js'
-import type { InsightsSummaryRequest, InsightsSummaryResponse } from './insights.schemas.js'
+import type {
+	InsightsNowPlayingRequest,
+	InsightsNowPlayingResponse,
+	InsightsSummaryRequest,
+	InsightsSummaryResponse,
+} from './insights.schemas.js'
 
 /**
  * Insights Service
@@ -18,6 +24,16 @@ export interface InsightsService {
 	 * @returns {Promise<InsightsSummaryResponse>}
 	 */
 	getSummary: (params: InsightsSummaryRequest, init?: RequestInit) => Promise<InsightsSummaryResponse>
+
+	/**
+	 * Fetches the user's current (or most recent) track and enriches it with
+	 * artist biography and similar artists.
+	 *
+	 * @param {InsightsNowPlayingRequest} params
+	 * @param {RequestInit} [init]
+	 * @returns {Promise<InsightsNowPlayingResponse>}
+	 */
+	getNowPlaying: (params: InsightsNowPlayingRequest, init?: RequestInit) => Promise<InsightsNowPlayingResponse>
 }
 
 /**
@@ -26,5 +42,6 @@ export interface InsightsService {
 export function createInsightsService(config: LastFmConfig): InsightsService {
 	return {
 		getSummary: (params, init) => getSummary(config, params, init),
+		getNowPlaying: (params, init) => getNowPlaying(config, params, init),
 	}
 }
