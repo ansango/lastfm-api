@@ -9,19 +9,18 @@
  *    namespace defaults (10 POST signed + 3 auth)
  */
 import { describe, expect, test } from 'bun:test'
-import { CANONICAL_METHODS } from '../../../src/canonical-methods.js'
 import { createClient } from '../../../src/client.js'
-import { allMethods, methodRegistry } from '../../../src/method-registry.js'
+import { ALL_REGISTRY_METHODS, allMethods, methodRegistry } from '../../../src/method-registry.js'
 
 describe('method-registry: shape', () => {
-	test('registry covers all 56 canonical methods', () => {
-		expect(allMethods.length).toBe(56)
+	test('registry covers all canonical and insight methods', () => {
+		expect(allMethods.length).toBe(ALL_REGISTRY_METHODS.length)
 	})
 
-	test('every registry id appears in CANONICAL_METHODS', () => {
-		const ids = new Set(CANONICAL_METHODS)
+	test('every registry id appears in ALL_REGISTRY_METHODS', () => {
+		const ids = new Set(ALL_REGISTRY_METHODS)
 		for (const m of allMethods) {
-			expect(ids.has(m.id as (typeof CANONICAL_METHODS)[number])).toBe(true)
+			expect(ids.has(m.id as (typeof ALL_REGISTRY_METHODS)[number])).toBe(true)
 		}
 	})
 
@@ -47,6 +46,7 @@ describe('method-registry: shape', () => {
 			geo: 2,
 			library: 1,
 			auth: 2,
+			insights: 1,
 		}
 		const actual: Record<string, number> = {}
 		for (const m of allMethods) {
