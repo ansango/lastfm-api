@@ -412,6 +412,48 @@ export const insightsObsessionsResponseSchema = z.object({
 	mostObsessiveArtist: artistNameSchema.nullable(),
 })
 
+// Streaks schemas
+export const insightsStreaksRequestSchema = z.object({
+	user: userNameSchema,
+	limit: limitSchema.optional(),
+})
+
+export const insightsStreaksResponseSchema = z.object({
+	user: userNameSchema,
+	currentStreakDays: z.number().int().nonnegative(),
+	longestStreakDays: z.number().int().nonnegative(),
+	longestDrySpellDays: z.number().int().nonnegative(),
+	activeDaysCount: z.number().int().nonnegative(),
+	totalDaysEvaluated: z.number().int().nonnegative(),
+	averageDailyScrobbles: z.number(),
+})
+
+// Heatmap schemas
+export const insightHeatmapDaySchema = z.object({
+	date: z.string(),
+	count: z.number().int().nonnegative(),
+	level: z.union([z.literal(0), z.literal(1), z.literal(2), z.literal(3), z.literal(4)]),
+})
+
+export const insightsHeatmapRequestSchema = z.object({
+	user: userNameSchema,
+	limit: limitSchema.optional(),
+	days: z.number().int().min(7).max(365).optional(),
+})
+
+export const insightsHeatmapResponseSchema = z.object({
+	user: userNameSchema,
+	totalScrobbles: z.number().int().nonnegative(),
+	maxDailyCount: z.number().int().nonnegative(),
+	busiestDay: z
+		.object({
+			date: z.string(),
+			count: z.number().int().nonnegative(),
+		})
+		.nullable(),
+	days: z.array(insightHeatmapDaySchema),
+})
+
 // Schema naming convention aliases for registry lookup
 export const insightsGetSummaryRequestSchema = insightsSummaryRequestSchema
 export const insightsGetSummaryResponseSchema = insightsSummaryResponseSchema
@@ -439,6 +481,14 @@ export const insightsGetForgottenFavoritesRequestSchema = insightsForgottenFavor
 export const insightsGetForgottenFavoritesResponseSchema = insightsForgottenFavoritesResponseSchema
 export const insightsGetObsessionsRequestSchema = insightsObsessionsRequestSchema
 export const insightsGetObsessionsResponseSchema = insightsObsessionsResponseSchema
+export const insightsGetStreaksRequestSchema = insightsStreaksRequestSchema
+export const insightsGetStreaksResponseSchema = insightsStreaksResponseSchema
+export const insightsGetListeningStreaksRequestSchema = insightsStreaksRequestSchema
+export const insightsGetListeningStreaksResponseSchema = insightsStreaksResponseSchema
+export const insightsGetHeatmapRequestSchema = insightsHeatmapRequestSchema
+export const insightsGetHeatmapResponseSchema = insightsHeatmapResponseSchema
+export const insightsGetListeningHeatmapRequestSchema = insightsHeatmapRequestSchema
+export const insightsGetListeningHeatmapResponseSchema = insightsHeatmapResponseSchema
 
 // Inferred types
 export type InsightsPeriod = z.infer<typeof insightsPeriodSchema>
@@ -506,3 +556,16 @@ export type InsightsObsessionsRequest = z.infer<typeof insightsObsessionsRequest
 export type InsightsObsessionsResponse = z.infer<typeof insightsObsessionsResponseSchema>
 export type InsightsGetObsessionsRequest = InsightsObsessionsRequest
 export type InsightsGetObsessionsResponse = InsightsObsessionsResponse
+export type InsightsStreaksRequest = z.infer<typeof insightsStreaksRequestSchema>
+export type InsightsStreaksResponse = z.infer<typeof insightsStreaksResponseSchema>
+export type InsightsGetStreaksRequest = InsightsStreaksRequest
+export type InsightsGetStreaksResponse = InsightsStreaksResponse
+export type InsightsGetListeningStreaksRequest = InsightsStreaksRequest
+export type InsightsGetListeningStreaksResponse = InsightsStreaksResponse
+export type InsightHeatmapDay = z.infer<typeof insightHeatmapDaySchema>
+export type InsightsHeatmapRequest = z.infer<typeof insightsHeatmapRequestSchema>
+export type InsightsHeatmapResponse = z.infer<typeof insightsHeatmapResponseSchema>
+export type InsightsGetHeatmapRequest = InsightsHeatmapRequest
+export type InsightsGetHeatmapResponse = InsightsHeatmapResponse
+export type InsightsGetListeningHeatmapRequest = InsightsHeatmapRequest
+export type InsightsGetListeningHeatmapResponse = InsightsHeatmapResponse
