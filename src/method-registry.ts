@@ -68,6 +68,10 @@ export interface MethodMeta {
 	readonly requiresSession: boolean;
 	/** Requires a signed request (api_sig computed by the package). */
 	readonly requiresSignature: boolean;
+	/** Mark this method as deprecated in the OpenAPI spec (Hono's
+	 *  `createRoute({...})` will surface it with `deprecated: true`,
+	 *  which Scalar renders as a strikethrough on the operation). */
+	readonly deprecated?: boolean;
 }
 
 export type MethodRegistry = Readonly<{
@@ -131,7 +135,7 @@ const NS_DEFAULTS: Readonly<Record<string, Pick<MethodMeta, 'httpMethod' | 'body
  * Add an entry here when a new method is signed, requires session,
  * uses POST, or has a non-default body kind.
  */
-const SPECIAL: Readonly<Record<string, Partial<Pick<MethodMeta, 'httpMethod' | 'bodyKind' | 'requiresSession' | 'requiresSignature'>>>> = {
+const SPECIAL: Readonly<Record<string, Partial<Pick<MethodMeta, 'httpMethod' | 'bodyKind' | 'requiresSession' | 'requiresSignature' | 'deprecated'>>>> = {
 	// Write methods: POST + signed + require session
 	'album.addTags': { httpMethod: 'POST', bodyKind: 'json', requiresSession: true, requiresSignature: true },
 	'album.removeTag': { httpMethod: 'POST', bodyKind: 'json', requiresSession: true, requiresSignature: true },
@@ -143,8 +147,10 @@ const SPECIAL: Readonly<Record<string, Partial<Pick<MethodMeta, 'httpMethod' | '
 	'track.unlove': { httpMethod: 'POST', bodyKind: 'json', requiresSession: true, requiresSignature: true },
 	'track.updateNowPlaying': { httpMethod: 'POST', bodyKind: 'json', requiresSession: true, requiresSignature: true },
 	'track.scrobble': { httpMethod: 'POST', bodyKind: 'json', requiresSession: true, requiresSignature: true },
-	// Auth: getMobileSession is POST + signed but does NOT need a session
-	'auth.getMobileSession': { httpMethod: 'POST', bodyKind: 'json', requiresSession: false }
+	// Auth: getMobileSession is POST + signed but does NOT need a session.
+	// Deprecated as of #105: only works for mobile-class API keys, which
+	// are not self-service. See src/services/auth.ts for the full note.
+	'auth.getMobileSession': { httpMethod: 'POST', bodyKind: 'json', requiresSession: false, deprecated: true }
 };
 
 // -- Builder -------------------------------------------------------------

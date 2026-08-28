@@ -60,6 +60,15 @@ export interface AuthService {
      * Intentionally does not support the deprecated `authToken` /
      * `md5(username + md5(password))` credential flow.
      *
+     * @deprecated Last.fm restricts this method to **mobile-class API
+     * keys**, which are not exposed through the public self-service create
+     * form. Every self-service key defaults to "web", so this call returns
+     * `error: 4 — Authentication Failed` for almost all users. Use the
+     * browser flow (`auth.getToken` + `auth.getSession`) instead, which
+     * works for every self-service API key. See
+     * <https://www.last.fm/api/webauth> for the full flow. This method
+     * is still callable and will be removed in a future major release.
+     *
      * @param {AuthGetMobileSessionRequest} params
      * @param {RequestInit} init
      * @returns {Promise<AuthGetMobileSessionResponse>}

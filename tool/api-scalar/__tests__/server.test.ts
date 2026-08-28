@@ -178,7 +178,7 @@ describe('createApp: write methods hit the package with a signed POST', () => {
 });
 
 describe('createApp: OpenAPI doc exposes the auth flow', () => {
-	test('/doc includes the auth tag with the mobile-flow description', async () => {
+	test('/doc includes the auth tag leading with the web flow', async () => {
 		const app = createFullApp({ apiKey: 'test-key' });
 		const res = await app.request('/doc');
 		const body = (await res.json()) as {
@@ -186,9 +186,30 @@ describe('createApp: OpenAPI doc exposes the auth flow', () => {
 		};
 		const authTag = body.tags?.find((t) => t.name === 'auth');
 		expect(authTag, 'auth tag must exist in /doc tags').toBeDefined();
-		expect(authTag?.description).toContain('mobile flow');
+		// Leads with the web flow (recommended for self-service keys).
+		expect(authTag?.description).toContain('web flow');
+		expect(authTag?.description).toContain('/auth/get-token');
+		expect(authTag?.description).toContain('/auth/get-session');
+		// Still covers the per-request `sk` mechanism.
 		expect(authTag?.description).toContain('x-lastfm-sk');
+		// Demotes the mobile flow to a deprecated footnote.
+		expect(authTag?.description).toContain('Mobile flow');
+		expect(authTag?.description).toContain('deprecated');
+		// No-persistence guarantee preserved.
 		expect(authTag?.description).toContain('No persistence');
+		// No longer asserts "we only ship the mobile flow".
+		expect(authTag?.description).not.toContain('we only ship the mobile flow');
+	});
+
+	test('auth.getMobileSession is marked deprecated in /doc', async () => {
+		const app = createFullApp({ apiKey: 'test-key' });
+		const res = await app.request('/doc');
+		const body = (await res.json()) as {
+			paths: Record<string, Record<string, { deprecated?: boolean }>>;
+		};
+		const op = body.paths['/auth/get-mobile-session']?.['post'];
+		expect(op, 'POST /auth/get-mobile-session must exist').toBeDefined();
+		expect(op?.deprecated, 'auth.getMobileSession must be flagged deprecated').toBe(true);
 	});
 
 	test('/doc exposes the x-lastfm-sk header on write methods only', async () => {
