@@ -85,9 +85,43 @@ export const insightsSummaryResponseSchema = z.object({
 	diversity: insightsDiversityStatsSchema.optional(),
 })
 
+// Now Playing request & response schemas
+export const insightsNowPlayingRequestSchema = z.object({
+	user: userNameSchema,
+	similarLimit: limitSchema.optional(),
+	bioMaxChars: z.number().int().positive().optional(),
+})
+
+export const insightsNowPlayingResponseSchema = z.object({
+	user: userNameSchema,
+	nowPlaying: z.boolean(),
+	track: z.object({
+		name: z.string(),
+		mbid: mbidSchema.optional(),
+		url: urlSchema.optional(),
+	}),
+	artist: z.object({
+		name: artistNameSchema,
+		mbid: mbidSchema.optional(),
+		url: urlSchema.optional(),
+	}),
+	album: z.string().optional(),
+	image: z.string().optional(),
+	bio: z.string(),
+	similar: z.array(
+		z.object({
+			name: artistNameSchema,
+			url: urlSchema.optional(),
+			match: z.number().optional(),
+		}),
+	),
+})
+
 // Schema naming convention aliases for registry lookup
 export const insightsGetSummaryRequestSchema = insightsSummaryRequestSchema
 export const insightsGetSummaryResponseSchema = insightsSummaryResponseSchema
+export const insightsGetNowPlayingRequestSchema = insightsNowPlayingRequestSchema
+export const insightsGetNowPlayingResponseSchema = insightsNowPlayingResponseSchema
 
 // Inferred types
 export type InsightsPeriod = z.infer<typeof insightsPeriodSchema>
@@ -100,3 +134,7 @@ export type InsightsSummaryRequest = z.infer<typeof insightsSummaryRequestSchema
 export type InsightsSummaryResponse = z.infer<typeof insightsSummaryResponseSchema>
 export type InsightsGetSummaryRequest = InsightsSummaryRequest
 export type InsightsGetSummaryResponse = InsightsSummaryResponse
+export type InsightsNowPlayingRequest = z.infer<typeof insightsNowPlayingRequestSchema>
+export type InsightsNowPlayingResponse = z.infer<typeof insightsNowPlayingResponseSchema>
+export type InsightsGetNowPlayingRequest = InsightsNowPlayingRequest
+export type InsightsGetNowPlayingResponse = InsightsNowPlayingResponse

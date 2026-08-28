@@ -5,6 +5,7 @@ import * as insightSchemas from '../entrypoints/insights.schemas.js'
 import { createClient } from '../index.js'
 import { computeDiversity, topNShare } from '../services/insights/lib/diversity.js'
 import { resolvePeriod } from '../services/insights/lib/periods.js'
+import { stripWiki, summarizeBio } from '../services/insights/now-playing.js'
 import { LastFmApiError } from '../utils.js'
 import {
 	fakeAlbum,
@@ -113,6 +114,26 @@ describe('insights service', () => {
 		})
 	})
 
+	describe('pure algorithms: bio sanitization', () => {
+		test('stripWiki cleans wiki links and HTML tags', () => {
+			const input = 'Formed in [[Oxford|Oxford, England]] in 1985. <a href="...">Read more</a> on Last.fm.'
+			const clean = stripWiki(input)
+			expect(clean).toBe('Formed in Oxford, England in 1985. Read more on Last.fm.')
+		})
+
+		test('summarizeBio truncates cleanly on word boundary', () => {
+			const bio = 'Radiohead are an English rock band formed in Abingdon in 1985.'
+			const summarized = summarizeBio(bio, 25)
+			expect(summarized).toBe('Radiohead are an English…')
+		})
+
+		test('summarizeBio returns full string if within maxChars', () => {
+			const bio = 'Short bio.'
+			expect(summarizeBio(bio, 100)).toBe('Short bio.')
+			expect(summarizeBio(undefined, 100)).toBe('')
+		})
+	})
+
 	describe('getSummary', () => {
 		test('fetches top artists, tracks, albums, tags in parallel and computes summary + diversity', async () => {
 			const artist1 = { ...fakeArtist, name: 'Radiohead', playcount: '60' }
@@ -195,20 +216,81 @@ describe('insights service', () => {
 		})
 	})
 
+	describe('getNowPlaying', () => {
+		test('enriches currently playing track with artist bio and similar artists', async () => {
+			const track = {
+				...fakeTrack,
+				name: 'Jigsaw Falling Into Place',
+				artist: { name: 'Radiohead', mbid: 'artist-mbid', url: 'https://last.fm/music/Radiohead' },
+				album: { '#text': 'In Rainbows' },
+				'@attr': { nowplaying: 'true' },
+			}
+			const artistInfo = {
+				...fakeArtist,
+				name: 'Radiohead',
+				bio: { summary: 'Radiohead are an English rock band formed in Abingdon in 1985.' },
+			}
+			const similar = {
+				similarartists: {
+					artist: [
+						{ name: 'The Smile', match: '0.9', url: 'https://last.fm/music/The+Smile' },
+						{ name: 'Thom Yorke', match: '0.85', url: 'https://last.fm/music/Thom+Yorke' },
+					],
+				},
+			}
+
+			mock.respondWithJson({ recenttracks: { track: [track], '@attr': { user: 'test_user' } } })
+			mock.respondWithJson({ artist: artistInfo })
+			mock.respondWithJson(similar)
+
+			const result = await client.insights.getNowPlaying({
+				user: 'test_user',
+				similarLimit: 2,
+				bioMaxChars: 50,
+			})
+
+			expect(mock.calls).toHaveLength(3)
+			expect(result.user).toBe('test_user')
+			expect(result.nowPlaying).toBe(true)
+			expect(result.track.name).toBe('Jigsaw Falling Into Place')
+			expect(result.artist.name).toBe('Radiohead')
+			expect(result.album).toBe('In Rainbows')
+			expect(result.bio).toContain('Radiohead')
+			expect(result.similar).toHaveLength(2)
+			expect(result.similar[0].name).toBe('The Smile')
+			expect(result.similar[0].match).toBe(0.9)
+
+			const parsed = insightSchemas.insightsNowPlayingResponseSchema.safeParse(result)
+			expect(parsed.success).toBe(true)
+		})
+
+		test('handles empty track history gracefully', async () => {
+			mock.respondWithJson({ recenttracks: { track: [], '@attr': { user: 'test_user' } } })
+
+			const result = await client.insights.getNowPlaying({ user: 'test_user' })
+			expect(result.user).toBe('test_user')
+			expect(result.nowPlaying).toBe(false)
+			expect(result.track.name).toBe('')
+			expect(result.similar).toEqual([])
+		})
+	})
+
 	describe('schema exports and client wiring', () => {
-		test('factory createInsightsService instantiates InsightsService with getSummary', () => {
+		test('factory createInsightsService instantiates InsightsService with getSummary and getNowPlaying', () => {
 			const svc: InsightsService = createInsightsService({ apiKey: API_KEY })
 			expect(typeof svc.getSummary).toBe('function')
+			expect(typeof svc.getNowPlaying).toBe('function')
 		})
 
 		test('exposes insights service via createClient helper', () => {
 			const c = createClient({ apiKey: API_KEY })
 			expect(typeof c.insights.getSummary).toBe('function')
+			expect(typeof c.insights.getNowPlaying).toBe('function')
 		})
 
-		test('insightsSummaryRequestSchema validates inputs', () => {
-			const valid = { user: 'ansango', period: 'weekly', limit: 5 }
-			const parsed = insightSchemas.insightsSummaryRequestSchema.safeParse(valid)
+		test('insightsNowPlayingRequestSchema validates inputs', () => {
+			const valid = { user: 'ansango', similarLimit: 5, bioMaxChars: 200 }
+			const parsed = insightSchemas.insightsNowPlayingRequestSchema.safeParse(valid)
 			expect(parsed.success).toBe(true)
 		})
 	})
