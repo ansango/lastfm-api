@@ -14,7 +14,8 @@ A universal Last.fm API client for Node.js and Browser, written in TypeScript.
 ## Features
 
 - ✅ **Universal**: Works in Node.js (≥20.0.0) and Browser
-- ✅ **Complete coverage**: All 57 canonical Last.fm API methods across 9 namespaces
+- ✅ **Complete coverage**: All 56 canonical Last.fm API methods across 9 namespaces
+- ✅ **Insights & Analytics Engine**: 9 high-level derived analytical views (Shannon diversity, enriched Now Playing, diurnal histograms, binge runs, ranking diffs, new discoveries, 2D mood classification, personality archetypes, and Jaccard user comparison)
 - ✅ **TypeScript**: Full type safety with comprehensive type definitions
 - ✅ **Zod Schemas**: Runtime validation schemas for all types
 - ✅ **ESM**: Modern ES modules with tree-shaking support
@@ -130,7 +131,14 @@ const libraryArtists = await client.library.getArtists({ user: 'ansango' });
 // Auth service (for scrobbling and authenticated methods)
 const session = await client.auth.getSession({ token: 'AUTH_TOKEN' });
 // Request an auth token (signed GET, no sk)
-const { token } = await client.auth.getToken();
+const { token, authUrl } = await client.auth.getToken();
+
+// Insights & analytics engine
+const summary = await client.insights.getSummary({ user: 'ansango', period: '7day' });
+const nowPlaying = await client.insights.getNowPlaying({ user: 'ansango' });
+const mood = await client.insights.getMood({ user: 'ansango', period: '1month' });
+const personality = await client.insights.getPersonality({ user: 'ansango' });
+const comparison = await client.insights.compareUsers({ userA: 'ansango', userB: 'friend' });
 
 // Now-playing and tag/love mutations (all require an authenticated session)
 await client.track.updateNowPlaying({
@@ -214,6 +222,7 @@ const tracks = await trackService.search({ track: 'Come Together' });
 - `@ansango/lastfm-api/geo`
 - `@ansango/lastfm-api/library`
 - `@ansango/lastfm-api/auth`
+- `@ansango/lastfm-api/insights`
 
 ## Zod Schema Validation
 
@@ -262,7 +271,55 @@ if (result.success) {
 - `@ansango/lastfm-api/geo/schemas`
 - `@ansango/lastfm-api/library/schemas`
 - `@ansango/lastfm-api/auth/schemas`
+- `@ansango/lastfm-api/insights/schemas`
 - `@ansango/lastfm-api/schemas` (base types like `imageSchema`, `datePropSchema`, etc.)
+
+## Insights & Analytics Engine
+
+The package includes a built-in analytics engine providing 9 high-level derived views computed over Last.fm data:
+
+```typescript
+import { createClient } from '@ansango/lastfm-api';
+
+const client = createClient();
+
+// 1. Summary & Shannon Diversity
+const summary = await client.insights.getSummary({ user: 'ansango', period: '7day' });
+console.log(`Total Scrobbles: ${summary.totalScrobbles}, Normalized Diversity: ${summary.diversity?.normalized}`);
+
+// 2. Enriched Now Playing with Artist Biography and Similar Artists
+const nowPlaying = await client.insights.getNowPlaying({ user: 'ansango', similarLimit: 3 });
+
+// 3. Diurnal & Weekday Histogram
+const histogram = await client.insights.getHoursHistogram({ user: 'ansango', sinceDays: 30 });
+console.log(`Peak Hour: ${histogram.peakHour}:00, Night Share: ${(histogram.nightShare * 100).toFixed(0)}%`);
+
+// 4. Binge Listening Streak Detection
+const binges = await client.insights.getBinges({ user: 'ansango', minLength: 3, maxGapSeconds: 1800 });
+
+// 5. Ranking Trends Differentials (Risers, Fallers, Newcomers, Departures)
+const trends = await client.insights.getTrends({
+  user: 'ansango',
+  target: 'artists',
+  currentPeriod: '7day',
+  previousPeriod: '1month'
+});
+
+// 6. New Artist Discoveries
+const discoveries = await client.insights.getDiscoveries({ user: 'ansango', windowDays: 7 });
+
+// 7. 2D Mood Classification (Energy vs. Valence)
+const mood = await client.insights.getMood({ user: 'ansango', period: '1month' });
+console.log(`Mood: ${mood.label} (Energy: ${mood.axes.energy}, Valence: ${mood.axes.valence})`);
+
+// 8. Listener Personality Archetype
+const personality = await client.insights.getPersonality({ user: 'ansango' });
+console.log(`Archetype: ${personality.archetype.emoji} ${personality.archetype.name} - ${personality.archetype.blurb}`);
+
+// 9. User-to-User Taste Clash (Jaccard Similarity)
+const comparison = await client.insights.compareUsers({ userA: 'ansango', userB: 'friend' });
+console.log(`Taste Compatibility: ${comparison.compatibilityScore}% (Jaccard: ${comparison.jaccard})`);
+```
 
 ## Environment Variables
 
@@ -425,6 +482,7 @@ class LastFmClient {
   geo: GeoService;
   library: LibraryService;
   auth: AuthService;
+  insights: InsightsService;
   
   constructor(config?: Partial<LastFmConfig>);
   getConfig(): Readonly<LastFmConfig>;
@@ -450,7 +508,7 @@ function resetGlobalConfig(): void;
 
 ### Services
 
-The package covers all 57 canonical Last.fm API methods across 9 namespaces. See [docs/api-coverage.md](docs/api-coverage.md) for the full table.
+The package covers all 56 canonical Last.fm API methods across 9 namespaces, plus 9 derived analytical methods in the `InsightsService`. See [docs/api-coverage.md](docs/api-coverage.md) for the full table.
 
 - **UserService**: 13 methods — `getInfo`, `getFriends`, `getLovedTracks`, `getRecentTracks`, `getTopAlbums`, `getTopArtists`, `getTopTags`, `getTopTracks`, `getWeeklyAlbumChart`, `getWeeklyArtistChart`, `getWeeklyChartList`, `getWeeklyTrackChart`, `getPersonalTags`
 - **AlbumService**: 6 methods — `getInfo`, `getTags`, `getTopTags`, `search`, `addTags`¹, `removeTag`¹
@@ -461,6 +519,7 @@ The package covers all 57 canonical Last.fm API methods across 9 namespaces. See
 - **GeoService**: 2 methods — `getTopArtists`, `getTopTracks`
 - **LibraryService**: 1 method — `getArtists`
 - **AuthService**: 2 methods — `getSession`, `getToken` (removed `getMobileSession` in v4.0.0)
+- **InsightsService**: 9 methods — `getSummary`, `getNowPlaying`, `getHoursHistogram`, `getBinges`, `getTrends`, `getDiscoveries`, `getMood`, `getPersonality`, `compareUsers`
 
 ¹ Requires an authenticated session.
 
