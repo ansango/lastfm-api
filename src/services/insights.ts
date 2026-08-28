@@ -4,6 +4,7 @@ import { getBinges } from './insights/binges.js'
 import { compareUsers } from './insights/compare.js'
 import { getForgottenFavorites, getObsessions } from './insights/decay.js'
 import { getDiscoveries } from './insights/discoveries.js'
+import { getGenreBreakdown, getGenreEvolution } from './insights/genres.js'
 import { getHoursHistogram } from './insights/hours.js'
 import { getMood } from './insights/mood.js'
 import { getNowPlaying } from './insights/now-playing.js'
@@ -23,6 +24,10 @@ import type {
 	InsightsDiscoveriesResponse,
 	InsightsForgottenFavoritesRequest,
 	InsightsForgottenFavoritesResponse,
+	InsightsGenreBreakdownRequest,
+	InsightsGenreBreakdownResponse,
+	InsightsGenreEvolutionRequest,
+	InsightsGenreEvolutionResponse,
 	InsightsHeatmapRequest,
 	InsightsHeatmapResponse,
 	InsightsHoursRequest,
@@ -203,6 +208,31 @@ export interface InsightsService {
 	 * @returns {Promise<InsightsAlbumHabitsResponse>}
 	 */
 	getAlbumHabits: (params: InsightsAlbumHabitsRequest, init?: RequestInit) => Promise<InsightsAlbumHabitsResponse>
+
+	/**
+	 * Computes normalized genre breakdown, filtering out noise tags and calculating
+	 * Herfindahl-Hirschman (HHI) concentration metrics.
+	 *
+	 * @param {InsightsGenreBreakdownRequest} params
+	 * @param {RequestInit} [init]
+	 * @returns {Promise<InsightsGenreBreakdownResponse>}
+	 */
+	getGenreBreakdown: (
+		params: InsightsGenreBreakdownRequest,
+		init?: RequestInit,
+	) => Promise<InsightsGenreBreakdownResponse>
+
+	/**
+	 * Tracks shifts in genre percentage shares between two time periods.
+	 *
+	 * @param {InsightsGenreEvolutionRequest} params
+	 * @param {RequestInit} [init]
+	 * @returns {Promise<InsightsGenreEvolutionResponse>}
+	 */
+	getGenreEvolution: (
+		params: InsightsGenreEvolutionRequest,
+		init?: RequestInit,
+	) => Promise<InsightsGenreEvolutionResponse>
 }
 
 /**
@@ -225,5 +255,7 @@ export function createInsightsService(config: LastFmConfig): InsightsService {
 		getListeningStreaks: (params, init) => getListeningStreaks(config, params, init),
 		getListeningHeatmap: (params, init) => getListeningHeatmap(config, params, init),
 		getAlbumHabits: (params, init) => getAlbumHabits(config, params, init),
+		getGenreBreakdown: (params, init) => getGenreBreakdown(config, params, init),
+		getGenreEvolution: (params, init) => getGenreEvolution(config, params, init),
 	}
 }

@@ -243,6 +243,15 @@ const SPECIAL: Readonly<
 		description:
 			'Analyzes sequential listening history to assess album completion, cohesion score (0-100), and listener profile (Album Purist vs Playlist Shuffler).',
 	},
+	'insights.getGenreBreakdown': {
+		summary: 'insights.getGenreBreakdown (@ansango/lastfm-api)',
+		description:
+			'Computes normalized genre breakdown, filtering out noise tags and calculating Herfindahl-Hirschman (HHI) concentration metrics.',
+	},
+	'insights.getGenreEvolution': {
+		summary: 'insights.getGenreEvolution (@ansango/lastfm-api)',
+		description: 'Tracks shifts in genre percentage shares (rising, fading, new) between two time periods.',
+	},
 }
 
 // -- Builder -------------------------------------------------------------
@@ -328,6 +337,8 @@ export const INSIGHTS_METHODS = [
 	'insights.getListeningStreaks',
 	'insights.getListeningHeatmap',
 	'insights.getAlbumHabits',
+	'insights.getGenreBreakdown',
+	'insights.getGenreEvolution',
 ] as const
 
 export const ALL_REGISTRY_METHODS = [...CANONICAL_METHODS, ...INSIGHTS_METHODS] as const
