@@ -228,6 +228,16 @@ const SPECIAL: Readonly<
 		description:
 			'Detects intense listening obsession episodes where a single artist or track heavily dominates a sliding listening window.',
 	},
+	'insights.getListeningStreaks': {
+		summary: 'insights.getListeningStreaks (@ansango/lastfm-api)',
+		description:
+			'Calculates consecutive daily listening streaks, longest continuous streaks, and dry spells across recent scrobbles.',
+	},
+	'insights.getListeningHeatmap': {
+		summary: 'insights.getListeningHeatmap (@ansango/lastfm-api)',
+		description:
+			'Generates a daily listening heatmap formatted with normalized intensity levels (0..4) suitable for GitHub-style calendar contribution representations.',
+	},
 }
 
 // -- Builder -------------------------------------------------------------
@@ -310,6 +320,8 @@ export const INSIGHTS_METHODS = [
 	'insights.getObscurityScore',
 	'insights.getForgottenFavorites',
 	'insights.getObsessions',
+	'insights.getListeningStreaks',
+	'insights.getListeningHeatmap',
 ] as const
 
 export const ALL_REGISTRY_METHODS = [...CANONICAL_METHODS, ...INSIGHTS_METHODS] as const
