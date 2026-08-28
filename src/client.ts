@@ -21,6 +21,7 @@ import {
 	type UserService,
 } from './core/services/index.js'
 import { createInsightsService, type InsightsService } from './insights/index.js'
+import { createReportsService, type ReportsService } from './reports/index.js'
 
 /**
  * Last.fm API Client
@@ -52,6 +53,7 @@ export class LastFmClient {
 	public readonly library: LibraryService
 	public readonly auth: AuthService
 	public readonly insights: InsightsService
+	public readonly reports: ReportsService
 
 	private readonly config: LastFmConfig
 
@@ -69,6 +71,7 @@ export class LastFmClient {
 		this.library = createLibraryService(this.config)
 		this.auth = createAuthService(this.config)
 		this.insights = createInsightsService(this.config)
+		this.reports = createReportsService(this.config)
 	}
 
 	/**

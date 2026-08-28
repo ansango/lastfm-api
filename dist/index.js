@@ -11,6 +11,8 @@ export * from './core/schemas/index.js';
 export * from './core/services/index.js';
 // Insights service & schemas
 export * from './insights/index.js';
+// Reports service & schemas
+export * from './reports/index.js';
 // Utilities
 export { buildAuthUrl, buildUrl, fetcher, generateSignature, LastFmApiError, parseLastFmResponse } from './utils.js';
 //# sourceMappingURL=index.js.map

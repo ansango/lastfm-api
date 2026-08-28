@@ -98,6 +98,14 @@
 			"import": "./dist/entrypoints/insights.schemas.js",
 			"types": "./dist/entrypoints/insights.schemas.d.ts"
 		},
+		"./reports": {
+			"import": "./dist/entrypoints/reports.js",
+			"types": "./dist/entrypoints/reports.d.ts"
+		},
+		"./reports/schemas": {
+			"import": "./dist/entrypoints/reports.schemas.js",
+			"types": "./dist/entrypoints/reports.schemas.d.ts"
+		},
 		"./schemas": {
 			"import": "./dist/entrypoints/base.schemas.js",
 			"types": "./dist/entrypoints/base.schemas.d.ts"
