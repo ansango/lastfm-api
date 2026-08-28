@@ -316,25 +316,72 @@ Methods that mutate user state require an authenticated session. The full list o
 - `album.addTags`, `album.removeTag`
 - `artist.addTags`, `artist.removeTag`
 
-For browser flows, get a session with `client.auth.getSession({ token })` after the user authorizes the token in a browser. For server-side / trusted environments, `client.auth.getMobileSession({ username, password })` issues a session directly. Once you have a session key, pass it as `sessionKey` in your config — the client injects it into every authenticated call. The mobile-session method always uses HTTPS; a custom `baseUrl` over plain HTTP is rejected before any network call.
+There are two paths to obtain a session key — pick the one that matches your Last.fm API key's app classification. The browser flow below works for **every** self-service API key; the mobile flow only works for mobile-classified keys, which Last.fm does not expose through the public create form.
 
-`auth.getToken` is a signed GET that does not require an existing session; it is the first step of the browser auth flow.
+### Browser flow (recommended — works for all self-service keys)
+
+The browser flow is the canonical Last.fm auth path and works with the API key every self-service user gets from <https://www.last.fm/api/account/create>.
 
 ```typescript
 import { LastFmClient } from '@ansango/lastfm-api';
 
+// 1. Get a request token (signed GET, no session needed).
+const client = new LastFmClient({
+  apiKey: process.env.LASTFM_API_KEY!,
+  sharedSecret: process.env.LASTFM_SHARED_SECRET!,
+});
+const { token } = await client.auth.getToken();
+
+// 2. Direct the user to authorize the token in a browser:
+//    https://www.last.fm/api/auth/?api_key=<KEY>&token=<token>
+//    After authorizing, Last.fm redirects to the callback URL configured
+//    on the API account (the token appears in the URL).
+
+// 3. Exchange the authorized token for a session key.
+const { session } = await client.auth.getSession({ token });
+const sessionKey = session.key; // pass this to write methods
+```
+
+### Mobile flow (mobile-class API keys only)
+
+`auth.getMobileSession` exchanges a username + password for a session key in a single call, but it only works for API keys classified as **mobile / standalone** in the API account settings. Last.fm's self-service create form does not expose this classification; every new key is a web key by default. If you registered your key as a web app, this method will fail with `error: 4 — Authentication Failed`. To get a mobile-class key, you need to email `partners@last.fm` and ask for a reclassification.
+
+```typescript
+// Only works for mobile-class API keys.
+const { session } = await client.auth.getMobileSession({
+  username: process.env.LASTFM_USERNAME!,
+  password: process.env.LASTFM_PASSWORD!,
+});
+```
+
+### Passing the session key to write methods
+
+Once you have a session key, you can pass it in two ways:
+
+- **Per-request** (`params.sk`): preferred for ad-hoc calls or one-off scripts.
+- **On the `LastFmConfig`** (`sessionKey`): preferred for long-lived clients; the transport injects it into every signed call automatically.
+
+```typescript
+// Option A: session key in the config (recommended for long-lived clients).
 const client = new LastFmClient({
   apiKey: process.env.LASTFM_API_KEY!,
   sharedSecret: process.env.LASTFM_SHARED_SECRET!,
   sessionKey: process.env.LASTFM_SESSION_KEY!,
 });
 
-// Scrobble a track — `sk` is auto-injected from `config.sessionKey`,
-// so you don't need to pass it explicitly.
+// `sk` is auto-injected from config.sessionKey; you don't need to pass it.
 await client.track.scrobble({
   artist: 'Cher',
   track: 'Believe',
   timestamp: Math.floor(Date.now() / 1000),
+});
+
+// Option B: session key per-request (preferred for ad-hoc calls).
+await client.track.scrobble({
+  artist: 'Cher',
+  track: 'Believe',
+  timestamp: Math.floor(Date.now() / 1000),
+  sk: 'paste-the-session-key-here',
 });
 ```
 

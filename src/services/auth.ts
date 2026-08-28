@@ -11,6 +11,15 @@ import type {
 export interface AuthService {
 	/**
 	 * Get the session key for a user. Used for authenticating a user when scrobbling.
+	 *
+	 * This is the second step of the **browser-based auth flow**:
+	 * 1. `auth.getToken()` — returns a request token
+	 * 2. Direct the user to `https://www.last.fm/api/auth/?api_key=<KEY>&token=<token>` in a browser
+	 * 3. The user authorises the app, Last.fm redirects to your callback URL with the same token
+	 * 4. Call `auth.getSession({ token })` — this method — to exchange the authorised token for a session key
+	 *
+	 * The returned `session.key` is what write methods (`track.love`, `track.scrobble`, …) expect as `sk`.
+	 *
 	 * @param {AuthGetSessionRequest} params
 	 * @param {RequestInit} init
 	 * @returns {Promise<AuthGetSessionResponse>}
@@ -28,6 +37,13 @@ export interface AuthService {
 	 * Signed GET with no functional request parameters and no existing
 	 * session. Safe to call from any environment.
 	 *
+	 * This is the first step of the **browser-based auth flow** — the
+	 * recommended path for self-service users. The full flow is:
+	 * 1. `auth.getToken()` — this method
+	 * 2. Direct the user to `https://www.last.fm/api/auth/?api_key=<KEY>&token=<token>` in a browser
+	 * 3. The user authorises the app, Last.fm redirects to your callback URL with the same token
+	 * 4. `auth.getSession({ token })` to exchange for the session key
+	 *
 	 * @param {RequestInit} init
 	 * @returns {Promise<AuthGetTokenResponse>}
 	 * https://www.last.fm/api/show/auth.getToken
@@ -41,6 +57,13 @@ export interface AuthService {
 	 * **Server-side / trusted environments only.** This method handles a
 	 * password and the application's shared secret; it must never be used
 	 * from a browser or any environment where the bundle is exposed.
+	 *
+	 * **Mobile-class API keys only.** Last.fm rejects this call with 403
+	 * (`error: 4 — Authentication Failed`) for self-service web/desktop
+	 * API keys. Self-service users should use the browser flow
+	 * (`auth.getToken` + `auth.getSession`) instead. The Last.fm create
+	 * form has no app-type selector; to obtain a mobile-class key you
+	 * need to email `partners@last.fm` and ask for a reclassification.
 	 *
 	 * Requires HTTPS — a custom `baseUrl` over plain HTTP is rejected
 	 * before any network call.

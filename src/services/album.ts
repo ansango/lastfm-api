@@ -60,6 +60,12 @@ export interface AlbumService {
 	 * Idempotency is not guaranteed by Last.fm; calling twice may add
 	 * the same tag twice if the previous run is reported as ignored.
 	 *
+	 * **Authentication:** pass `sk` in `params.sk` (preferred for ad-hoc
+	 * calls) or set `sessionKey` on the `LastFmConfig` when constructing
+	 * the client (preferred for long-lived clients). Obtain a session key
+	 * via `auth.getToken` + the browser-based `auth.getSession` flow, or
+	 * via `auth.getMobileSession` (mobile-class API keys only).
+	 *
 	 * @param {AlbumAddTagsRequest} params
 	 * @param {RequestInit} init
 	 * @returns {Promise<void>}
@@ -73,6 +79,11 @@ export interface AlbumService {
 	 * Last.fm does not document idempotency for `album.removeTag`;
 	 * removing an absent tag is a no-op or a server error depending
 	 * on the live behaviour.
+	 *
+	 * **Authentication:** pass `sk` in `params.sk` (preferred for ad-hoc
+	 * calls) or set `sessionKey` on the `LastFmConfig` when constructing
+	 * the client. Obtain a session key via `auth.getToken` +
+	 * `auth.getSession`, or `auth.getMobileSession` (mobile-class only).
 	 *
 	 * @param {AlbumRemoveTagRequest} params
 	 * @param {RequestInit} init
