@@ -226,7 +226,7 @@ function buildMethodMeta(id: string): MethodMeta {
 	}
 }
 
-export const INSIGHTS_METHODS = ['insights.getSummary'] as const
+export const INSIGHTS_METHODS = ['insights.getSummary', 'insights.getNowPlaying'] as const
 
 export const ALL_REGISTRY_METHODS = [...CANONICAL_METHODS, ...INSIGHTS_METHODS] as const
 
