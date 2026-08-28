@@ -231,6 +231,8 @@ export const INSIGHTS_METHODS = [
 	'insights.getNowPlaying',
 	'insights.getHoursHistogram',
 	'insights.getBinges',
+	'insights.getTrends',
+	'insights.getDiscoveries',
 ] as const
 
 export const ALL_REGISTRY_METHODS = [...CANONICAL_METHODS, ...INSIGHTS_METHODS] as const

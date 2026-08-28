@@ -4,9 +4,11 @@ import { createInsightsService, type InsightsService } from '../entrypoints/insi
 import * as insightSchemas from '../entrypoints/insights.schemas.js'
 import { createClient } from '../index.js'
 import { findBinges } from '../services/insights/lib/binges.js'
+import { findNewArtists } from '../services/insights/lib/discoveries.js'
 import { computeDiversity, topNShare } from '../services/insights/lib/diversity.js'
 import { bucketTimestamp, buildHourHistogram } from '../services/insights/lib/hours.js'
 import { resolvePeriod } from '../services/insights/lib/periods.js'
+import { diffRankings } from '../services/insights/lib/trends.js'
 import { stripWiki, summarizeBio } from '../services/insights/now-playing.js'
 import { LastFmApiError } from '../utils.js'
 import {
@@ -194,6 +196,55 @@ describe('insights service', () => {
 		})
 	})
 
+	describe('pure algorithms: trends diff', () => {
+		test('diffRankings categorizes risers, fallers, newcomers, departures', () => {
+			const current = [
+				{ name: 'Artist A', playcount: 50 }, // was rank 2 (climbed to 1) -> riser
+				{ name: 'Artist C', playcount: 40 }, // was absent -> newcomer
+				{ name: 'Artist B', playcount: 30 }, // was rank 1 (dropped to 3) -> faller
+			]
+			const previous = [
+				{ name: 'Artist B', playcount: 80 },
+				{ name: 'Artist A', playcount: 40 },
+				{ name: 'Artist D', playcount: 20 }, // dropped out -> departure
+			]
+
+			const diff = diffRankings(current, previous)
+			expect(diff.risers).toHaveLength(1)
+			expect(diff.risers[0].name).toBe('Artist A')
+			expect(diff.risers[0].deltaRank).toBe(1) // from 2 to 1
+
+			expect(diff.newcomers).toHaveLength(1)
+			expect(diff.newcomers[0].name).toBe('Artist C')
+
+			expect(diff.fallers).toHaveLength(1)
+			expect(diff.fallers[0].name).toBe('Artist B')
+			expect(diff.fallers[0].deltaRank).toBe(-2) // from 1 to 3
+
+			expect(diff.departures).toHaveLength(1)
+			expect(diff.departures[0].name).toBe('Artist D')
+		})
+	})
+
+	describe('pure algorithms: discoveries', () => {
+		test('findNewArtists filters out baseline and sorts by firstSeen', () => {
+			const baseline = new Set(['Radiohead', 'The Beatles'])
+			const window = [
+				{ name: 'Radiohead', firstSeen: 1000 },
+				{ name: 'Black Country, New Road', firstSeen: 1500 },
+				{ name: 'Fontaines D.C.', firstSeen: 1200 },
+				{ name: 'Fontaines D.C.', firstSeen: 1800 },
+			]
+
+			const discoveries = findNewArtists(window, baseline)
+			expect(discoveries).toHaveLength(2)
+			expect(discoveries[0].name).toBe('Fontaines D.C.')
+			expect(discoveries[0].firstSeen).toBe(1200)
+			expect(discoveries[1].name).toBe('Black Country, New Road')
+			expect(discoveries[1].firstSeen).toBe(1500)
+		})
+	})
+
 	describe('getSummary', () => {
 		test('fetches top artists, tracks, albums, tags in parallel and computes summary + diversity', async () => {
 			const artist1 = { ...fakeArtist, name: 'Radiohead', playcount: '60' }
@@ -214,15 +265,12 @@ describe('insights service', () => {
 			})
 
 			expect(mock.calls).toHaveLength(4)
-
-			// Assert summary composition
 			expect(result.user).toBe('test_user')
 			expect(result.lastfmPeriod).toBe('7day')
-			expect(result.totalScrobbles).toBe(100) // 60 + 40
+			expect(result.totalScrobbles).toBe(100)
 			expect(result.topArtists).toHaveLength(2)
 			expect(result.diversity).toBeDefined()
 
-			// Schema validation
 			const parsed = insightSchemas.insightsSummaryResponseSchema.safeParse(result)
 			expect(parsed.success).toBe(true)
 		})
@@ -370,6 +418,65 @@ describe('insights service', () => {
 		})
 	})
 
+	describe('getTrends', () => {
+		test('calculates artist ranking diff between periods', async () => {
+			const cur = [{ ...fakeArtist, name: 'Radiohead', playcount: '50' }]
+			const prev = [
+				{ ...fakeArtist, name: 'The Smile', playcount: '40' },
+				{ ...fakeArtist, name: 'Radiohead', playcount: '30' },
+			]
+
+			mock.respondWithJson({ topartists: { artist: cur, '@attr': okAttr() } })
+			mock.respondWithJson({ topartists: { artist: prev, '@attr': okAttr() } })
+
+			const result = await client.insights.getTrends({
+				user: 'test_user',
+				target: 'artists',
+				currentPeriod: '7day',
+				previousPeriod: '1month',
+			})
+
+			expect(result.user).toBe('test_user')
+			expect(result.target).toBe('artists')
+			expect(result.risers).toHaveLength(1)
+			expect(result.risers[0].name).toBe('Radiohead')
+			expect(result.risers[0].deltaRank).toBe(1) // was rank 2, now 1
+			expect(result.departures).toHaveLength(1)
+			expect(result.departures[0].name).toBe('The Smile')
+
+			const parsed = insightSchemas.insightsTrendsResponseSchema.safeParse(result)
+			expect(parsed.success).toBe(true)
+		})
+	})
+
+	describe('getDiscoveries', () => {
+		test('identifies new artist discoveries against baseline roster', async () => {
+			const baseline = [{ ...fakeArtist, name: 'Radiohead' }]
+			const windowTrack = {
+				...fakeTrack,
+				artist: { name: 'Fontaines D.C.' },
+				date: { uts: '1700000000' },
+			}
+
+			mock.respondWithJson({ topartists: { artist: baseline, '@attr': okAttr() } })
+			mock.respondWithJson({ recenttracks: { track: [windowTrack], '@attr': okAttr(1, 200, 1) } })
+
+			const result = await client.insights.getDiscoveries({
+				user: 'test_user',
+				windowDays: 7,
+			})
+
+			expect(result.user).toBe('test_user')
+			expect(result.baselineSize).toBe(1)
+			expect(result.totalDiscovered).toBe(1)
+			expect(result.discoveries[0].name).toBe('Fontaines D.C.')
+			expect(result.discoveries[0].firstSeen).toBe(1700000000)
+
+			const parsed = insightSchemas.insightsDiscoveriesResponseSchema.safeParse(result)
+			expect(parsed.success).toBe(true)
+		})
+	})
+
 	describe('schema exports and client wiring', () => {
 		test('factory createInsightsService instantiates InsightsService with all wired methods', () => {
 			const svc: InsightsService = createInsightsService({ apiKey: API_KEY })
@@ -377,6 +484,8 @@ describe('insights service', () => {
 			expect(typeof svc.getNowPlaying).toBe('function')
 			expect(typeof svc.getHoursHistogram).toBe('function')
 			expect(typeof svc.getBinges).toBe('function')
+			expect(typeof svc.getTrends).toBe('function')
+			expect(typeof svc.getDiscoveries).toBe('function')
 		})
 
 		test('exposes insights service via createClient helper', () => {
@@ -385,13 +494,16 @@ describe('insights service', () => {
 			expect(typeof c.insights.getNowPlaying).toBe('function')
 			expect(typeof c.insights.getHoursHistogram).toBe('function')
 			expect(typeof c.insights.getBinges).toBe('function')
+			expect(typeof c.insights.getTrends).toBe('function')
+			expect(typeof c.insights.getDiscoveries).toBe('function')
 		})
 
-		test('insightsHoursRequestSchema and insightsBingesRequestSchema validate inputs', () => {
-			expect(insightSchemas.insightsHoursRequestSchema.safeParse({ user: 'ansango', sinceDays: 14 }).success).toBe(true)
+		test('insightsTrendsRequestSchema and insightsDiscoveriesRequestSchema validate inputs', () => {
+			expect(insightSchemas.insightsTrendsRequestSchema.safeParse({ user: 'ansango', target: 'artists' }).success).toBe(
+				true,
+			)
 			expect(
-				insightSchemas.insightsBingesRequestSchema.safeParse({ user: 'ansango', minLength: 3, trackKey: 'artist' })
-					.success,
+				insightSchemas.insightsDiscoveriesRequestSchema.safeParse({ user: 'ansango', windowDays: 14 }).success,
 			).toBe(true)
 		})
 	})
