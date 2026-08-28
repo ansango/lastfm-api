@@ -235,6 +235,7 @@ export const INSIGHTS_METHODS = [
 	'insights.getDiscoveries',
 	'insights.getMood',
 	'insights.getPersonality',
+	'insights.compareUsers',
 ] as const
 
 export const ALL_REGISTRY_METHODS = [...CANONICAL_METHODS, ...INSIGHTS_METHODS] as const
