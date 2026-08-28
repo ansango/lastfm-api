@@ -39,7 +39,7 @@ export interface SignedRequestOptions {
      * Whether this method requires a session key. When true, `sk` is resolved
      * from `params.sk` (request) or `config.sessionKey` and is included in
      * the signature and the body. When false, the transport signs and sends
-     * without an `sk` (used by `auth.getToken` and `auth.getMobileSession`).
+     * without an `sk` (used by `auth.getToken`).
      * @default true
      */
     requiresSession?: boolean;

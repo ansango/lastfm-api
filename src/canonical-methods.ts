@@ -1,7 +1,8 @@
 /**
  * Canonical Last.fm method inventory.
  *
- * Single source of truth for the "57/57" coverage of the Last.fm API.
+ * Single source of truth for the "56/56" coverage of the Last.fm API.
+ * (was 57/57; `auth.getMobileSession` removed in v4.0.0 — see #117.)
  * Consumed by:
  *  - `src/__tests__/inventory.test.ts` — verifies that each method exists on the client
  *  - `src/method-registry.ts` — wires the docs tool (Hono + Scalar)
@@ -80,10 +81,9 @@ export const CANONICAL_METHODS = [
 	'geo.getTopTracks',
 	// library (1)
 	'library.getArtists',
-	// auth (3)
+	// auth (2)
 	'auth.getSession',
 	'auth.getToken',
-	'auth.getMobileSession',
 ] as const
 
 export type CanonicalMethodId = (typeof CANONICAL_METHODS)[number]

@@ -14,8 +14,8 @@ import { createClient } from '../../../src/client.js'
 import { allMethods, methodRegistry } from '../../../src/method-registry.js'
 
 describe('method-registry: shape', () => {
-	test('registry covers all 57 canonical methods', () => {
-		expect(allMethods.length).toBe(57)
+	test('registry covers all 56 canonical methods', () => {
+		expect(allMethods.length).toBe(56)
 	})
 
 	test('every registry id appears in CANONICAL_METHODS', () => {
@@ -46,7 +46,7 @@ describe('method-registry: shape', () => {
 			chart: 3,
 			geo: 2,
 			library: 1,
-			auth: 3,
+			auth: 2,
 		}
 		const actual: Record<string, number> = {}
 		for (const m of allMethods) {
@@ -80,14 +80,6 @@ describe('method-registry: SPECIAL table', () => {
 		}
 	})
 
-	test('auth.getMobileSession is POST + signed but does NOT need a session', () => {
-		const m = methodRegistry.auth.getMobileSession
-		expect(m.httpMethod).toBe('POST')
-		expect(m.bodyKind).toBe('json')
-		expect(m.requiresSession).toBe(false)
-		expect(m.requiresSignature).toBe(true)
-	})
-
 	test('auth.getToken and auth.getSession are signed GET (no session)', () => {
 		for (const name of ['getToken', 'getSession']) {
 			const m = methodRegistry.auth[name]
@@ -109,7 +101,6 @@ describe('method-registry: SPECIAL table', () => {
 			'track.unlove',
 			'track.updateNowPlaying',
 			'track.scrobble',
-			'auth.getMobileSession',
 			'auth.getToken',
 			'auth.getSession',
 		])

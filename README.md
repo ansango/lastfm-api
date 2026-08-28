@@ -131,11 +131,6 @@ const libraryArtists = await client.library.getArtists({ user: 'ansango' });
 const session = await client.auth.getSession({ token: 'AUTH_TOKEN' });
 // Request an auth token (signed GET, no sk)
 const { token } = await client.auth.getToken();
-// Username/password login (signed POST, no sk) — server-side / trusted only
-const { session: mobileSession } = await client.auth.getMobileSession({
-  username: 'someone',
-  password: process.env.LASTFM_PASSWORD!
-});
 
 // Now-playing and tag/love mutations (all require an authenticated session)
 await client.track.updateNowPlaying({
@@ -310,13 +305,13 @@ const client = new LastFmClient({
 
 Methods that mutate user state require an authenticated session. The full list of write methods is:
 
-- `auth.getSession`, `auth.getToken`, `auth.getMobileSession`
+- `auth.getSession`, `auth.getToken`
 - `track.scrobble`, `track.updateNowPlaying`
 - `track.addTags`, `track.removeTag`, `track.love`, `track.unlove`
 - `album.addTags`, `album.removeTag`
 - `artist.addTags`, `artist.removeTag`
 
-There are two paths to obtain a session key — pick the one that matches your Last.fm API key's app classification. The browser flow below works for **every** self-service API key; the mobile flow only works for mobile-classified keys, which Last.fm does not expose through the public create form.
+The browser flow below works for every self-service API key — there is no mobile flow in this package anymore.
 
 ### Browser flow (recommended — works for all self-service keys)
 
@@ -357,17 +352,7 @@ Before the browser flow works end-to-end, set a callback URL on your API account
 
 If you skip this step, the redirect after **Allow access** lands on a Last.fm error page instead of your URL, and the token is lost. You have to call `auth.getToken` again and re-authorize.
 
-### Mobile flow (mobile-class API keys only)
-
-`auth.getMobileSession` exchanges a username + password for a session key in a single call, but it only works for API keys classified as **mobile / standalone** in the API account settings. Last.fm's self-service create form does not expose this classification; every new key is a web key by default. If you registered your key as a web app, this method will fail with `error: 4 — Authentication Failed`. To get a mobile-class key, you need to email `partners@last.fm` and ask for a reclassification.
-
-```typescript
-// Only works for mobile-class API keys.
-const { session } = await client.auth.getMobileSession({
-  username: process.env.LASTFM_USERNAME!,
-  password: process.env.LASTFM_PASSWORD!,
-});
-```
+> **Note:** `auth.getMobileSession` was removed in v4.0.0. Last.fm restricts that endpoint to mobile-classified API keys, which are not exposed through the public self-service create form; the browser flow above works for every API key Last.fm issues today.
 
 ### Passing the session key to write methods
 
@@ -475,7 +460,7 @@ The package covers all 57 canonical Last.fm API methods across 9 namespaces. See
 - **ChartService**: 3 methods — `getTopArtists`, `getTopTags`, `getTopTracks`
 - **GeoService**: 2 methods — `getTopArtists`, `getTopTracks`
 - **LibraryService**: 1 method — `getArtists`
-- **AuthService**: 3 methods — `getSession`, `getToken`, `getMobileSession`¹
+- **AuthService**: 2 methods — `getSession`, `getToken` (removed `getMobileSession` in v4.0.0)
 
 ¹ Requires an authenticated session.
 
