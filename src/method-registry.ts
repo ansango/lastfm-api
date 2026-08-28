@@ -261,6 +261,11 @@ const SPECIAL: Readonly<
 		summary: 'insights.getBridgeArtists (@ansango/lastfm-api)',
 		description: 'Finds artists that bridge two distinct genres or tags by computing cross-tag ranking overlap.',
 	},
+	'insights.compareTasteGroup': {
+		summary: 'insights.compareTasteGroup (@ansango/lastfm-api)',
+		description:
+			'Compares 3 to 10 users simultaneously, computing pairwise Jaccard compatibility, consensus artists heard across the group, and identifying taste anchors and outliers.',
+	},
 }
 
 // -- Builder -------------------------------------------------------------
@@ -350,6 +355,7 @@ export const INSIGHTS_METHODS = [
 	'insights.getGenreEvolution',
 	'insights.getSmartRecommendations',
 	'insights.getBridgeArtists',
+	'insights.compareTasteGroup',
 ] as const
 
 export const ALL_REGISTRY_METHODS = [...CANONICAL_METHODS, ...INSIGHTS_METHODS] as const

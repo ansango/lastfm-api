@@ -46,7 +46,7 @@ describe('method-registry: shape', () => {
 			geo: 2,
 			library: 1,
 			auth: 2,
-			insights: 19,
+			insights: 20,
 		}
 		const actual: Record<string, number> = {}
 		for (const m of allMethods) {

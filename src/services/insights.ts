@@ -5,6 +5,7 @@ import { compareUsers } from './insights/compare.js'
 import { getForgottenFavorites, getObsessions } from './insights/decay.js'
 import { getDiscoveries } from './insights/discoveries.js'
 import { getGenreBreakdown, getGenreEvolution } from './insights/genres.js'
+import { compareTasteGroup } from './insights/group.js'
 import { getHoursHistogram } from './insights/hours.js'
 import { getMood } from './insights/mood.js'
 import { getNowPlaying } from './insights/now-playing.js'
@@ -23,6 +24,8 @@ import type {
 	InsightsBridgeArtistsResponse,
 	InsightsCompareRequest,
 	InsightsCompareResponse,
+	InsightsCompareTasteGroupRequest,
+	InsightsCompareTasteGroupResponse,
 	InsightsDiscoveriesRequest,
 	InsightsDiscoveriesResponse,
 	InsightsForgottenFavoritesRequest,
@@ -259,6 +262,19 @@ export interface InsightsService {
 	 * @returns {Promise<InsightsBridgeArtistsResponse>}
 	 */
 	getBridgeArtists: (params: InsightsBridgeArtistsRequest, init?: RequestInit) => Promise<InsightsBridgeArtistsResponse>
+
+	/**
+	 * Compares 3 to 10 users simultaneously, computing pairwise Jaccard compatibility,
+	 * consensus artists heard across the group, and identifying taste anchors and outliers.
+	 *
+	 * @param {InsightsCompareTasteGroupRequest} params
+	 * @param {RequestInit} [init]
+	 * @returns {Promise<InsightsCompareTasteGroupResponse>}
+	 */
+	compareTasteGroup: (
+		params: InsightsCompareTasteGroupRequest,
+		init?: RequestInit,
+	) => Promise<InsightsCompareTasteGroupResponse>
 }
 
 /**
@@ -285,5 +301,6 @@ export function createInsightsService(config: LastFmConfig): InsightsService {
 		getGenreEvolution: (params, init) => getGenreEvolution(config, params, init),
 		getSmartRecommendations: (params, init) => getSmartRecommendations(config, params, init),
 		getBridgeArtists: (params, init) => getBridgeArtists(config, params, init),
+		compareTasteGroup: (params, init) => compareTasteGroup(config, params, init),
 	}
 }
