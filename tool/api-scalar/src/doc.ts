@@ -64,6 +64,10 @@ export function mountOpenAPI(app: OpenAPIHono, opts: { serverUrl?: string } = {}
 				name: 'Insights & Analytics Engine',
 				tags: ['insights'],
 			},
+			{
+				name: 'Reports & Wrapped',
+				tags: ['reports'],
+			},
 		],
 		tags: [
 			{
@@ -106,6 +110,11 @@ export function mountOpenAPI(app: OpenAPIHono, opts: { serverUrl?: string } = {}
 				name: 'insights',
 				description:
 					'Higher-level analytical insights and derived metrics computed over Last.fm data (Shannon diversity, enriched now playing, diurnal histograms, binge runs, ranking differentials, discoveries, 2D mood classification, personality archetypes, obscurity scores, forgotten favorites, obsessions, streaks, heatmaps, album habits, genre breakdown & evolution, smart recommendations, bridge artists, and taste group clustering).',
+			},
+			{
+				name: 'reports',
+				description:
+					'Year in Review / Wrapped reports, seasonal listening profiles, historical scrobble milestone tracker, and monthly comparative digests.',
 			},
 		],
 	})
