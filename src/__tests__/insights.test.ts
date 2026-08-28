@@ -926,6 +926,57 @@ describe('insights service', () => {
 		})
 	})
 
+	describe('getSmartRecommendations', () => {
+		test('traverses similarity graph from user seeds and returns ranked candidates', async () => {
+			const topArtists = [{ ...fakeArtist, name: 'The Smile', playcount: '100' }]
+			const similarArtists = [
+				{ name: 'Thom Yorke', match: '0.9', url: 'https://www.last.fm/music/Thom+Yorke' },
+				{ name: 'The Smile', match: '1.0' }, // already known, should be skipped
+			]
+
+			mock.respondWithJson({ topartists: { artist: topArtists, '@attr': okAttr() } })
+			mock.respondWithJson({ similarartists: { artist: similarArtists, '@attr': { artist: 'The Smile' } } })
+
+			const result = await client.insights.getSmartRecommendations({ user: 'test_user', seedLimit: 1 })
+			expect(result.user).toBe('test_user')
+			expect(result.seedArtists).toEqual(['The Smile'])
+			expect(result.recommendations).toHaveLength(1)
+			expect(result.recommendations[0].name).toBe('Thom Yorke')
+			expect(result.recommendations[0].matchedSeeds).toEqual(['The Smile'])
+
+			const parsed = insightSchemas.insightsRecommendationsResponseSchema.safeParse(result)
+			expect(parsed.success).toBe(true)
+		})
+	})
+
+	describe('getBridgeArtists', () => {
+		test('identifies artists appearing across two distinct genre charts', async () => {
+			const tagAArtists = [
+				{ name: 'New Order', playcount: '1000' },
+				{ name: 'Joy Division', playcount: '800' },
+			]
+			const tagBArtists = [
+				{ name: 'Daft Punk', playcount: '2000' },
+				{ name: 'New Order', playcount: '1500' },
+			]
+
+			// tagA then tagB
+			mock.respondWithJson({ topartists: { artist: tagAArtists, '@attr': okAttr() } })
+			mock.respondWithJson({ topartists: { artist: tagBArtists, '@attr': okAttr() } })
+
+			const result = await client.insights.getBridgeArtists({ tagA: 'post-punk', tagB: 'electronic' })
+			expect(result.tagA).toBe('post-punk')
+			expect(result.tagB).toBe('electronic')
+			expect(result.totalBridges).toBe(1)
+			expect(result.bridgeArtists[0].name).toBe('New Order')
+			expect(result.bridgeArtists[0].rankA).toBe(1)
+			expect(result.bridgeArtists[0].rankB).toBe(2)
+
+			const parsed = insightSchemas.insightsBridgeArtistsResponseSchema.safeParse(result)
+			expect(parsed.success).toBe(true)
+		})
+	})
+
 	describe('schema exports and client wiring', () => {
 		test('factory createInsightsService instantiates InsightsService with all wired methods', () => {
 			const svc: InsightsService = createInsightsService({ apiKey: API_KEY })
@@ -946,6 +997,8 @@ describe('insights service', () => {
 			expect(typeof svc.getAlbumHabits).toBe('function')
 			expect(typeof svc.getGenreBreakdown).toBe('function')
 			expect(typeof svc.getGenreEvolution).toBe('function')
+			expect(typeof svc.getSmartRecommendations).toBe('function')
+			expect(typeof svc.getBridgeArtists).toBe('function')
 		})
 
 		test('exposes insights service via createClient helper', () => {
@@ -967,6 +1020,8 @@ describe('insights service', () => {
 			expect(typeof c.insights.getAlbumHabits).toBe('function')
 			expect(typeof c.insights.getGenreBreakdown).toBe('function')
 			expect(typeof c.insights.getGenreEvolution).toBe('function')
+			expect(typeof c.insights.getSmartRecommendations).toBe('function')
+			expect(typeof c.insights.getBridgeArtists).toBe('function')
 		})
 
 		test('insightsCompareRequestSchema validates inputs', () => {
@@ -1032,6 +1087,19 @@ describe('insights service', () => {
 					currentPeriod: '1month',
 					previousPeriod: '12month',
 				}).success,
+			).toBe(true)
+		})
+
+		test('insightsRecommendationsRequestSchema validates inputs', () => {
+			expect(
+				insightSchemas.insightsRecommendationsRequestSchema.safeParse({ user: 'alice', seedLimit: 5, limit: 10 })
+					.success,
+			).toBe(true)
+		})
+
+		test('insightsBridgeArtistsRequestSchema validates inputs', () => {
+			expect(
+				insightSchemas.insightsBridgeArtistsRequestSchema.safeParse({ tagA: 'punk', tagB: 'disco', limit: 10 }).success,
 			).toBe(true)
 		})
 	})

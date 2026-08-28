@@ -10,6 +10,7 @@ import { getMood } from './insights/mood.js'
 import { getNowPlaying } from './insights/now-playing.js'
 import { getObscurityScore } from './insights/obscurity.js'
 import { getPersonality } from './insights/personality.js'
+import { getBridgeArtists, getSmartRecommendations } from './insights/recommendations.js'
 import { getListeningHeatmap, getListeningStreaks } from './insights/streaks.js'
 import { getSummary } from './insights/summary.js'
 import { getTrends } from './insights/trends.js'
@@ -18,6 +19,8 @@ import type {
 	InsightsAlbumHabitsResponse,
 	InsightsBingesRequest,
 	InsightsBingesResponse,
+	InsightsBridgeArtistsRequest,
+	InsightsBridgeArtistsResponse,
 	InsightsCompareRequest,
 	InsightsCompareResponse,
 	InsightsDiscoveriesRequest,
@@ -42,6 +45,8 @@ import type {
 	InsightsObsessionsResponse,
 	InsightsPersonalityRequest,
 	InsightsPersonalityResponse,
+	InsightsRecommendationsRequest,
+	InsightsRecommendationsResponse,
 	InsightsStreaksRequest,
 	InsightsStreaksResponse,
 	InsightsSummaryRequest,
@@ -233,6 +238,27 @@ export interface InsightsService {
 		params: InsightsGenreEvolutionRequest,
 		init?: RequestInit,
 	) => Promise<InsightsGenreEvolutionResponse>
+
+	/**
+	 * Traverses Last.fm similarity graphs from user's top artists to recommend unlistened artists.
+	 *
+	 * @param {InsightsRecommendationsRequest} params
+	 * @param {RequestInit} [init]
+	 * @returns {Promise<InsightsRecommendationsResponse>}
+	 */
+	getSmartRecommendations: (
+		params: InsightsRecommendationsRequest,
+		init?: RequestInit,
+	) => Promise<InsightsRecommendationsResponse>
+
+	/**
+	 * Finds artists that bridge two distinct genres or tags by computing rank overlap.
+	 *
+	 * @param {InsightsBridgeArtistsRequest} params
+	 * @param {RequestInit} [init]
+	 * @returns {Promise<InsightsBridgeArtistsResponse>}
+	 */
+	getBridgeArtists: (params: InsightsBridgeArtistsRequest, init?: RequestInit) => Promise<InsightsBridgeArtistsResponse>
 }
 
 /**
@@ -257,5 +283,7 @@ export function createInsightsService(config: LastFmConfig): InsightsService {
 		getAlbumHabits: (params, init) => getAlbumHabits(config, params, init),
 		getGenreBreakdown: (params, init) => getGenreBreakdown(config, params, init),
 		getGenreEvolution: (params, init) => getGenreEvolution(config, params, init),
+		getSmartRecommendations: (params, init) => getSmartRecommendations(config, params, init),
+		getBridgeArtists: (params, init) => getBridgeArtists(config, params, init),
 	}
 }

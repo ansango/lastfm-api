@@ -252,6 +252,15 @@ const SPECIAL: Readonly<
 		summary: 'insights.getGenreEvolution (@ansango/lastfm-api)',
 		description: 'Tracks shifts in genre percentage shares (rising, fading, new) between two time periods.',
 	},
+	'insights.getSmartRecommendations': {
+		summary: 'insights.getSmartRecommendations (@ansango/lastfm-api)',
+		description:
+			'Traverses Last.fm similarity graphs from user top artists to recommend unlistened artists with matched seed traceability.',
+	},
+	'insights.getBridgeArtists': {
+		summary: 'insights.getBridgeArtists (@ansango/lastfm-api)',
+		description: 'Finds artists that bridge two distinct genres or tags by computing cross-tag ranking overlap.',
+	},
 }
 
 // -- Builder -------------------------------------------------------------
@@ -339,6 +348,8 @@ export const INSIGHTS_METHODS = [
 	'insights.getAlbumHabits',
 	'insights.getGenreBreakdown',
 	'insights.getGenreEvolution',
+	'insights.getSmartRecommendations',
+	'insights.getBridgeArtists',
 ] as const
 
 export const ALL_REGISTRY_METHODS = [...CANONICAL_METHODS, ...INSIGHTS_METHODS] as const
