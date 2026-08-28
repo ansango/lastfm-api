@@ -218,6 +218,16 @@ const SPECIAL: Readonly<
 		description:
 			'Evaluates a user’s top artists against global Last.fm popularity metrics to calculate an Obscurity / Hipster score (0-100), highlighting hidden gems and mainstream anchors.',
 	},
+	'insights.getForgottenFavorites': {
+		summary: 'insights.getForgottenFavorites (@ansango/lastfm-api)',
+		description:
+			'Identifies historical favorite artists that the user has stopped listening to in the recent period, highlighting abandoned staples and revival opportunities.',
+	},
+	'insights.getObsessions': {
+		summary: 'insights.getObsessions (@ansango/lastfm-api)',
+		description:
+			'Detects intense listening obsession episodes where a single artist or track heavily dominates a sliding listening window.',
+	},
 }
 
 // -- Builder -------------------------------------------------------------
@@ -298,6 +308,8 @@ export const INSIGHTS_METHODS = [
 	'insights.getPersonality',
 	'insights.compareUsers',
 	'insights.getObscurityScore',
+	'insights.getForgottenFavorites',
+	'insights.getObsessions',
 ] as const
 
 export const ALL_REGISTRY_METHODS = [...CANONICAL_METHODS, ...INSIGHTS_METHODS] as const

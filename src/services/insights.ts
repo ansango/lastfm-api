@@ -1,6 +1,7 @@
 import type { LastFmConfig } from '../config.js'
 import { getBinges } from './insights/binges.js'
 import { compareUsers } from './insights/compare.js'
+import { getForgottenFavorites, getObsessions } from './insights/decay.js'
 import { getDiscoveries } from './insights/discoveries.js'
 import { getHoursHistogram } from './insights/hours.js'
 import { getMood } from './insights/mood.js'
@@ -16,6 +17,8 @@ import type {
 	InsightsCompareResponse,
 	InsightsDiscoveriesRequest,
 	InsightsDiscoveriesResponse,
+	InsightsForgottenFavoritesRequest,
+	InsightsForgottenFavoritesResponse,
 	InsightsHoursRequest,
 	InsightsHoursResponse,
 	InsightsMoodRequest,
@@ -24,6 +27,8 @@ import type {
 	InsightsNowPlayingResponse,
 	InsightsObscurityRequest,
 	InsightsObscurityResponse,
+	InsightsObsessionsRequest,
+	InsightsObsessionsResponse,
 	InsightsPersonalityRequest,
 	InsightsPersonalityResponse,
 	InsightsSummaryRequest,
@@ -138,6 +143,29 @@ export interface InsightsService {
 	 * @returns {Promise<InsightsObscurityResponse>}
 	 */
 	getObscurityScore: (params: InsightsObscurityRequest, init?: RequestInit) => Promise<InsightsObscurityResponse>
+
+	/**
+	 * Identifies historical favorite artists that the user has stopped listening to
+	 * in the recent period.
+	 *
+	 * @param {InsightsForgottenFavoritesRequest} params
+	 * @param {RequestInit} [init]
+	 * @returns {Promise<InsightsForgottenFavoritesResponse>}
+	 */
+	getForgottenFavorites: (
+		params: InsightsForgottenFavoritesRequest,
+		init?: RequestInit,
+	) => Promise<InsightsForgottenFavoritesResponse>
+
+	/**
+	 * Detects intense listening obsession episodes where a single artist or track heavily dominates
+	 * a sliding listening window.
+	 *
+	 * @param {InsightsObsessionsRequest} params
+	 * @param {RequestInit} [init]
+	 * @returns {Promise<InsightsObsessionsResponse>}
+	 */
+	getObsessions: (params: InsightsObsessionsRequest, init?: RequestInit) => Promise<InsightsObsessionsResponse>
 }
 
 /**
@@ -155,5 +183,7 @@ export function createInsightsService(config: LastFmConfig): InsightsService {
 		getPersonality: (params, init) => getPersonality(config, params, init),
 		compareUsers: (params, init) => compareUsers(config, params, init),
 		getObscurityScore: (params, init) => getObscurityScore(config, params, init),
+		getForgottenFavorites: (params, init) => getForgottenFavorites(config, params, init),
+		getObsessions: (params, init) => getObsessions(config, params, init),
 	}
 }
