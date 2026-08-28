@@ -9,6 +9,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 > [ansango/lastfm-api](https://github.com/ansango/lastfm-api). Entries below preserve the
 > historical package and repository names used by their original releases.
 
+## [3.2.0] - 2026-08-28
+
+### ✨ Features
+
+- **tool**: surface `x-lastfm-sk` header on the 10 POST signed methods in Scalar's "Try it" form (#100) ([b904451](https://github.com/ansango/lastfm-api/commit/b904451))
+
+### 📚 Documentation
+
+- document `sk` parameter and the browser auth flow on the 10 write methods (JSDoc + README) (#101) ([49c10da](https://github.com/ansango/lastfm-api/commit/49c10da))
+- add Callback URL setup prerequisite to README and Scalar auth tag (#110) ([c64410d](https://github.com/ansango/lastfm-api/commit/c64410d))
+- deprecate `auth.getMobileSession` and reorient the auth flow to lead with the web flow (#105) ([4446f10](https://github.com/ansango/lastfm-api/commit/4446f10))
+
+### 🛠️ Tooling
+
+- friendly startup error when `LASTFM_API_KEY` is missing (#103) ([cca87a2](https://github.com/ansango/lastfm-api/commit/cca87a2))
+- add Biome for lint + format, replace unused Prettier config (#111) ([071c1e7](https://github.com/ansango/lastfm-api/commit/071c1e7))
+
+
 ## [3.1.3] - 2026-08-02
 
 ### 📚 Documentation
