@@ -327,6 +327,42 @@ export const insightsCompareResponseSchema = z.object({
 	onlyUserB: z.array(artistNameSchema),
 })
 
+// Obscurity Score request & response schemas
+export const insightObscureArtistSchema = z.object({
+	name: artistNameSchema,
+	userPlaycount: z.number().int().nonnegative(),
+	globalListeners: z.number().int().nonnegative(),
+	globalPlaycount: z.number().int().nonnegative().optional(),
+	obscurityScore: z.number(),
+	url: urlSchema.optional(),
+})
+
+export const insightsObscurityRequestSchema = z.object({
+	user: userNameSchema,
+	period: insightsPeriodSchema.optional(),
+	limit: limitSchema.optional(),
+})
+
+export const insightsObscurityResponseSchema = z.object({
+	user: userNameSchema,
+	period: z.string(),
+	obscurityScore: z.number(),
+	category: z.enum([
+		'Purist Underground',
+		'Indie Explorer',
+		'Balanced Listener',
+		'Mainstream Enthusiast',
+		'Chart Chaser',
+	]),
+	description: z.string(),
+	totalArtistsEvaluated: z.number().int().nonnegative(),
+	averageGlobalListeners: z.number().int().nonnegative(),
+	medianGlobalListeners: z.number().int().nonnegative(),
+	hiddenGems: z.array(insightObscureArtistSchema),
+	mainstreamAnchors: z.array(insightObscureArtistSchema),
+	artists: z.array(insightObscureArtistSchema),
+})
+
 // Schema naming convention aliases for registry lookup
 export const insightsGetSummaryRequestSchema = insightsSummaryRequestSchema
 export const insightsGetSummaryResponseSchema = insightsSummaryResponseSchema
@@ -348,6 +384,8 @@ export const insightsCompareUsersRequestSchema = insightsCompareRequestSchema
 export const insightsCompareUsersResponseSchema = insightsCompareResponseSchema
 export const insightsGetCompareUsersRequestSchema = insightsCompareRequestSchema
 export const insightsGetCompareUsersResponseSchema = insightsCompareResponseSchema
+export const insightsGetObscurityScoreRequestSchema = insightsObscurityRequestSchema
+export const insightsGetObscurityScoreResponseSchema = insightsObscurityResponseSchema
 
 // Inferred types
 export type InsightsPeriod = z.infer<typeof insightsPeriodSchema>
@@ -400,3 +438,8 @@ export type InsightsCompareRequest = z.infer<typeof insightsCompareRequestSchema
 export type InsightsCompareResponse = z.infer<typeof insightsCompareResponseSchema>
 export type InsightsCompareUsersRequest = InsightsCompareRequest
 export type InsightsCompareUsersResponse = InsightsCompareResponse
+export type InsightObscureArtist = z.infer<typeof insightObscureArtistSchema>
+export type InsightsObscurityRequest = z.infer<typeof insightsObscurityRequestSchema>
+export type InsightsObscurityResponse = z.infer<typeof insightsObscurityResponseSchema>
+export type InsightsGetObscurityScoreRequest = InsightsObscurityRequest
+export type InsightsGetObscurityScoreResponse = InsightsObscurityResponse

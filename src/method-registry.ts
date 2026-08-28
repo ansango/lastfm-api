@@ -213,6 +213,11 @@ const SPECIAL: Readonly<
 		description:
 			'Compares two Last.fm users’ listening affinity using Jaccard similarity over mutual top artist rosters, returning shared artists ranked by mutual playcount weight.',
 	},
+	'insights.getObscurityScore': {
+		summary: 'insights.getObscurityScore (@ansango/lastfm-api)',
+		description:
+			'Evaluates a user’s top artists against global Last.fm popularity metrics to calculate an Obscurity / Hipster score (0-100), highlighting hidden gems and mainstream anchors.',
+	},
 }
 
 // -- Builder -------------------------------------------------------------
@@ -292,6 +297,7 @@ export const INSIGHTS_METHODS = [
 	'insights.getMood',
 	'insights.getPersonality',
 	'insights.compareUsers',
+	'insights.getObscurityScore',
 ] as const
 
 export const ALL_REGISTRY_METHODS = [...CANONICAL_METHODS, ...INSIGHTS_METHODS] as const
