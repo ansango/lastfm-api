@@ -3,7 +3,7 @@
  */
 
 import 'dotenv/config'
-import { createClient, LastFmClient, setGlobalConfig } from './dist/index.js'
+import { createClient, LastFmClient, setGlobalConfig } from './src/index.js'
 
 async function testUserInfo() {
 	console.log('\n🎵 Test 1: Get User Info')
