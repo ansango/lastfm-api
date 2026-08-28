@@ -125,7 +125,7 @@ function main() {
 
 	try {
 		// Run tests
-		exec('bun test-real.ts', 'Running tests')
+		exec('bun test', 'Running tests')
 
 		// Build project
 		exec('bun run build', 'Building project')

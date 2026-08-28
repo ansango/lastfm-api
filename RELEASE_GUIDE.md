@@ -19,7 +19,7 @@ Sistema completo de automatización para releases del proyecto @ansango/lastfm-a
     "build": "rimraf dist && tsc",
     "clean": "rimraf dist",
     "dev": "bun run clean && tsc --watch --project tsconfig.dev.json",
-    "test": "bun test-real.ts",
+    "test": "bun test",
     "prepublishOnly": "bun run build",
     "changelog": "bun scripts/changelog.ts",
     "release": "bun scripts/release.ts",

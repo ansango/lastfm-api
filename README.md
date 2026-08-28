@@ -15,7 +15,11 @@ A universal Last.fm API client for Node.js and Browser, written in TypeScript.
 
 - ✅ **Universal**: Works in Node.js (≥20.0.0) and Browser
 - ✅ **Complete coverage**: All 56 canonical Last.fm API methods across 9 namespaces
-- ✅ **Insights & Analytics Engine**: 9 high-level derived analytical views (Shannon diversity, enriched Now Playing, diurnal histograms, binge runs, ranking diffs, new discoveries, 2D mood classification, personality archetypes, and Jaccard user comparison)
+- ✅ **Insights & Analytics Engine**: 20 high-level derived analytical views (Shannon diversity, enriched Now Playing, diurnal histograms, binge runs, ranking diffs, new discoveries, 2D mood classification, personality archetypes, obscurity scores, streaks, heatmaps, album habits, genre breakdown & evolution, smart recommendations, bridge artists, and user/group comparison)
+- ✅ **Reports & Wrapped Engine**: Custom Year-in-Review, historical milestone projections, and monthly digests
+- ✅ **Smart Playlists Generator**: Algorithmic playlist generation (heavy rotation, time capsule, deep cuts, discovery radar) with M3U and CSV exports
+- ✅ **Bulk Data Exporter & Backup**: Resilient scrobble, loved tracks, and library catalog backup with UTS checkpointing and ListenBrainz/JSONL/CSV formats
+- ✅ **Async Pagination & Streaming**: Native `for await` streaming iterators (`iterateItems`, `collectAll`, `iteratePages`) with automatic rate limiting and boundary controls
 - ✅ **TypeScript**: Full type safety with comprehensive type definitions
 - ✅ **Zod Schemas**: Runtime validation schemas for all types
 - ✅ **ESM**: Modern ES modules with tree-shaking support
@@ -31,6 +35,12 @@ A universal Last.fm API client for Node.js and Browser, written in TypeScript.
   - [Using the Client Class](#using-the-client-class)
   - [Using Global Configuration](#using-global-configuration)
   - [Using Individual Services](#using-individual-services)
+- [Zod Schema Validation](#zod-schema-validation)
+- [Insights & Analytics Engine](#insights--analytics-engine)
+- [Reports & Wrapped Engine](#reports--wrapped-engine)
+- [Smart Playlists Generator](#smart-playlists-generator)
+- [Bulk Data Exporter & Backup](#bulk-data-exporter--backup)
+- [Async Pagination & Streaming Iterators](#async-pagination--streaming-iterators)
 - [Environment Variables](#environment-variables)
 - [Authentication & Scrobbling](#authentication--scrobbling)
 - [Error Handling](#error-handling)
@@ -213,6 +223,7 @@ const tracks = await trackService.search({ track: 'Come Together' });
 ```
 
 **Available service imports:**
+- `@ansango/lastfm-api/core` (canonical methods + pagination)
 - `@ansango/lastfm-api/user`
 - `@ansango/lastfm-api/album`
 - `@ansango/lastfm-api/artist`
@@ -223,6 +234,9 @@ const tracks = await trackService.search({ track: 'Come Together' });
 - `@ansango/lastfm-api/library`
 - `@ansango/lastfm-api/auth`
 - `@ansango/lastfm-api/insights`
+- `@ansango/lastfm-api/reports`
+- `@ansango/lastfm-api/playlists`
+- `@ansango/lastfm-api/exporter`
 
 ## Zod Schema Validation
 
@@ -236,6 +250,10 @@ Schemas are available through modular imports, following the same pattern as the
 import { userGetInfoRequestSchema, userGetInfoResponseSchema } from '@ansango/lastfm-api/user/schemas';
 import { albumSearchRequestSchema } from '@ansango/lastfm-api/album/schemas';
 import { trackGetInfoResponseSchema } from '@ansango/lastfm-api/track/schemas';
+import { insightsSummaryResponseSchema } from '@ansango/lastfm-api/insights/schemas';
+import { reportsWrappedResponseSchema } from '@ansango/lastfm-api/reports/schemas';
+import { playlistsGenerateResponseSchema } from '@ansango/lastfm-api/playlists/schemas';
+import { exporterScrobblesResponseSchema } from '@ansango/lastfm-api/exporter/schemas';
 ```
 
 ### Usage Example
@@ -262,6 +280,7 @@ if (result.success) {
 ```
 
 **Available schema imports:**
+- `@ansango/lastfm-api/core/schemas`
 - `@ansango/lastfm-api/user/schemas`
 - `@ansango/lastfm-api/album/schemas`
 - `@ansango/lastfm-api/artist/schemas`
@@ -272,6 +291,9 @@ if (result.success) {
 - `@ansango/lastfm-api/library/schemas`
 - `@ansango/lastfm-api/auth/schemas`
 - `@ansango/lastfm-api/insights/schemas`
+- `@ansango/lastfm-api/reports/schemas`
+- `@ansango/lastfm-api/playlists/schemas`
+- `@ansango/lastfm-api/exporter/schemas`
 - `@ansango/lastfm-api/schemas` (base types like `imageSchema`, `datePropSchema`, etc.)
 
 ## Insights & Analytics Engine
@@ -536,7 +558,7 @@ Before the browser flow works end-to-end, set a callback URL on your API account
 
 If you skip this step, the redirect after **Allow access** lands on a Last.fm error page instead of your URL, and the token is lost. You have to call `auth.getToken` again and re-authorize.
 
-> **Note:** `auth.getMobileSession` was removed in v4.0.0. Last.fm restricts that endpoint to mobile-classified API keys, which are not exposed through the public self-service create form; the browser flow above works for every API key Last.fm issues today.
+> **Note:** `auth.getMobileSession` was removed in v3.3.0. Last.fm restricts that endpoint to mobile-classified API keys, which are not exposed through the public self-service create form; the browser flow above works for every API key Last.fm issues today.
 
 ### Passing the session key to write methods
 
@@ -600,6 +622,7 @@ The main client class with all services:
 
 ```typescript
 class LastFmClient {
+  core: LastFmCoreClient;
   user: UserService;
   album: AlbumService;
   artist: ArtistService;
@@ -610,6 +633,9 @@ class LastFmClient {
   library: LibraryService;
   auth: AuthService;
   insights: InsightsService;
+  reports: ReportsService;
+  playlists: PlaylistsService;
+  exporter: ExporterService;
   
   constructor(config?: Partial<LastFmConfig>);
   getConfig(): Readonly<LastFmConfig>;
@@ -635,8 +661,9 @@ function resetGlobalConfig(): void;
 
 ### Services
 
-The package covers all 56 canonical Last.fm API methods across 9 namespaces, plus 9 derived analytical methods in the `InsightsService`. See [docs/api-coverage.md](docs/api-coverage.md) for the full table.
+The package covers all 56 canonical Last.fm API methods across 9 namespaces, plus 20 derived analytical methods in `InsightsService`, 3 reporting methods in `ReportsService`, 3 smart playlist methods in `PlaylistsService`, and 3 data export engines in `ExporterService` (83 total endpoints). See [docs/api-coverage.md](docs/api-coverage.md) for the full table.
 
+- **CoreClient (`core`)**: Bundle of all 56 canonical Last.fm methods with built-in async pagination (`iterateItems`, `collectAll`, `iteratePages`)
 - **UserService**: 13 methods — `getInfo`, `getFriends`, `getLovedTracks`, `getRecentTracks`, `getTopAlbums`, `getTopArtists`, `getTopTags`, `getTopTracks`, `getWeeklyAlbumChart`, `getWeeklyArtistChart`, `getWeeklyChartList`, `getWeeklyTrackChart`, `getPersonalTags`
 - **AlbumService**: 6 methods — `getInfo`, `getTags`, `getTopTags`, `search`, `addTags`¹, `removeTag`¹
 - **ArtistService**: 10 methods — `getInfo`, `getTags`, `getSimilar`, `getTopTags`, `getTopAlbums`, `getTopTracks`, `search`, `getCorrection`, `addTags`¹, `removeTag`¹
@@ -645,8 +672,11 @@ The package covers all 56 canonical Last.fm API methods across 9 namespaces, plu
 - **ChartService**: 3 methods — `getTopArtists`, `getTopTags`, `getTopTracks`
 - **GeoService**: 2 methods — `getTopArtists`, `getTopTracks`
 - **LibraryService**: 1 method — `getArtists`
-- **AuthService**: 2 methods — `getSession`, `getToken` (removed `getMobileSession` in v4.0.0)
-- **InsightsService**: 9 methods — `getSummary`, `getNowPlaying`, `getHoursHistogram`, `getBinges`, `getTrends`, `getDiscoveries`, `getMood`, `getPersonality`, `compareUsers`
+- **AuthService**: 2 methods — `getSession`, `getToken` (removed `getMobileSession` in v3.3.0)
+- **InsightsService**: 20 methods — `getSummary`, `getNowPlaying`, `getHoursHistogram`, `getBinges`, `getTrends`, `getDiscoveries`, `getMood`, `getPersonality`, `compareUsers`, `getObscurityScore`, `getObsessions`, `getForgottenFavorites`, `getListeningStreaks`, `getListeningHeatmap`, `getAlbumHabits`, `getGenreBreakdown`, `getGenreEvolution`, `getSmartRecommendations`, `getBridgeArtists`, `compareTasteGroup`
+- **ReportsService**: 3 methods — `getWrapped`, `getMilestones`, `getMonthlyDigest`
+- **PlaylistsService**: 3 methods — `generate`, `exportM3U`, `exportCsv`
+- **ExporterService**: 3 methods — `exportScrobbles`, `exportLovedTracks`, `exportLibrary`
 
 ¹ Requires an authenticated session.
 
@@ -701,10 +731,7 @@ bun run build
 bun run typecheck
 
 # Run deterministic unit tests (no network, mocked fetch)
-bun run test:unit
-
-# Run live integration (requires Last.fm credentials in .env)
-bun run test:integration:live
+bun run test:unit # or simply 'bun test'
 
 # Lint (Biome — formatter + linter, single command)
 bun run lint
@@ -726,10 +753,10 @@ bun run clean
 ## Interactive API Explorer
 
 The repo ships with a local Hono + Scalar server under `tool/api-scalar/`
-that turns the package into a fully interactive OpenAPI explorer. All 57
-canonical Last.fm methods are wired declaratively from the package's own
-Zod schemas and service functions — no method is hand-written, no schema
-is duplicated.
+that turns the package into a fully interactive OpenAPI explorer. All 56
+canonical Last.fm methods and 27 extension methods (83 total operations)
+are wired declaratively into 5 collapsible sections from the package's
+own Zod schemas and service functions.
 
 ```sh
 bun install --cwd tool/api-scalar
@@ -745,14 +772,10 @@ for the design notes.
 
 ### Testing
 
-The test suite is split into two layers:
+The test suite consists of deterministic unit tests with mocked `globalThis.fetch`:
 
-- **`bun run test:unit`** — deterministic tests with mocked `globalThis.fetch`. They cover every canonical Last.fm method that the package implements, assert the correct `namespace.method` routing, validate that `api_key`/`format=json` are present, and verify that Last.fm error envelopes surface as `LastFmApiError`. They do not require an API key or any network access, and they run as part of CI on every push and pull request.
-- **`bun run test:integration:live`** — runs `test-real.ts` against the real Last.fm API. It is **not** part of CI and must be invoked manually by a developer with valid credentials in `.env`.
-
-The `bun test` alias points to the deterministic suite, so a normal `bun test` is safe to run anywhere.
-
-An `inventory.test.ts` file asserts the **57/57 canonical-method baseline** — every namespace.method pair listed in the official Last.fm API index is exposed on the `LastFmClient` and callable. The per-namespace breakdown is mirrored in [docs/api-coverage.md](docs/api-coverage.md) and stays in sync with the inventory test.
+- **`bun test`** (or **`bun run test:unit`**) — covers every method that the package implements, asserts the correct `namespace.method` routing, validates that `api_key`/`format=json` are present, and verifies that Last.fm error envelopes surface as `LastFmApiError`. They do not require an API key or any network access, and they run as part of CI on every push and pull request.
+- **`inventory.test.ts`** — asserts the **56/56 canonical-method baseline** ensuring every namespace.method pair listed in the official Last.fm API index is exposed on the `LastFmClient` and callable. The per-namespace breakdown is mirrored in [docs/api-coverage.md](docs/api-coverage.md).
 
 ### Release Process
 

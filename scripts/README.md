@@ -117,7 +117,7 @@ bun scripts/release.ts <patch|minor|major|alpha|beta>
 
 **El script ejecuta:**
 1. ✅ Verifica que el directorio de trabajo esté limpio
-2. ✅ Ejecuta los tests (`bun test-real.ts`)
+2. ✅ Ejecuta los tests (`bun test`)
 3. ✅ Compila el proyecto (`bun run build`)
 4. 📈 Incrementa la versión en `package.json`
 5. 📝 Genera/actualiza `CHANGELOG.md`

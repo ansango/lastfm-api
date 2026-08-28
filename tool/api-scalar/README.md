@@ -48,8 +48,7 @@ section below.
 
 ## Configuration
 
-The tool reads `.env` from the repo root (the `dotenv` call resolves
-`${import.meta.dir}/../../../.env`).
+The tool reads `.env` from the repo root automatically via Bun's native environment variable support.
 
 ```sh
 # Required for any "Try it" call
