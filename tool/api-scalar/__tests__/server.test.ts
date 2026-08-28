@@ -266,4 +266,23 @@ describe('createApp: OpenAPI doc exposes the auth flow', () => {
 			'auth.getToken must NOT advertise x-lastfm-sk header',
 		).toBe(false)
 	})
+
+	test('/doc correctly documents insight routes without fake last.fm/api/show links', async () => {
+		const app = createFullApp({ apiKey: 'test-key' })
+		const res = await app.request('/doc')
+		const body = (await res.json()) as {
+			paths: Record<string, Record<string, { summary?: string; description?: string }>>
+		}
+
+		const summaryOp = body.paths['/insights/get-summary']?.get
+		expect(summaryOp).toBeDefined()
+		expect(summaryOp?.summary).toContain('@ansango/lastfm-api')
+		expect(summaryOp?.description).toContain('Shannon diversity')
+		expect(summaryOp?.description).not.toContain('last.fm/api/show/insights.')
+
+		const moodOp = body.paths['/insights/get-mood']?.get
+		expect(moodOp).toBeDefined()
+		expect(moodOp?.description).toContain('energy vs. valence')
+		expect(moodOp?.description).not.toContain('last.fm/api/show/insights.')
+	})
 })
