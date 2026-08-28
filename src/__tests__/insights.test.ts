@@ -658,6 +658,65 @@ describe('insights service', () => {
 		})
 	})
 
+	describe('getObscurityScore', () => {
+		test('evaluates top artists and computes weighted obscurity score, gems, and anchors', async () => {
+			const topArtists = [
+				{ ...fakeArtist, name: 'Coldplay', playcount: '100' },
+				{ ...fakeArtist, name: 'Local Underground Band', playcount: '50' },
+			]
+
+			mock.respondWithJson({ topartists: { artist: topArtists, '@attr': okAttr() } })
+			// artist.getInfo for Coldplay (mega mainstream)
+			mock.respondWithJson({
+				artist: {
+					...fakeArtist,
+					name: 'Coldplay',
+					stats: { listeners: '6000000', playcount: '350000000' },
+					url: 'https://www.last.fm/music/Coldplay',
+				},
+			})
+			// artist.getInfo for Local Underground Band (indie/obscure)
+			mock.respondWithJson({
+				artist: {
+					...fakeArtist,
+					name: 'Local Underground Band',
+					stats: { listeners: '1500', playcount: '12000' },
+					url: 'https://www.last.fm/music/Local+Underground+Band',
+				},
+			})
+
+			const result = await client.insights.getObscurityScore({
+				user: 'test_user',
+				limit: 20,
+			})
+
+			expect(mock.calls).toHaveLength(3)
+			expect(result.user).toBe('test_user')
+			expect(result.totalArtistsEvaluated).toBe(2)
+			expect(result.obscurityScore).toBeGreaterThanOrEqual(0)
+			expect(result.obscurityScore).toBeLessThanOrEqual(100)
+			expect(result.hiddenGems).toHaveLength(1)
+			expect(result.hiddenGems[0].name).toBe('Local Underground Band')
+			expect(result.mainstreamAnchors).toHaveLength(2)
+			expect(result.mainstreamAnchors[0].name).toBe('Coldplay')
+
+			const parsed = insightSchemas.insightsObscurityResponseSchema.safeParse(result)
+			expect(parsed.success).toBe(true)
+		})
+
+		test('handles empty top artists gracefully with fallback score', async () => {
+			mock.respondWithJson({ topartists: { artist: [], '@attr': okAttr() } })
+
+			const result = await client.insights.getObscurityScore({ user: 'empty_user' })
+			expect(result.totalArtistsEvaluated).toBe(0)
+			expect(result.obscurityScore).toBe(50)
+			expect(result.hiddenGems).toHaveLength(0)
+
+			const parsed = insightSchemas.insightsObscurityResponseSchema.safeParse(result)
+			expect(parsed.success).toBe(true)
+		})
+	})
+
 	describe('schema exports and client wiring', () => {
 		test('factory createInsightsService instantiates InsightsService with all wired methods', () => {
 			const svc: InsightsService = createInsightsService({ apiKey: API_KEY })
@@ -670,6 +729,7 @@ describe('insights service', () => {
 			expect(typeof svc.getMood).toBe('function')
 			expect(typeof svc.getPersonality).toBe('function')
 			expect(typeof svc.compareUsers).toBe('function')
+			expect(typeof svc.getObscurityScore).toBe('function')
 		})
 
 		test('exposes insights service via createClient helper', () => {
@@ -683,11 +743,18 @@ describe('insights service', () => {
 			expect(typeof c.insights.getMood).toBe('function')
 			expect(typeof c.insights.getPersonality).toBe('function')
 			expect(typeof c.insights.compareUsers).toBe('function')
+			expect(typeof c.insights.getObscurityScore).toBe('function')
 		})
 
 		test('insightsCompareRequestSchema validates inputs', () => {
 			expect(
 				insightSchemas.insightsCompareRequestSchema.safeParse({ userA: 'alice', userB: 'bob', limit: 50 }).success,
+			).toBe(true)
+		})
+
+		test('insightsObscurityRequestSchema validates inputs', () => {
+			expect(
+				insightSchemas.insightsObscurityRequestSchema.safeParse({ user: 'alice', period: '7day', limit: 20 }).success,
 			).toBe(true)
 		})
 	})

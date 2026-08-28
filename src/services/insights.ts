@@ -5,6 +5,7 @@ import { getDiscoveries } from './insights/discoveries.js'
 import { getHoursHistogram } from './insights/hours.js'
 import { getMood } from './insights/mood.js'
 import { getNowPlaying } from './insights/now-playing.js'
+import { getObscurityScore } from './insights/obscurity.js'
 import { getPersonality } from './insights/personality.js'
 import { getSummary } from './insights/summary.js'
 import { getTrends } from './insights/trends.js'
@@ -21,6 +22,8 @@ import type {
 	InsightsMoodResponse,
 	InsightsNowPlayingRequest,
 	InsightsNowPlayingResponse,
+	InsightsObscurityRequest,
+	InsightsObscurityResponse,
 	InsightsPersonalityRequest,
 	InsightsPersonalityResponse,
 	InsightsSummaryRequest,
@@ -125,6 +128,16 @@ export interface InsightsService {
 	 * @returns {Promise<InsightsCompareResponse>}
 	 */
 	compareUsers: (params: InsightsCompareRequest, init?: RequestInit) => Promise<InsightsCompareResponse>
+
+	/**
+	 * Evaluates a user's top artists against global Last.fm popularity metrics to calculate
+	 * an Obscurity / Hipster score, highlighting hidden gems and mainstream anchors.
+	 *
+	 * @param {InsightsObscurityRequest} params
+	 * @param {RequestInit} [init]
+	 * @returns {Promise<InsightsObscurityResponse>}
+	 */
+	getObscurityScore: (params: InsightsObscurityRequest, init?: RequestInit) => Promise<InsightsObscurityResponse>
 }
 
 /**
@@ -141,5 +154,6 @@ export function createInsightsService(config: LastFmConfig): InsightsService {
 		getMood: (params, init) => getMood(config, params, init),
 		getPersonality: (params, init) => getPersonality(config, params, init),
 		compareUsers: (params, init) => compareUsers(config, params, init),
+		getObscurityScore: (params, init) => getObscurityScore(config, params, init),
 	}
 }
