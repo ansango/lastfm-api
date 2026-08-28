@@ -92,7 +92,15 @@ export interface TrackService {
 	/**
 	 * Scrobble a track. Submits a track play to the Last.fm.
 	 * Canonical Last.fm method name: `track.scrobble`.
-	 * @param {TrackScrobbleRequest} params
+	 *
+	 * **Requires authentication.** Pass `sk` in `params.sk` (preferred for
+	 * ad-hoc calls) or set `sessionKey` on the `LastFmConfig` when
+	 * constructing the client (preferred for long-lived clients). Obtain a
+	 * session key via `auth.getToken` + the browser-based `auth.getSession`
+	 * flow (works for self-service API keys), or via `auth.getMobileSession`
+	 * (requires a mobile-class API key — not self-service).
+	 *
+	 * @param {TrackScrobbleRequest} params - `artist`, `track`, `timestamp`, and optional `sk` and `album`
 	 * @param {RequestInit} init
 	 * @returns {Promise<TrackScrobbleResponse>}
 	 * https://www.last.fm/api/show/track.scrobble
@@ -137,6 +145,12 @@ export interface TrackService {
 	 *
 	 * Idempotency is not guaranteed by Last.fm.
 	 *
+	 * **Authentication:** pass `sk` in `params.sk` (preferred for ad-hoc
+	 * calls) or set `sessionKey` on the `LastFmConfig` when constructing
+	 * the client (preferred for long-lived clients). Obtain a session key
+	 * via `auth.getToken` + the browser-based `auth.getSession` flow, or
+	 * via `auth.getMobileSession` (mobile-class API keys only).
+	 *
 	 * @param {TrackAddTagsRequest} params
 	 * @param {RequestInit} init
 	 * @returns {Promise<void>}
@@ -148,6 +162,11 @@ export interface TrackService {
 	 * authenticated session.
 	 *
 	 * Last.fm does not document idempotency for `track.removeTag`.
+	 *
+	 * **Authentication:** pass `sk` in `params.sk` (preferred for ad-hoc
+	 * calls) or set `sessionKey` on the `LastFmConfig` when constructing
+	 * the client. Obtain a session key via `auth.getToken` +
+	 * `auth.getSession`, or `auth.getMobileSession` (mobile-class only).
 	 *
 	 * @param {TrackRemoveTagRequest} params
 	 * @param {RequestInit} init
@@ -162,6 +181,11 @@ export interface TrackService {
 	 * Last.fm does not document idempotency for `track.love`; calling
 	 * twice is a server-side concern.
 	 *
+	 * **Authentication:** pass `sk` in `params.sk` (preferred for ad-hoc
+	 * calls) or set `sessionKey` on the `LastFmConfig` when constructing
+	 * the client. Obtain a session key via `auth.getToken` +
+	 * `auth.getSession`, or `auth.getMobileSession` (mobile-class only).
+	 *
 	 * @param {TrackLoveRequest} params
 	 * @param {RequestInit} init
 	 * @returns {Promise<void>}
@@ -173,6 +197,11 @@ export interface TrackService {
 	 * authenticated session.
 	 *
 	 * Last.fm does not document idempotency for `track.unlove`.
+	 *
+	 * **Authentication:** pass `sk` in `params.sk` (preferred for ad-hoc
+	 * calls) or set `sessionKey` on the `LastFmConfig` when constructing
+	 * the client. Obtain a session key via `auth.getToken` +
+	 * `auth.getSession`, or `auth.getMobileSession` (mobile-class only).
 	 *
 	 * @param {TrackUnloveRequest} params
 	 * @param {RequestInit} init
@@ -196,6 +225,11 @@ export interface TrackService {
 	 *
 	 * The `context` field is honoured only for API keys that Last.fm
 	 * has whitelisted; other API keys receive an ignored-message code.
+	 *
+	 * **Authentication:** pass `sk` in `params.sk` (preferred for ad-hoc
+	 * calls) or set `sessionKey` on the `LastFmConfig` when constructing
+	 * the client. Obtain a session key via `auth.getToken` +
+	 * `auth.getSession`, or `auth.getMobileSession` (mobile-class only).
 	 *
 	 * @param {TrackUpdateNowPlayingRequest} params
 	 * @param {RequestInit} init

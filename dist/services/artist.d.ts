@@ -77,6 +77,12 @@ export interface ArtistService {
      *
      * Idempotency is not guaranteed by Last.fm.
      *
+     * **Authentication:** pass `sk` in `params.sk` (preferred for ad-hoc
+     * calls) or set `sessionKey` on the `LastFmConfig` when constructing
+     * the client (preferred for long-lived clients). Obtain a session key
+     * via `auth.getToken` + the browser-based `auth.getSession` flow, or
+     * via `auth.getMobileSession` (mobile-class API keys only).
+     *
      * @param {ArtistAddTagsRequest} params
      * @param {RequestInit} init
      * @returns {Promise<void>}
@@ -88,6 +94,11 @@ export interface ArtistService {
      * authenticated session.
      *
      * Last.fm does not document idempotency for `artist.removeTag`.
+     *
+     * **Authentication:** pass `sk` in `params.sk` (preferred for ad-hoc
+     * calls) or set `sessionKey` on the `LastFmConfig` when constructing
+     * the client. Obtain a session key via `auth.getToken` +
+     * `auth.getSession`, or `auth.getMobileSession` (mobile-class only).
      *
      * @param {ArtistRemoveTagRequest} params
      * @param {RequestInit} init
