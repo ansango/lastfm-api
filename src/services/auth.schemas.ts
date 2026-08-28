@@ -28,6 +28,13 @@ export const authGetSessionResponseSchema = z.object({
 
 export const authGetTokenResponseSchema = z.object({
 	token: z.string(),
+	authUrl: z
+		.string()
+		.url()
+		.optional()
+		.describe(
+			'Pre-built Last.fm auth URL to open in a browser. Equivalent to `https://www.last.fm/api/auth/?api_key=<KEY>&token=<token>`. Open it, log in if prompted, click "Allow access", then pass the same token to `auth.getSession`.',
+		),
 })
 
 export const authGetMobileSessionResponseSchema = z.object({
