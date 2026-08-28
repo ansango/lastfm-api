@@ -1,5 +1,5 @@
-import type { LibraryGetArtistsRequest, LibraryGetArtistsResponse } from './library.schemas.js';
 import type { LastFmConfig } from '../config.js';
+import type { LibraryGetArtistsRequest, LibraryGetArtistsResponse } from './library.schemas.js';
 export interface LibraryService {
     /**
      * Get a list of the artists saved in a user's Last.fm library, along with the number of plays by the user.

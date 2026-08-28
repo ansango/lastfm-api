@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from 'zod';
 export declare const authGetSessionRequestSchema: z.ZodObject<{
     token: z.ZodString;
 }, z.core.$strip>;

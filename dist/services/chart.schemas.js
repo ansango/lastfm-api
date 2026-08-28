@@ -1,8 +1,8 @@
-import { z } from "zod";
-import { artistNameSchema, durationSchema, imageSchema, itemsPerPageSchema, limitSchema, listenersSchema, mbidSchema, pageSchema, playcountSchema, reachSchema, tagNameSchema, totalPagesSchema, totalSchema, trackNameSchema, urlSchema } from "./schemas/index.js";
+import { z } from 'zod';
+import { artistNameSchema, durationSchema, imageSchema, itemsPerPageSchema, limitSchema, listenersSchema, mbidSchema, pageSchema, playcountSchema, reachSchema, tagNameSchema, totalPagesSchema, totalSchema, trackNameSchema, urlSchema, } from './schemas/index.js';
 export const chartGetTopArtistsRequestSchema = z.object({
     limit: limitSchema.optional(),
-    page: pageSchema.optional()
+    page: pageSchema.optional(),
 });
 export const chartGetTopArtistsResponseSchema = z.object({
     artists: z.object({
@@ -12,19 +12,19 @@ export const chartGetTopArtistsResponseSchema = z.object({
             mbid: mbidSchema,
             listeners: listenersSchema,
             url: urlSchema,
-            image: z.array(imageSchema)
+            image: z.array(imageSchema),
         })),
-        "@attr": z.object({
+        '@attr': z.object({
             page: pageSchema,
             perPage: itemsPerPageSchema,
             totalPages: totalPagesSchema,
-            total: totalSchema
-        })
-    })
+            total: totalSchema,
+        }),
+    }),
 });
 export const chartGetTopTagsRequestSchema = z.object({
     limit: limitSchema.optional(),
-    page: pageSchema.optional()
+    page: pageSchema.optional(),
 });
 export const chartGetTopTagsResponseSchema = z.object({
     tags: z.object({
@@ -32,19 +32,19 @@ export const chartGetTopTagsResponseSchema = z.object({
             name: tagNameSchema,
             url: urlSchema,
             reach: reachSchema,
-            taggings: z.string()
+            taggings: z.string(),
         })),
-        "@attr": z.object({
+        '@attr': z.object({
             page: pageSchema,
             perPage: itemsPerPageSchema,
             totalPages: totalPagesSchema,
-            total: totalSchema
-        })
-    })
+            total: totalSchema,
+        }),
+    }),
 });
 export const chartGetTopTracksRequestSchema = z.object({
     limit: limitSchema.optional(),
-    page: pageSchema.optional()
+    page: pageSchema.optional(),
 });
 export const chartGetTopTracksResponseSchema = z.object({
     tracks: z.object({
@@ -58,16 +58,16 @@ export const chartGetTopTracksResponseSchema = z.object({
             artist: z.object({
                 name: artistNameSchema,
                 mbid: mbidSchema,
-                url: urlSchema
+                url: urlSchema,
             }),
-            image: z.array(imageSchema)
+            image: z.array(imageSchema),
         })),
-        "@attr": z.object({
+        '@attr': z.object({
             page: pageSchema,
             perPage: itemsPerPageSchema,
             totalPages: totalPagesSchema,
-            total: totalSchema
-        })
-    })
+            total: totalSchema,
+        }),
+    }),
 });
 //# sourceMappingURL=chart.schemas.js.map

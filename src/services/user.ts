@@ -1,3 +1,5 @@
+import type { LastFmConfig } from '../config.js'
+import { buildUrl, fetcher } from '../utils.js'
 import type {
 	UserGetFriendsRequest,
 	UserGetFriendsResponse,
@@ -25,10 +27,7 @@ import type {
 	UserGetWeeklyChartListResponse,
 	UserGetWeeklyTrackChartRequest,
 	UserGetWeeklyTrackChartResponse,
-	PersonalTaggingType
-} from './user.schemas.js';
-import { fetcher, buildUrl } from '../utils.js';
-import type { LastFmConfig } from '../config.js';
+} from './user.schemas.js'
 
 export interface UserService {
 	/**
@@ -38,10 +37,7 @@ export interface UserService {
 	 * @returns {Promise<UserGetFriendsResponse>}
 	 * https://www.last.fm/api/show/user.getFriends
 	 */
-	getFriends: (
-		params: UserGetFriendsRequest,
-		init?: RequestInit
-	) => Promise<UserGetFriendsResponse>;
+	getFriends: (params: UserGetFriendsRequest, init?: RequestInit) => Promise<UserGetFriendsResponse>
 	/**
 	 * Fetch user info
 	 * @param {UserGetInfoRequest} params
@@ -50,7 +46,7 @@ export interface UserService {
 	 * https://www.last.fm/api/show/user.getInfo
 	 */
 
-	getInfo: (params: UserGetInfoRequest, init?: RequestInit) => Promise<UserGetInfoResponse>;
+	getInfo: (params: UserGetInfoRequest, init?: RequestInit) => Promise<UserGetInfoResponse>
 	/**
 	 * Fetches a list of the user's loved tracks
 	 * @param {UserGetLovedTracksRequest} params
@@ -58,10 +54,7 @@ export interface UserService {
 	 * @returns {Promise<UserGetLovedTracksResponse>}
 	 * https://www.last.fm/api/show/user.getLovedTracks
 	 */
-	getLovedTracks: (
-		params: UserGetLovedTracksRequest,
-		init?: RequestInit
-	) => Promise<UserGetLovedTracksResponse>;
+	getLovedTracks: (params: UserGetLovedTracksRequest, init?: RequestInit) => Promise<UserGetLovedTracksResponse>
 	/**
 	 * Fetches a list of the user's recent tracks
 	 * @param {UserGetRecentTracksRequest} params
@@ -69,10 +62,7 @@ export interface UserService {
 	 * @returns {Promise<UserGetRecentTracksResponse>}
 	 * https://www.last.fm/api/show/user.getRecentTracks
 	 */
-	getRecentTracks: (
-		params: UserGetRecentTracksRequest,
-		init?: RequestInit
-	) => Promise<UserGetRecentTracksResponse>;
+	getRecentTracks: (params: UserGetRecentTracksRequest, init?: RequestInit) => Promise<UserGetRecentTracksResponse>
 	/**
 	 * Fetches a list of the user's top albums
 	 * @param {UserGetTopAlbumsRequest} params
@@ -80,10 +70,7 @@ export interface UserService {
 	 * @returns {Promise<UserGetTopAlbumsResponse>}
 	 * https://www.last.fm/api/show/user.getTopAlbums
 	 */
-	getTopAlbums: (
-		params: UserGetTopAlbumsRequest,
-		init?: RequestInit
-	) => Promise<UserGetTopAlbumsResponse>;
+	getTopAlbums: (params: UserGetTopAlbumsRequest, init?: RequestInit) => Promise<UserGetTopAlbumsResponse>
 	/**
 	 * Fetches a list of the user's top artists
 	 * @param {UserGetTopArtistsRequest} params
@@ -91,10 +78,7 @@ export interface UserService {
 	 * @returns {Promise<UserGetTopArtistsResponse>}
 	 * https://www.last.fm/api/show/user.getTopArtists
 	 */
-	getTopArtists: (
-		params: UserGetTopArtistsRequest,
-		init?: RequestInit
-	) => Promise<UserGetTopArtistsResponse>;
+	getTopArtists: (params: UserGetTopArtistsRequest, init?: RequestInit) => Promise<UserGetTopArtistsResponse>
 	/**
 	 * Fetches a list of the user's top tags
 	 * @param {UserGetTopTagsRequest} params
@@ -102,10 +86,7 @@ export interface UserService {
 	 * @returns {Promise<UserGetTopTagsResponse>}
 	 * https://www.last.fm/api/show/user.getTopTags
 	 */
-	getTopTags: (
-		params: UserGetTopTagsRequest,
-		init?: RequestInit
-	) => Promise<UserGetTopTagsResponse>;
+	getTopTags: (params: UserGetTopTagsRequest, init?: RequestInit) => Promise<UserGetTopTagsResponse>
 	/**
 	 * Fetches a list of the user's top tracks
 	 * @param {UserGetTopTracksRequest} params
@@ -113,10 +94,7 @@ export interface UserService {
 	 * @returns {Promise<UserGetTopTracksResponse>}
 	 * https://www.last.fm/api/show/user.getTopTracks
 	 */
-	getTopTracks: (
-		params: UserGetTopTracksRequest,
-		init?: RequestInit
-	) => Promise<UserGetTopTracksResponse>;
+	getTopTracks: (params: UserGetTopTracksRequest, init?: RequestInit) => Promise<UserGetTopTracksResponse>
 	/**
 	 * Fetches a list of the user's chart albums for a given week
 	 * @param {UserGetWeeklyAlbumChartRequest} params
@@ -126,8 +104,8 @@ export interface UserService {
 	 */
 	getWeeklyAlbumChart: (
 		params: UserGetWeeklyAlbumChartRequest,
-		init?: RequestInit
-	) => Promise<UserGetWeeklyAlbumChartResponse>;
+		init?: RequestInit,
+	) => Promise<UserGetWeeklyAlbumChartResponse>
 	/**
 	 * Fetches a list of the user's chart artists for a given week
 	 * @param {UserGetWeeklyArtistChartRequest} params
@@ -137,8 +115,8 @@ export interface UserService {
 	 */
 	getWeeklyArtistChart: (
 		params: UserGetWeeklyArtistChartRequest,
-		init?: RequestInit
-	) => Promise<UserGetWeeklyArtistChartResponse>;
+		init?: RequestInit,
+	) => Promise<UserGetWeeklyArtistChartResponse>
 	/**
 	 * Fetches a list of the user's chart lists for a given week
 	 * @param {UserGetWeeklyChartListRequest} params
@@ -148,8 +126,8 @@ export interface UserService {
 	 */
 	getWeeklyChartList: (
 		params: UserGetWeeklyChartListRequest,
-		init?: RequestInit
-	) => Promise<UserGetWeeklyChartListResponse>;
+		init?: RequestInit,
+	) => Promise<UserGetWeeklyChartListResponse>
 	/**
 	 * Fetches a list of the user's chart tracks for a given week
 	 * @param {UserGetWeeklyTrackChartRequest} params
@@ -159,8 +137,8 @@ export interface UserService {
 	 */
 	getWeeklyTrackChart: (
 		params: UserGetWeeklyTrackChartRequest,
-		init?: RequestInit
-	) => Promise<UserGetWeeklyTrackChartResponse>;
+		init?: RequestInit,
+	) => Promise<UserGetWeeklyTrackChartResponse>
 	/**
 	 * Get the personal tags a user has applied to artists, albums, or
 	 * tracks. The response is narrowed by the literal `taggingtype`:
@@ -180,17 +158,15 @@ export interface UserService {
 	 */
 	getPersonalTags: <T extends string>(
 		params: UserGetPersonalTagsRequest<T>,
-		init?: RequestInit
-	) => Promise<UserGetPersonalTagsResponse<T>>;
+		init?: RequestInit,
+	) => Promise<UserGetPersonalTagsResponse<T>>
 }
 
 export function createUserService(config: LastFmConfig): UserService {
 	return {
-		getFriends: (params, init) =>
-			fetcher<UserGetFriendsResponse>(buildUrl(config, 'user.getFriends', params), init),
+		getFriends: (params, init) => fetcher<UserGetFriendsResponse>(buildUrl(config, 'user.getFriends', params), init),
 
-		getInfo: (params, init) =>
-			fetcher<UserGetInfoResponse>(buildUrl(config, 'user.getInfo', params), init),
+		getInfo: (params, init) => fetcher<UserGetInfoResponse>(buildUrl(config, 'user.getInfo', params), init),
 
 		getLovedTracks: (params, init) =>
 			fetcher<UserGetLovedTracksResponse>(buildUrl(config, 'user.getLovedTracks', params), init),
@@ -200,37 +176,18 @@ export function createUserService(config: LastFmConfig): UserService {
 			fetcher<UserGetTopAlbumsResponse>(buildUrl(config, 'user.getTopAlbums', params), init),
 		getTopArtists: (params, init) =>
 			fetcher<UserGetTopArtistsResponse>(buildUrl(config, 'user.getTopArtists', params), init),
-		getTopTags: (params, init) =>
-			fetcher<UserGetTopTagsResponse>(buildUrl(config, 'user.getTopTags', params), init),
+		getTopTags: (params, init) => fetcher<UserGetTopTagsResponse>(buildUrl(config, 'user.getTopTags', params), init),
 		getTopTracks: (params, init) =>
 			fetcher<UserGetTopTracksResponse>(buildUrl(config, 'user.getTopTracks', params), init),
 		getWeeklyAlbumChart: (params, init) =>
-			fetcher<UserGetWeeklyAlbumChartResponse>(
-				buildUrl(config, 'user.getWeeklyAlbumChart', params),
-				init
-			),
+			fetcher<UserGetWeeklyAlbumChartResponse>(buildUrl(config, 'user.getWeeklyAlbumChart', params), init),
 		getWeeklyArtistChart: (params, init) =>
-			fetcher<UserGetWeeklyArtistChartResponse>(
-				buildUrl(config, 'user.getWeeklyArtistChart', params),
-				init
-			),
+			fetcher<UserGetWeeklyArtistChartResponse>(buildUrl(config, 'user.getWeeklyArtistChart', params), init),
 		getWeeklyChartList: (params, init) =>
-			fetcher<UserGetWeeklyChartListResponse>(
-				buildUrl(config, 'user.getWeeklyChartList', params),
-				init
-			),
+			fetcher<UserGetWeeklyChartListResponse>(buildUrl(config, 'user.getWeeklyChartList', params), init),
 		getWeeklyTrackChart: (params, init) =>
-			fetcher<UserGetWeeklyTrackChartResponse>(
-				buildUrl(config, 'user.getWeeklyTrackChart', params),
-				init
-			),
-		getPersonalTags: <T extends string>(
-			params: UserGetPersonalTagsRequest<T>,
-			init?: RequestInit
-		) =>
-			fetcher<UserGetPersonalTagsResponse<T>>(
-				buildUrl(config, 'user.getPersonalTags', params),
-				init
-			)
-	};
+			fetcher<UserGetWeeklyTrackChartResponse>(buildUrl(config, 'user.getWeeklyTrackChart', params), init),
+		getPersonalTags: <T extends string>(params: UserGetPersonalTagsRequest<T>, init?: RequestInit) =>
+			fetcher<UserGetPersonalTagsResponse<T>>(buildUrl(config, 'user.getPersonalTags', params), init),
+	}
 }

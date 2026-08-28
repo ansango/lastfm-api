@@ -1,8 +1,8 @@
-import { z } from "zod";
-import { albumNameSchema, artistNameSchema, contentSchema, countSchema, durationSchema, fromSchema, imageSchema, itemsPerPageSchema, langSchema, limitSchema, mbidSchema, pageSchema, rankSchema, reachSchema, summarySchema, tagNameSchema, toSchema, totalPagesSchema, totalSchema, trackNameSchema, urlSchema } from "./schemas/index.js";
+import { z } from 'zod';
+import { albumNameSchema, artistNameSchema, contentSchema, countSchema, durationSchema, fromSchema, imageSchema, itemsPerPageSchema, langSchema, limitSchema, mbidSchema, pageSchema, rankSchema, reachSchema, summarySchema, tagNameSchema, toSchema, totalPagesSchema, totalSchema, trackNameSchema, urlSchema, } from './schemas/index.js';
 export const tagWikiSchema = z.object({
     summary: summarySchema,
-    content: contentSchema
+    content: contentSchema,
 });
 /**
  * Tag
@@ -13,33 +13,33 @@ export const tagSchema = z.object({
     url: urlSchema,
     total: totalSchema,
     reach: reachSchema,
-    wiki: tagWikiSchema
+    wiki: tagWikiSchema,
 });
 export const tagGetInfoRequestSchema = z.object({
     tag: tagNameSchema,
-    lang: langSchema.optional()
+    lang: langSchema.optional(),
 });
 export const tagGetInfoResponseSchema = z.object({
-    tag: tagSchema
+    tag: tagSchema,
 });
 export const tagGetSimilarRequestSchema = z.object({
-    tag: tagNameSchema
+    tag: tagNameSchema,
 });
 export const tagGetSimilarResponseSchema = z.object({
     similar: z.object({
         tag: z.array(z.object({
             name: tagNameSchema,
-            url: urlSchema
+            url: urlSchema,
         })),
-        "@attr": z.object({
-            tag: tagNameSchema
-        })
-    })
+        '@attr': z.object({
+            tag: tagNameSchema,
+        }),
+    }),
 });
 export const tagGetTopAlbumsRequestSchema = z.object({
     tag: tagNameSchema,
     limit: limitSchema.optional(),
-    page: pageSchema.optional()
+    page: pageSchema.optional(),
 });
 export const tagGetTopAlbumsResponseSchema = z.object({
     albums: z.object({
@@ -50,26 +50,26 @@ export const tagGetTopAlbumsResponseSchema = z.object({
             artist: z.object({
                 name: artistNameSchema,
                 mbid: mbidSchema,
-                url: urlSchema
+                url: urlSchema,
             }),
             image: z.array(imageSchema),
-            "@attr": z.object({
-                rank: rankSchema
-            })
+            '@attr': z.object({
+                rank: rankSchema,
+            }),
         })),
-        "@attr": z.object({
+        '@attr': z.object({
             tag: tagNameSchema,
             page: pageSchema,
             perPage: itemsPerPageSchema,
             totalPages: totalPagesSchema,
-            total: totalSchema
-        })
-    })
+            total: totalSchema,
+        }),
+    }),
 });
 export const tagGetTopArtistsRequestSchema = z.object({
     tag: tagNameSchema,
     limit: limitSchema.optional(),
-    page: pageSchema.optional()
+    page: pageSchema.optional(),
 });
 export const tagGetTopArtistsResponseSchema = z.object({
     topartists: z.object({
@@ -78,40 +78,40 @@ export const tagGetTopArtistsResponseSchema = z.object({
             mbid: mbidSchema,
             url: urlSchema,
             image: z.array(imageSchema),
-            "@attr": z.object({
-                rank: rankSchema
-            })
+            '@attr': z.object({
+                rank: rankSchema,
+            }),
         })),
-        "@attr": z.object({
+        '@attr': z.object({
             tag: tagNameSchema,
             page: pageSchema,
             perPage: itemsPerPageSchema,
             totalPages: totalPagesSchema,
-            total: totalSchema
-        })
-    })
+            total: totalSchema,
+        }),
+    }),
 });
 export const tagGetTopTagsRequestSchema = z.object({
-    limit: limitSchema.optional()
+    limit: limitSchema.optional(),
 });
 export const tagGetTopTagsResponseSchema = z.object({
     toptags: z.object({
         tag: z.array(z.object({
             name: tagNameSchema,
             reach: reachSchema,
-            count: countSchema
+            count: countSchema,
         })),
-        "@attr": z.object({
+        '@attr': z.object({
             offset: z.number(),
             num_res: z.number(),
-            total: totalSchema
-        })
-    })
+            total: totalSchema,
+        }),
+    }),
 });
 export const tagGetTopTracksRequestSchema = z.object({
     tag: tagNameSchema,
     limit: limitSchema.optional(),
-    page: pageSchema.optional()
+    page: pageSchema.optional(),
 });
 export const tagGetTopTracksResponseSchema = z.object({
     toptracks: z.object({
@@ -123,34 +123,34 @@ export const tagGetTopTracksResponseSchema = z.object({
             artist: z.object({
                 name: artistNameSchema,
                 mbid: mbidSchema,
-                url: urlSchema
+                url: urlSchema,
             }),
             image: z.array(imageSchema),
-            "@attr": z.object({
-                rank: rankSchema
-            })
+            '@attr': z.object({
+                rank: rankSchema,
+            }),
         })),
-        "@attr": z.object({
+        '@attr': z.object({
             tag: tagNameSchema,
             page: pageSchema,
             perPage: itemsPerPageSchema,
             totalPages: totalPagesSchema,
-            total: totalSchema
-        })
-    })
+            total: totalSchema,
+        }),
+    }),
 });
 export const tagGetWeeklyChartListRequestSchema = z.object({
-    tag: tagNameSchema
+    tag: tagNameSchema,
 });
 export const tagGetWeeklyChartListResponseSchema = z.object({
     weeklychartlist: z.object({
         chart: z.array(z.object({
             from: fromSchema,
-            to: toSchema
+            to: toSchema,
         })),
-        "@attr": z.object({
-            tag: tagNameSchema
-        })
-    })
+        '@attr': z.object({
+            tag: tagNameSchema,
+        }),
+    }),
 });
 //# sourceMappingURL=tag.schemas.js.map

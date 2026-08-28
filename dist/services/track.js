@@ -1,4 +1,4 @@
-import { fetcher, buildUrl, signedPost, LastFmApiError } from '../utils.js';
+import { buildUrl, fetcher, LastFmApiError, signedPost } from '../utils.js';
 import { buildBatchScrobbleParams, buildScrobbleParams } from './track.utils.js';
 function resolveSessionKeyForTrackMutation(config, requestSk, action) {
     const sk = requestSk ?? config.sessionKey;
@@ -17,11 +17,11 @@ function resolveSessionKeyForNowPlaying(config, requestSk) {
 export function createTrackService(config) {
     const scrobbleImpl = (params, init) => signedPost(config, 'track.scrobble', {
         params: buildScrobbleParams(config, params),
-        init
+        init,
     });
     const scrobbleManyImpl = (params, init) => signedPost(config, 'track.scrobble', {
         params: buildBatchScrobbleParams(config, params),
-        init
+        init,
     });
     return {
         getInfo: (params, init) => fetcher(buildUrl(config, 'track.getInfo', params), init),
@@ -41,9 +41,9 @@ export function createTrackService(config) {
                     artist: params.artist,
                     track: params.track,
                     tags: params.tags.join(','),
-                    sk
+                    sk,
                 },
-                init
+                init,
             }).then(() => undefined);
         },
         removeTag: (params, init) => {
@@ -53,23 +53,23 @@ export function createTrackService(config) {
                     artist: params.artist,
                     track: params.track,
                     tag: params.tag,
-                    sk
+                    sk,
                 },
-                init
+                init,
             }).then(() => undefined);
         },
         love: (params, init) => {
             const sk = resolveSessionKeyForTrackMutation(config, params.sk, 'love');
             return signedPost(config, 'track.love', {
                 params: { artist: params.artist, track: params.track, sk },
-                init
+                init,
             }).then(() => undefined);
         },
         unlove: (params, init) => {
             const sk = resolveSessionKeyForTrackMutation(config, params.sk, 'unlove');
             return signedPost(config, 'track.unlove', {
                 params: { artist: params.artist, track: params.track, sk },
-                init
+                init,
             }).then(() => undefined);
         },
         updateNowPlaying: (params, init) => {
@@ -84,11 +84,11 @@ export function createTrackService(config) {
                     mbid: params.mbid,
                     duration: params.duration,
                     albumArtist: params.albumArtist,
-                    sk
+                    sk,
                 },
-                init
+                init,
             });
-        }
+        },
     };
 }
 //# sourceMappingURL=track.js.map

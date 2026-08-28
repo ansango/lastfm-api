@@ -1,5 +1,5 @@
 import type { LastFmConfig } from '../config.js';
-import type { AlbumAddTagsRequest, AlbumGetInfoRequest, AlbumGetInfoResponse, AlbumRemoveTagRequest, AlbumGetTagsRequest, AlbumGetTagsResponse, AlbumGetTopTagsRequest, AlbumGetTopTagsResponse, AlbumSearchRequest, AlbumSearchResponse } from './album.schemas.js';
+import type { AlbumAddTagsRequest, AlbumGetInfoRequest, AlbumGetInfoResponse, AlbumGetTagsRequest, AlbumGetTagsResponse, AlbumGetTopTagsRequest, AlbumGetTopTagsResponse, AlbumRemoveTagRequest, AlbumSearchRequest, AlbumSearchResponse } from './album.schemas.js';
 export interface AlbumService {
     /**
      * Get the metadata for an album on Last.fm using the album name or a musicbrainz id.

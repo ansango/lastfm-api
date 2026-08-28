@@ -1,9 +1,9 @@
-import { z } from "zod";
-import { artistNameSchema, countSchema, imageSchema, itemsPerPageSchema, limitSchema, mbidSchema, pageSchema, playcountSchema, totalPagesSchema, totalSchema, urlSchema, userNameSchema } from "./schemas/index.js";
+import { z } from 'zod';
+import { artistNameSchema, countSchema, imageSchema, itemsPerPageSchema, limitSchema, mbidSchema, pageSchema, playcountSchema, totalPagesSchema, totalSchema, urlSchema, userNameSchema, } from './schemas/index.js';
 export const libraryGetArtistsRequestSchema = z.object({
     user: userNameSchema,
     limit: limitSchema.optional(),
-    page: pageSchema.optional()
+    page: pageSchema.optional(),
 });
 export const libraryGetArtistsResponseSchema = z.object({
     artists: z.object({
@@ -13,15 +13,15 @@ export const libraryGetArtistsResponseSchema = z.object({
             mbid: mbidSchema,
             url: urlSchema,
             playcount: playcountSchema,
-            name: artistNameSchema
+            name: artistNameSchema,
         })),
-        "@attr": z.object({
+        '@attr': z.object({
             user: userNameSchema,
             totalPages: totalPagesSchema,
             page: pageSchema,
             perPage: itemsPerPageSchema,
-            total: totalSchema
-        })
-    })
+            total: totalSchema,
+        }),
+    }),
 });
 //# sourceMappingURL=library.schemas.js.map

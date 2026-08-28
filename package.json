@@ -1,164 +1,169 @@
 {
-  "name": "@ansango/lastfm-api",
-  "version": "3.1.3",
-  "description": "A universal Last.fm API client for Node.js and Browser",
-  "type": "module",
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
-  "exports": {
-    ".": {
-      "import": "./dist/index.js",
-      "types": "./dist/index.d.ts"
-    },
-    "./user": {
-      "import": "./dist/entrypoints/user.js",
-      "types": "./dist/entrypoints/user.d.ts"
-    },
-    "./user/schemas": {
-      "import": "./dist/entrypoints/user.schemas.js",
-      "types": "./dist/entrypoints/user.schemas.d.ts"
-    },
-    "./album": {
-      "import": "./dist/entrypoints/album.js",
-      "types": "./dist/entrypoints/album.d.ts"
-    },
-    "./album/schemas": {
-      "import": "./dist/entrypoints/album.schemas.js",
-      "types": "./dist/entrypoints/album.schemas.d.ts"
-    },
-    "./artist": {
-      "import": "./dist/entrypoints/artist.js",
-      "types": "./dist/entrypoints/artist.d.ts"
-    },
-    "./artist/schemas": {
-      "import": "./dist/entrypoints/artist.schemas.js",
-      "types": "./dist/entrypoints/artist.schemas.d.ts"
-    },
-    "./track": {
-      "import": "./dist/entrypoints/track.js",
-      "types": "./dist/entrypoints/track.d.ts"
-    },
-    "./track/schemas": {
-      "import": "./dist/entrypoints/track.schemas.js",
-      "types": "./dist/entrypoints/track.schemas.d.ts"
-    },
-    "./tag": {
-      "import": "./dist/entrypoints/tag.js",
-      "types": "./dist/entrypoints/tag.d.ts"
-    },
-    "./tag/schemas": {
-      "import": "./dist/entrypoints/tag.schemas.js",
-      "types": "./dist/entrypoints/tag.schemas.d.ts"
-    },
-    "./chart": {
-      "import": "./dist/entrypoints/chart.js",
-      "types": "./dist/entrypoints/chart.d.ts"
-    },
-    "./chart/schemas": {
-      "import": "./dist/entrypoints/chart.schemas.js",
-      "types": "./dist/entrypoints/chart.schemas.d.ts"
-    },
-    "./geo": {
-      "import": "./dist/entrypoints/geo.js",
-      "types": "./dist/entrypoints/geo.d.ts"
-    },
-    "./geo/schemas": {
-      "import": "./dist/entrypoints/geo.schemas.js",
-      "types": "./dist/entrypoints/geo.schemas.d.ts"
-    },
-    "./library": {
-      "import": "./dist/entrypoints/library.js",
-      "types": "./dist/entrypoints/library.d.ts"
-    },
-    "./library/schemas": {
-      "import": "./dist/entrypoints/library.schemas.js",
-      "types": "./dist/entrypoints/library.schemas.d.ts"
-    },
-    "./auth": {
-      "import": "./dist/entrypoints/auth.js",
-      "types": "./dist/entrypoints/auth.d.ts"
-    },
-    "./auth/schemas": {
-      "import": "./dist/entrypoints/auth.schemas.js",
-      "types": "./dist/entrypoints/auth.schemas.d.ts"
-    },
-    "./schemas": {
-      "import": "./dist/entrypoints/base.schemas.js",
-      "types": "./dist/entrypoints/base.schemas.d.ts"
-    }
-  },
-  "files": [
-    "dist",
-    "README.md",
-    "LICENSE",
-    "CHANGELOG.md"
-  ],
-  "engines": {
-    "node": ">=20.0.0"
-  },
-  "scripts": {
-    "build": "rimraf dist && tsc",
-    "clean": "rimraf dist",
-    "dev": "bun run clean && tsc --watch --project tsconfig.dev.json",
-    "typecheck": "tsc --noEmit -p tsconfig.test.json",
-    "test": "bun run test:unit",
-    "test:unit": "bun test src/__tests__",
-    "test:integration:live": "bun test-real.ts",
-    "prepublishOnly": "bun run build",
-    "changelog": "bun scripts/changelog.ts",
-    "release": "bun scripts/release.ts",
-    "release:patch": "bun scripts/release.ts patch",
-    "release:minor": "bun scripts/release.ts minor",
-    "release:major": "bun scripts/release.ts major",
-    "release:alpha": "bun scripts/release.ts alpha",
-    "release:beta": "bun scripts/release.ts beta",
-    "gh:release": "bun scripts/github-release.ts",
-    "tool:dev": "bun install --cwd tool/api-scalar && bun run --cwd tool/api-scalar dev",
-    "tool:start": "bun install --cwd tool/api-scalar && bun run --cwd tool/api-scalar start",
-    "tool:test": "bun install --cwd tool/api-scalar && bun run --cwd tool/api-scalar test",
-    "tool:typecheck": "bun install --cwd tool/api-scalar && bun run --cwd tool/api-scalar typecheck"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/ansango/lastfm-api.git"
-  },
-  "homepage": "https://github.com/ansango/lastfm-api#readme",
-  "bugs": {
-    "url": "https://github.com/ansango/lastfm-api/issues"
-  },
-  "publishConfig": {
-    "access": "public"
-  },
-  "author": "Anibal Santos",
-  "license": "MIT",
-  "keywords": [
-    "client",
-    "last-fm",
-    "lastfm",
-    "nodejs",
-    "api",
-    "node",
-    "typescript",
-    "browser",
-    "universal",
-    "esm",
-    "zod",
-    "validation"
-  ],
-  "dependencies": {
-    "js-md5": "^0.8.3",
-    "zod": "4.1.12"
-  },
-  "devDependencies": {
-    "@types/bun": "^1.4.0",
-    "@types/node": "^24.10.0",
-    "dotenv": "^17.2.3",
-    "rimraf": "^6.1.0",
-    "typescript": "^5.9.3"
-  },
-  "config": {
-    "commitizen": {
-      "path": "./node_modules/cz-conventional-changelog"
-    }
-  }
+	"name": "@ansango/lastfm-api",
+	"version": "3.1.3",
+	"description": "A universal Last.fm API client for Node.js and Browser",
+	"type": "module",
+	"main": "./dist/index.js",
+	"types": "./dist/index.d.ts",
+	"exports": {
+		".": {
+			"import": "./dist/index.js",
+			"types": "./dist/index.d.ts"
+		},
+		"./user": {
+			"import": "./dist/entrypoints/user.js",
+			"types": "./dist/entrypoints/user.d.ts"
+		},
+		"./user/schemas": {
+			"import": "./dist/entrypoints/user.schemas.js",
+			"types": "./dist/entrypoints/user.schemas.d.ts"
+		},
+		"./album": {
+			"import": "./dist/entrypoints/album.js",
+			"types": "./dist/entrypoints/album.d.ts"
+		},
+		"./album/schemas": {
+			"import": "./dist/entrypoints/album.schemas.js",
+			"types": "./dist/entrypoints/album.schemas.d.ts"
+		},
+		"./artist": {
+			"import": "./dist/entrypoints/artist.js",
+			"types": "./dist/entrypoints/artist.d.ts"
+		},
+		"./artist/schemas": {
+			"import": "./dist/entrypoints/artist.schemas.js",
+			"types": "./dist/entrypoints/artist.schemas.d.ts"
+		},
+		"./track": {
+			"import": "./dist/entrypoints/track.js",
+			"types": "./dist/entrypoints/track.d.ts"
+		},
+		"./track/schemas": {
+			"import": "./dist/entrypoints/track.schemas.js",
+			"types": "./dist/entrypoints/track.schemas.d.ts"
+		},
+		"./tag": {
+			"import": "./dist/entrypoints/tag.js",
+			"types": "./dist/entrypoints/tag.d.ts"
+		},
+		"./tag/schemas": {
+			"import": "./dist/entrypoints/tag.schemas.js",
+			"types": "./dist/entrypoints/tag.schemas.d.ts"
+		},
+		"./chart": {
+			"import": "./dist/entrypoints/chart.js",
+			"types": "./dist/entrypoints/chart.d.ts"
+		},
+		"./chart/schemas": {
+			"import": "./dist/entrypoints/chart.schemas.js",
+			"types": "./dist/entrypoints/chart.schemas.d.ts"
+		},
+		"./geo": {
+			"import": "./dist/entrypoints/geo.js",
+			"types": "./dist/entrypoints/geo.d.ts"
+		},
+		"./geo/schemas": {
+			"import": "./dist/entrypoints/geo.schemas.js",
+			"types": "./dist/entrypoints/geo.schemas.d.ts"
+		},
+		"./library": {
+			"import": "./dist/entrypoints/library.js",
+			"types": "./dist/entrypoints/library.d.ts"
+		},
+		"./library/schemas": {
+			"import": "./dist/entrypoints/library.schemas.js",
+			"types": "./dist/entrypoints/library.schemas.d.ts"
+		},
+		"./auth": {
+			"import": "./dist/entrypoints/auth.js",
+			"types": "./dist/entrypoints/auth.d.ts"
+		},
+		"./auth/schemas": {
+			"import": "./dist/entrypoints/auth.schemas.js",
+			"types": "./dist/entrypoints/auth.schemas.d.ts"
+		},
+		"./schemas": {
+			"import": "./dist/entrypoints/base.schemas.js",
+			"types": "./dist/entrypoints/base.schemas.d.ts"
+		}
+	},
+	"files": [
+		"dist",
+		"README.md",
+		"LICENSE",
+		"CHANGELOG.md"
+	],
+	"engines": {
+		"node": ">=20.0.0"
+	},
+	"scripts": {
+		"build": "rimraf dist && tsc",
+		"clean": "rimraf dist",
+		"dev": "bun run clean && tsc --watch --project tsconfig.dev.json",
+		"typecheck": "tsc --noEmit -p tsconfig.test.json",
+		"test": "bun run test:unit",
+		"test:unit": "bun test src/__tests__",
+		"test:integration:live": "bun test-real.ts",
+		"lint": "biome check .",
+		"lint:fix": "biome check --write .",
+		"format": "biome format --write .",
+		"format:check": "biome format .",
+		"prepublishOnly": "bun run build",
+		"changelog": "bun scripts/changelog.ts",
+		"release": "bun scripts/release.ts",
+		"release:patch": "bun scripts/release.ts patch",
+		"release:minor": "bun scripts/release.ts minor",
+		"release:major": "bun scripts/release.ts major",
+		"release:alpha": "bun scripts/release.ts alpha",
+		"release:beta": "bun scripts/release.ts beta",
+		"gh:release": "bun scripts/github-release.ts",
+		"tool:dev": "bun install --cwd tool/api-scalar && bun run --cwd tool/api-scalar dev",
+		"tool:start": "bun install --cwd tool/api-scalar && bun run --cwd tool/api-scalar start",
+		"tool:test": "bun install --cwd tool/api-scalar && bun run --cwd tool/api-scalar test",
+		"tool:typecheck": "bun install --cwd tool/api-scalar && bun run --cwd tool/api-scalar typecheck"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/ansango/lastfm-api.git"
+	},
+	"homepage": "https://github.com/ansango/lastfm-api#readme",
+	"bugs": {
+		"url": "https://github.com/ansango/lastfm-api/issues"
+	},
+	"publishConfig": {
+		"access": "public"
+	},
+	"author": "Anibal Santos",
+	"license": "MIT",
+	"keywords": [
+		"client",
+		"last-fm",
+		"lastfm",
+		"nodejs",
+		"api",
+		"node",
+		"typescript",
+		"browser",
+		"universal",
+		"esm",
+		"zod",
+		"validation"
+	],
+	"dependencies": {
+		"js-md5": "^0.8.3",
+		"zod": "4.1.12"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "^2.5.11",
+		"@types/bun": "^1.4.0",
+		"@types/node": "^24.10.0",
+		"dotenv": "^17.2.3",
+		"rimraf": "^6.1.0",
+		"typescript": "^5.9.3"
+	},
+	"config": {
+		"commitizen": {
+			"path": "./node_modules/cz-conventional-changelog"
+		}
+	}
 }

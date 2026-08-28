@@ -1,2 +1,2 @@
 // Generated schema exports for user service
-export * from '../services/user.schemas.js';
+export * from '../services/user.schemas.js'

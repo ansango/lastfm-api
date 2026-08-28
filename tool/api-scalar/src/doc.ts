@@ -5,12 +5,13 @@
  *  - `GET /doc`  — raw OpenAPI 3.0 JSON
  *  - `GET /`     — Scalar API reference UI
  */
-import { Scalar } from '@scalar/hono-api-reference';
-import { name as pkgName, version as pkgVersion } from '../../../package.json' with { type: 'json' };
-import type { OpenAPIHono } from '@hono/zod-openapi';
 
-const PKG_NAME = typeof pkgName === 'string' ? pkgName : '@ansango/lastfm-api';
-const PKG_VERSION = typeof pkgVersion === 'string' ? pkgVersion : '0.0.0';
+import type { OpenAPIHono } from '@hono/zod-openapi'
+import { Scalar } from '@scalar/hono-api-reference'
+import { name as pkgName, version as pkgVersion } from '../../../package.json' with { type: 'json' }
+
+const PKG_NAME = typeof pkgName === 'string' ? pkgName : '@ansango/lastfm-api'
+const PKG_VERSION = typeof pkgVersion === 'string' ? pkgVersion : '0.0.0'
 
 /**
  * Brief auth flow shown in the Scalar UI at the top of the `auth` tag.
@@ -43,11 +44,11 @@ const AUTH_TAG_DESCRIPTION = [
 	'',
 	'`POST /auth/get-mobile-session` with `username` + `password` returns a session key in one shot, but only works for API keys classified as mobile in the Last.fm API account settings. The self-service create form has no app-type selector and defaults to web, so this call returns `error: 4 — Authentication Failed` for almost all users. The endpoint is still wired in this tool for users with reclassified keys, but is marked **deprecated** in the spec. To obtain a mobile-class key, email `partners@last.fm` and request a manual reclassification.',
 	'',
-	'**No persistence.** The tool never writes the session key to disk. Closing the browser loses it; repeat step 1 to get a new one. The `LASTFM_API_KEY` and `LASTFM_SHARED_SECRET` env vars stay in your shell — they\'re not sensitive in the same way.'
-].join('\n');
+	"**No persistence.** The tool never writes the session key to disk. Closing the browser loses it; repeat step 1 to get a new one. The `LASTFM_API_KEY` and `LASTFM_SHARED_SECRET` env vars stay in your shell — they're not sensitive in the same way.",
+].join('\n')
 
 export function mountOpenAPI(app: OpenAPIHono, opts: { serverUrl?: string } = {}): void {
-	const serverUrl = opts.serverUrl ?? process.env.DOCS_SERVER_URL ?? 'http://localhost:3000';
+	const serverUrl = opts.serverUrl ?? process.env.DOCS_SERVER_URL ?? 'http://localhost:3000'
 
 	app.doc('/doc', {
 		openapi: '3.0.0',
@@ -55,16 +56,16 @@ export function mountOpenAPI(app: OpenAPIHono, opts: { serverUrl?: string } = {}
 			title: `${PKG_NAME} — local docs server`,
 			version: PKG_VERSION,
 			description:
-				'Interactive API explorer for @ansango/lastfm-api. All 57 canonical Last.fm methods are wired declaratively from the method registry; "Try it" calls the real Last.fm API via the package.'
+				'Interactive API explorer for @ansango/lastfm-api. All 57 canonical Last.fm methods are wired declaratively from the method registry; "Try it" calls the real Last.fm API via the package.',
 		},
 		servers: [{ url: serverUrl, description: 'Local docs server' }],
 		tags: [
 			{
 				name: 'auth',
-				description: AUTH_TAG_DESCRIPTION
-			}
-		]
-	});
+				description: AUTH_TAG_DESCRIPTION,
+			},
+		],
+	})
 
 	app.get(
 		'/',
@@ -77,7 +78,7 @@ export function mountOpenAPI(app: OpenAPIHono, opts: { serverUrl?: string } = {}
 			url: '/doc',
 			pageTitle: `${PKG_NAME} — API reference`,
 			showToolbar: 'never',
-			defaultOpenAllTags: true
-		} as Parameters<typeof Scalar>[0])
-	);
+			defaultOpenAllTags: true,
+		} as Parameters<typeof Scalar>[0]),
+	)
 }

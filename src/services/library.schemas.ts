@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from 'zod'
 import {
 	artistNameSchema,
 	countSchema,
@@ -11,34 +11,36 @@ import {
 	totalPagesSchema,
 	totalSchema,
 	urlSchema,
-	userNameSchema
-} from "./schemas/index.js";
+	userNameSchema,
+} from './schemas/index.js'
 
 export const libraryGetArtistsRequestSchema = z.object({
-    user: userNameSchema,
-    limit: limitSchema.optional(),
-    page: pageSchema.optional()
-});
+	user: userNameSchema,
+	limit: limitSchema.optional(),
+	page: pageSchema.optional(),
+})
 
 export const libraryGetArtistsResponseSchema = z.object({
-    artists: z.object({
-        artist: z.array(z.object({
-            tagCount: countSchema,
-            image: z.array(imageSchema),
-            mbid: mbidSchema,
-            url: urlSchema,
-            playcount: playcountSchema,
-            name: artistNameSchema
-        })),
-        "@attr": z.object({
-            user: userNameSchema,
-            totalPages: totalPagesSchema,
-            page: pageSchema,
-            perPage: itemsPerPageSchema,
-            total: totalSchema
-        })
-    })
-});
+	artists: z.object({
+		artist: z.array(
+			z.object({
+				tagCount: countSchema,
+				image: z.array(imageSchema),
+				mbid: mbidSchema,
+				url: urlSchema,
+				playcount: playcountSchema,
+				name: artistNameSchema,
+			}),
+		),
+		'@attr': z.object({
+			user: userNameSchema,
+			totalPages: totalPagesSchema,
+			page: pageSchema,
+			perPage: itemsPerPageSchema,
+			total: totalSchema,
+		}),
+	}),
+})
 
-export type LibraryGetArtistsRequest = z.infer<typeof libraryGetArtistsRequestSchema>;
-export type LibraryGetArtistsResponse = z.infer<typeof libraryGetArtistsResponseSchema>;
+export type LibraryGetArtistsRequest = z.infer<typeof libraryGetArtistsRequestSchema>
+export type LibraryGetArtistsResponse = z.infer<typeof libraryGetArtistsResponseSchema>
