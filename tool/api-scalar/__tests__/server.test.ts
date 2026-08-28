@@ -45,13 +45,13 @@ describe('createApp: shape', () => {
 		expect(typeof app.fetch).toBe('function')
 	})
 
-	test('GET /doc returns valid OpenAPI 3.0 JSON with 56 paths', async () => {
+	test('GET /doc returns valid OpenAPI 3.0 JSON with 57 paths', async () => {
 		const app = createFullApp({ apiKey: 'test-key' })
 		const res = await app.request('/doc')
 		expect(res.status).toBe(200)
 		const body = (await res.json()) as { openapi: string; paths: Record<string, unknown> }
 		expect(body.openapi).toBe('3.0.0')
-		expect(Object.keys(body.paths).length).toBe(56)
+		expect(Object.keys(body.paths).length).toBe(57)
 	})
 
 	test('GET / returns the Scalar HTML page', async () => {
@@ -83,6 +83,7 @@ describe('createApp: per-namespace smoke (mocked fetch)', () => {
 		{ id: 'geo.getTopArtists', path: '/geo/get-top-artists', query: '?country=spain&limit=10' },
 		{ id: 'library.getArtists', path: '/library/get-artists', query: '?user=ansango' },
 		{ id: 'auth.getToken', path: '/auth/get-token', query: '' },
+		{ id: 'insights.getSummary', path: '/insights/get-summary', query: '?user=ansango' },
 	]
 
 	for (const sample of samples) {
@@ -91,9 +92,14 @@ describe('createApp: per-namespace smoke (mocked fetch)', () => {
 			const app = createApp({ apiKey: 'test-key', sharedSecret: 'test-secret' })
 			const res = await app.request(`${sample.path}${sample.query}`)
 			expect(res.status).toBe(200)
-			const body = (await res.json()) as { ok: boolean; mocked: boolean }
-			expect(body.ok).toBe(true)
-			expect(body.mocked).toBe(true)
+			const body = (await res.json()) as Record<string, unknown>
+			expect(body).toBeDefined()
+			if (sample.id.startsWith('insights.')) {
+				expect(body.user).toBe('ansango')
+			} else {
+				expect(body.ok).toBe(true)
+				expect(body.mocked).toBe(true)
+			}
 		})
 	}
 })

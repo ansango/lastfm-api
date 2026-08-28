@@ -85,6 +85,10 @@ export const insightsSummaryResponseSchema = z.object({
 	diversity: insightsDiversityStatsSchema.optional(),
 })
 
+// Schema naming convention aliases for registry lookup
+export const insightsGetSummaryRequestSchema = insightsSummaryRequestSchema
+export const insightsGetSummaryResponseSchema = insightsSummaryResponseSchema
+
 // Inferred types
 export type InsightsPeriod = z.infer<typeof insightsPeriodSchema>
 export type InsightArtistEntry = z.infer<typeof insightArtistEntrySchema>
@@ -94,3 +98,5 @@ export type InsightTagEntry = z.infer<typeof insightTagEntrySchema>
 export type InsightsDiversityStats = z.infer<typeof insightsDiversityStatsSchema>
 export type InsightsSummaryRequest = z.infer<typeof insightsSummaryRequestSchema>
 export type InsightsSummaryResponse = z.infer<typeof insightsSummaryResponseSchema>
+export type InsightsGetSummaryRequest = InsightsSummaryRequest
+export type InsightsGetSummaryResponse = InsightsSummaryResponse
