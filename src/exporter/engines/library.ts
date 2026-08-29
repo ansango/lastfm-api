@@ -1,5 +1,5 @@
 import type { LastFmConfig } from '../../config.js'
-import { createLibraryService } from '../../core/services/library.js'
+import { createLibraryService } from '../../library/service.js'
 import { formatCsvLibrary } from '../formats/csv.js'
 import type { ExporterLibraryRequest, ExporterLibraryResponse, ExportLibraryArtistRecord } from '../schemas.js'
 

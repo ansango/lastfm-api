@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test'
-import { collectAll, iterateItems, iteratePages } from '../core/pagination.js'
+import { collectAll, iterateItems, iteratePages } from '../common/pagination.js'
 
 describe('core/pagination', () => {
 	const mockPages: Record<number, { tracks: Array<{ id: number; title: string }>; totalPages: number }> = {

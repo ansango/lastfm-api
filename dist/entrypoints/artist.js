@@ -1,3 +1,2 @@
-export * from '../core/schemas/artist.schemas.js';
-export { createArtistService } from '../core/services/artist.js';
+export * from '../artist/service.js';
 //# sourceMappingURL=artist.js.map

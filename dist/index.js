@@ -1,26 +1,26 @@
-// Configuration
-// Cache service, stores & schemas
-export * from './cache/index.js';
 // Clients
-export { createClient, LastFmClient } from './client.js';
+export * from './album/index.js';
+export * from './artist/index.js';
+export * from './auth/index.js';
+export * from './cache/index.js';
+// Canonical Methods
+export { CANONICAL_METHODS } from './canonical-methods.js';
+export * from './chart/index.js';
+export { createClient, createClient as createCoreClient, LastFmClient, LastFmClient as LastFmCoreClient, } from './client.js';
+// Common & Utilities
+export * from './common/index.js';
+// Configuration
 export { createConfig, getGlobalConfig, resetGlobalConfig, setGlobalConfig, } from './config.js';
-// Canonical methods inventory
-export { CANONICAL_METHODS } from './core/canonical-methods.js';
-export { createCoreClient, LastFmCoreClient } from './core/client.js';
-export * from './core/pagination.js';
-export * from './core/schemas/index.js';
-// Core services & schemas
-export * from './core/services/index.js';
-// Exporter service & schemas
 export * from './exporter/index.js';
-// Insights service & schemas
+export * from './geo/index.js';
 export * from './insights/index.js';
-// Playlists service & schemas
+export * from './library/index.js';
 export * from './playlists/index.js';
-// Reports service & schemas
 export * from './reports/index.js';
-// Utilities
+export * from './tag/index.js';
+export * from './track/index.js';
+// Domain Services & Schemas
+export * from './user/index.js';
 export { buildAuthUrl, buildUrl, fetcher, generateSignature, LastFmApiError, parseLastFmResponse } from './utils.js';
-// Watcher service & schemas
 export * from './watcher/index.js';
 //# sourceMappingURL=index.js.map

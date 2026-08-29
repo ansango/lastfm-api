@@ -1,6 +1,6 @@
+import { createArtistService } from '../../artist/service.js'
 import type { LastFmConfig } from '../../config.js'
-import { createArtistService } from '../../core/services/artist.js'
-import { createUserService } from '../../core/services/user.js'
+import { createUserService } from '../../user/service.js'
 import { formatCsv } from '../formatters/csv.js'
 import { formatM3U } from '../formatters/m3u.js'
 import { formatSpotifyQueries } from '../formatters/spotifymatch.js'

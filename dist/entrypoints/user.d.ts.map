@@ -1,1 +1,1 @@
-{"version":3,"file":"user.d.ts","sourceRoot":"","sources":["../../src/entrypoints/user.ts"],"names":[],"mappings":"AAAA,mBAAmB,iCAAiC,CAAA;AACpD,cAAc,iCAAiC,CAAA;AAC/C,OAAO,EAAE,iBAAiB,EAAE,KAAK,WAAW,EAAE,MAAM,0BAA0B,CAAA"}
+{"version":3,"file":"user.d.ts","sourceRoot":"","sources":["../../src/entrypoints/user.ts"],"names":[],"mappings":"AAAA,cAAc,oBAAoB,CAAA"}

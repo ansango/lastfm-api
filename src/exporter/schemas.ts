@@ -6,7 +6,7 @@ import {
 	trackNameSchema,
 	urlSchema,
 	userNameSchema,
-} from '../core/schemas/base/index.js'
+} from '../common/schemas/index.js'
 
 export const exportScrobbleRecordSchema = z.object({
 	artist: artistNameSchema,

@@ -1,3 +1,2 @@
-export * from '../core/schemas/auth.schemas.js';
-export { createAuthService } from '../core/services/auth.js';
+export * from '../auth/service.js';
 //# sourceMappingURL=auth.js.map

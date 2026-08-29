@@ -1,5 +1,5 @@
 import type { LastFmConfig } from '../../config.js'
-import { createUserService } from '../../core/services/user.js'
+import { createUserService } from '../../user/service.js'
 import { formatCsvLovedTracks } from '../formats/csv.js'
 import type { ExporterLovedTracksRequest, ExporterLovedTracksResponse, ExportLovedTrackRecord } from '../schemas.js'
 
@@ -24,7 +24,7 @@ export async function exportLovedTracks(
 		const name = t.name ?? ''
 		const artist = typeof t.artist === 'object' && t.artist !== null ? (t.artist.name ?? '') : String(t.artist ?? '')
 		const date = t.date?.['#text']
-		const uts = t.date?.uts ? Number.parseInt(t.date.uts, 10) : undefined
+		const uts = t.date?.uts ? Number.parseInt(String(t.date.uts), 10) : undefined
 
 		if (name && artist) {
 			records.push({

@@ -1,0 +1,38 @@
+export type CountMap = Readonly<Record<string, number>>
+
+export interface Diversity {
+	readonly total: number
+	readonly uniqueCount: number
+	readonly shannon: number
+	readonly normalized: number
+}
+
+export function computeDiversity(counts: CountMap): Diversity {
+	const entries = Object.entries(counts).filter(([, c]) => c > 0)
+	const total = entries.reduce((acc, [, c]) => acc + c, 0)
+	const uniqueCount = entries.length
+	if (total === 0 || uniqueCount === 0) {
+		return { total: 0, uniqueCount: 0, shannon: 0, normalized: 0 }
+	}
+	if (uniqueCount === 1) {
+		return { total, uniqueCount: 1, shannon: 0, normalized: 0 }
+	}
+	let h = 0
+	for (const [, c] of entries) {
+		const p = c / total
+		h -= p * Math.log(p)
+	}
+	const normalized = h / Math.log(uniqueCount)
+	return { total, uniqueCount, shannon: h, normalized }
+}
+
+export function topNShare(counts: CountMap, n: number): number {
+	const sorted = Object.values(counts)
+		.filter((c) => c > 0)
+		.sort((a, b) => b - a)
+	if (sorted.length === 0) return 0
+	const total = sorted.reduce((acc, c) => acc + c, 0)
+	if (total === 0) return 0
+	const top = sorted.slice(0, Math.max(0, n)).reduce((acc, c) => acc + c, 0)
+	return top / total
+}

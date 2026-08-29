@@ -1,10 +1,18 @@
+import { type AlbumService } from './album/index.js';
+import { type ArtistService } from './artist/index.js';
+import { type AuthService } from './auth/index.js';
 import { type CacheService } from './cache/index.js';
+import { type ChartService } from './chart/index.js';
 import type { LastFmConfig } from './config.js';
-import { type AlbumService, type ArtistService, type AuthService, type ChartService, type GeoService, type LibraryService, type TagService, type TrackService, type UserService } from './core/services/index.js';
 import { type ExporterService } from './exporter/index.js';
+import { type GeoService } from './geo/index.js';
 import { type InsightsService } from './insights/index.js';
+import { type LibraryService } from './library/index.js';
 import { type PlaylistsService } from './playlists/index.js';
 import { type ReportsService } from './reports/index.js';
+import { type TagService } from './tag/index.js';
+import { type TrackService } from './track/index.js';
+import { type UserService } from './user/index.js';
 import { type WatcherService } from './watcher/index.js';
 /**
  * Last.fm API Client

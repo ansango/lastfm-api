@@ -27,21 +27,21 @@
  */
 
 import { type ZodTypeAny, z } from 'zod'
+import * as albumSchemas from './album/schemas.js'
+import * as artistSchemas from './artist/schemas.js'
+import * as authSchemas from './auth/schemas.js'
+import { CANONICAL_METHODS } from './canonical-methods.js'
+import * as chartSchemas from './chart/schemas.js'
 import type { LastFmClient } from './client.js'
-import { CANONICAL_METHODS } from './core/canonical-methods.js'
-import * as albumSchemas from './core/schemas/album.schemas.js'
-import * as artistSchemas from './core/schemas/artist.schemas.js'
-import * as authSchemas from './core/schemas/auth.schemas.js'
-import * as chartSchemas from './core/schemas/chart.schemas.js'
-import * as geoSchemas from './core/schemas/geo.schemas.js'
-import * as librarySchemas from './core/schemas/library.schemas.js'
-import * as tagSchemas from './core/schemas/tag.schemas.js'
-import * as trackSchemas from './core/schemas/track.schemas.js'
-import * as userSchemas from './core/schemas/user.schemas.js'
 import * as exporterSchemas from './exporter/schemas.js'
+import * as geoSchemas from './geo/schemas.js'
 import * as insightsSchemas from './insights/schemas.js'
+import * as librarySchemas from './library/schemas.js'
 import * as playlistsSchemas from './playlists/schemas.js'
 import * as reportsSchemas from './reports/schemas.js'
+import * as tagSchemas from './tag/schemas.js'
+import * as trackSchemas from './track/schemas.js'
+import * as userSchemas from './user/schemas.js'
 
 // -- Types ----------------------------------------------------------------
 

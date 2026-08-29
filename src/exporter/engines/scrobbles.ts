@@ -1,5 +1,5 @@
 import type { LastFmConfig } from '../../config.js'
-import { createUserService } from '../../core/services/user.js'
+import { createUserService } from '../../user/service.js'
 import { formatCsvScrobbles } from '../formats/csv.js'
 import { formatJsonLines } from '../formats/jsonl.js'
 import { formatListenBrainz } from '../formats/listenbrainz.js'
@@ -41,7 +41,7 @@ export async function exportScrobbles(
 				: String(t.artist ?? '')
 		const track = t.name ?? ''
 		const album = typeof t.album === 'object' && t.album !== null ? (t.album['#text'] ?? '') : String(t.album ?? '')
-		const uts = Number.parseInt(t.date?.uts ?? '0', 10)
+		const uts = Number.parseInt(String(t.date?.uts ?? '0'), 10)
 		const timestamp = t.date?.['#text'] ?? (uts > 0 ? new Date(uts * 1000).toISOString() : '')
 		const mbid = t.mbid && t.mbid.length > 0 ? t.mbid : undefined
 

@@ -1,5 +1,5 @@
 import type { LastFmConfig } from '../../config.js'
-import { createUserService } from '../../core/services/user.js'
+import { createUserService } from '../../user/service.js'
 import type { ReportsWrappedRequest, ReportsWrappedResponse } from '../schemas.js'
 
 function formatUtcDate(uts: number): string {
@@ -76,7 +76,7 @@ export async function getWrapped(
 		const trackTitle = t.name ?? ''
 		const albumTitle =
 			typeof t.album === 'object' && t.album !== null ? (t.album['#text'] ?? '') : String(t.album ?? '')
-		const uts = Number.parseInt(t.date?.uts ?? '0', 10)
+		const uts = Number.parseInt(String(t.date?.uts ?? '0'), 10)
 
 		if (artistName) {
 			artistCounts[artistName] = (artistCounts[artistName] ?? 0) + 1

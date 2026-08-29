@@ -1,4 +1,4 @@
-import type { UserService } from '../core/services/user.js'
+import type { UserService } from '../user/service.js'
 import { TypedEventEmitter } from './emitter.js'
 import type { WatcherIdleStatus, WatcherOptions, WatcherPollStatus, WatcherTrack } from './schemas.js'
 

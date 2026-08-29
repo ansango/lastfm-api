@@ -1,3 +1,2 @@
-export * from '../core/schemas/user.schemas.js';
-export { createUserService } from '../core/services/user.js';
+export * from '../user/service.js';
 //# sourceMappingURL=user.js.map
