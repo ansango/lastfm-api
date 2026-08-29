@@ -39,9 +39,10 @@ export interface ChartService {
 export function createChartService(config: LastFmConfig): ChartService {
 	return {
 		getTopArtists: (params, init) =>
-			fetcher<ChartGetTopArtistsResponse>(buildUrl(config, 'chart.getTopArtists', params), init),
-		getTopTags: (params, init) => fetcher<ChartGetTopTagsResponse>(buildUrl(config, 'chart.getTopTags', params), init),
+			fetcher<ChartGetTopArtistsResponse>(buildUrl(config, 'chart.getTopArtists', params), init, config.cacheManager),
+		getTopTags: (params, init) =>
+			fetcher<ChartGetTopTagsResponse>(buildUrl(config, 'chart.getTopTags', params), init, config.cacheManager),
 		getTopTracks: (params, init) =>
-			fetcher<ChartGetTopTracksResponse>(buildUrl(config, 'chart.getTopTracks', params), init),
+			fetcher<ChartGetTopTracksResponse>(buildUrl(config, 'chart.getTopTracks', params), init, config.cacheManager),
 	}
 }

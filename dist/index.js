@@ -1,4 +1,6 @@
 // Configuration
+// Cache service, stores & schemas
+export * from './cache/index.js';
 // Clients
 export { createClient, LastFmClient } from './client.js';
 export { createConfig, getGlobalConfig, resetGlobalConfig, setGlobalConfig, } from './config.js';

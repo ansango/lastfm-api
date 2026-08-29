@@ -16,6 +16,6 @@ export interface LibraryService {
 export function createLibraryService(config: LastFmConfig): LibraryService {
 	return {
 		getArtists: (params, init) =>
-			fetcher<LibraryGetArtistsResponse>(buildUrl(config, 'library.getArtists', params), init),
+			fetcher<LibraryGetArtistsResponse>(buildUrl(config, 'library.getArtists', params), init, config.cacheManager),
 	}
 }

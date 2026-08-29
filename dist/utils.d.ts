@@ -1,3 +1,4 @@
+import type { CacheManager } from './cache/manager.js';
 import type { LastFmConfig } from './config.js';
 /**
  * Error thrown when a Last.fm API call fails. Carries the HTTP status and
@@ -17,9 +18,9 @@ export declare class LastFmApiError extends Error {
  */
 export declare function parseLastFmResponse(response: Response): Promise<unknown>;
 /**
- * Realiza una petición HTTP y parsea la respuesta como JSON
+ * Realiza una petición HTTP y parsea la respuesta como JSON con soporte de caché transparente
  */
-export declare function fetcher<T>(url: string, init?: RequestInit): Promise<T>;
+export declare function fetcher<T>(url: string, init?: RequestInit, cacheManager?: CacheManager): Promise<T>;
 /**
  * Construye la URL para las peticiones a la API de Last.fm
  */

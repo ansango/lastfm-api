@@ -81,16 +81,23 @@ export interface TagService {
 
 export function createTagService(config: LastFmConfig): TagService {
 	return {
-		getInfo: (params, init) => fetcher<TagGetInfoResponse>(buildUrl(config, 'tag.getInfo', params), init),
-		getSimilar: (params, init) => fetcher<TagGetSimilarResponse>(buildUrl(config, 'tag.getSimilar', params), init),
+		getInfo: (params, init) =>
+			fetcher<TagGetInfoResponse>(buildUrl(config, 'tag.getInfo', params), init, config.cacheManager),
+		getSimilar: (params, init) =>
+			fetcher<TagGetSimilarResponse>(buildUrl(config, 'tag.getSimilar', params), init, config.cacheManager),
 		getTopAlbums: (params, init) =>
-			fetcher<TagGetTopAlbumsResponse>(buildUrl(config, 'tag.getTopAlbums', params), init),
+			fetcher<TagGetTopAlbumsResponse>(buildUrl(config, 'tag.getTopAlbums', params), init, config.cacheManager),
 		getTopArtists: (params, init) =>
-			fetcher<TagGetTopArtistsResponse>(buildUrl(config, 'tag.getTopArtists', params), init),
-		getTopTags: (params, init) => fetcher<TagGetTopTagsResponse>(buildUrl(config, 'tag.getTopTags', params), init),
+			fetcher<TagGetTopArtistsResponse>(buildUrl(config, 'tag.getTopArtists', params), init, config.cacheManager),
+		getTopTags: (params, init) =>
+			fetcher<TagGetTopTagsResponse>(buildUrl(config, 'tag.getTopTags', params), init, config.cacheManager),
 		getTopTracks: (params, init) =>
-			fetcher<TagGetTopTracksResponse>(buildUrl(config, 'tag.getTopTracks', params), init),
+			fetcher<TagGetTopTracksResponse>(buildUrl(config, 'tag.getTopTracks', params), init, config.cacheManager),
 		getWeeklyChartList: (params, init) =>
-			fetcher<TagGetWeeklyChartListResponse>(buildUrl(config, 'tag.getWeeklyChartList', params), init),
+			fetcher<TagGetWeeklyChartListResponse>(
+				buildUrl(config, 'tag.getWeeklyChartList', params),
+				init,
+				config.cacheManager,
+			),
 	}
 }
