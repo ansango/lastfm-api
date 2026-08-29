@@ -25,6 +25,7 @@ import { createExporterService, type ExporterService } from './exporter/index.js
 import { createInsightsService, type InsightsService } from './insights/index.js'
 import { createPlaylistsService, type PlaylistsService } from './playlists/index.js'
 import { createReportsService, type ReportsService } from './reports/index.js'
+import { createWatcherService, type WatcherService } from './watcher/index.js'
 
 /**
  * Last.fm API Client
@@ -60,6 +61,7 @@ export class LastFmClient {
 	public readonly playlists: PlaylistsService
 	public readonly exporter: ExporterService
 	public readonly cache: CacheService
+	public readonly watcher: WatcherService
 
 	private readonly config: LastFmConfig
 
@@ -86,6 +88,7 @@ export class LastFmClient {
 		this.reports = createReportsService(this.config)
 		this.playlists = createPlaylistsService(this.config)
 		this.exporter = createExporterService(this.config)
+		this.watcher = createWatcherService(this.user)
 	}
 
 	/**

@@ -17,4 +17,6 @@ export * from './playlists/index.js';
 export type * from './reports/index.js';
 export * from './reports/index.js';
 export { buildAuthUrl, buildUrl, fetcher, generateSignature, LastFmApiError, parseLastFmResponse } from './utils.js';
+export type * from './watcher/index.js';
+export * from './watcher/index.js';
 //# sourceMappingURL=index.d.ts.map

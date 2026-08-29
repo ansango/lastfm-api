@@ -5,6 +5,7 @@ import { createExporterService } from './exporter/index.js';
 import { createInsightsService } from './insights/index.js';
 import { createPlaylistsService } from './playlists/index.js';
 import { createReportsService } from './reports/index.js';
+import { createWatcherService } from './watcher/index.js';
 /**
  * Last.fm API Client
  *
@@ -39,6 +40,7 @@ export class LastFmClient {
     playlists;
     exporter;
     cache;
+    watcher;
     config;
     constructor(config) {
         this.config = config ? createConfig(config) : getGlobalConfig();
@@ -61,6 +63,7 @@ export class LastFmClient {
         this.reports = createReportsService(this.config);
         this.playlists = createPlaylistsService(this.config);
         this.exporter = createExporterService(this.config);
+        this.watcher = createWatcherService(this.user);
     }
     /**
      * Get the current configuration (read-only)

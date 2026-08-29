@@ -5,6 +5,7 @@ import { type ExporterService } from './exporter/index.js';
 import { type InsightsService } from './insights/index.js';
 import { type PlaylistsService } from './playlists/index.js';
 import { type ReportsService } from './reports/index.js';
+import { type WatcherService } from './watcher/index.js';
 /**
  * Last.fm API Client
  *
@@ -39,6 +40,7 @@ export declare class LastFmClient {
     readonly playlists: PlaylistsService;
     readonly exporter: ExporterService;
     readonly cache: CacheService;
+    readonly watcher: WatcherService;
     private readonly config;
     constructor(config?: Partial<LastFmConfig>);
     /**

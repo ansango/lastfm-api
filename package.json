@@ -130,6 +130,14 @@
 			"import": "./dist/entrypoints/cache.schemas.js",
 			"types": "./dist/entrypoints/cache.schemas.d.ts"
 		},
+		"./watcher": {
+			"import": "./dist/entrypoints/watcher.js",
+			"types": "./dist/entrypoints/watcher.d.ts"
+		},
+		"./watcher/schemas": {
+			"import": "./dist/entrypoints/watcher.schemas.js",
+			"types": "./dist/entrypoints/watcher.schemas.d.ts"
+		},
 		"./schemas": {
 			"import": "./dist/entrypoints/base.schemas.js",
 			"types": "./dist/entrypoints/base.schemas.d.ts"
