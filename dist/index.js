@@ -21,4 +21,6 @@ export * from './playlists/index.js';
 export * from './reports/index.js';
 // Utilities
 export { buildAuthUrl, buildUrl, fetcher, generateSignature, LastFmApiError, parseLastFmResponse } from './utils.js';
+// Watcher service & schemas
+export * from './watcher/index.js';
 //# sourceMappingURL=index.js.map

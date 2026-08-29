@@ -32,6 +32,8 @@ export * from './playlists/index.js'
 export type * from './reports/index.js'
 // Reports service & schemas
 export * from './reports/index.js'
-
 // Utilities
 export { buildAuthUrl, buildUrl, fetcher, generateSignature, LastFmApiError, parseLastFmResponse } from './utils.js'
+export type * from './watcher/index.js'
+// Watcher service & schemas
+export * from './watcher/index.js'

@@ -16,6 +16,8 @@ A universal Last.fm API client for Node.js and Browser, written in TypeScript.
 - ✅ **Universal**: Works in Node.js (≥20.0.0) and Browser
 - ✅ **Complete coverage**: All 56 canonical Last.fm API methods across 9 namespaces
 - ✅ **Insights & Analytics Engine**: 20 high-level derived analytical views (Shannon diversity, enriched Now Playing, diurnal histograms, binge runs, ranking diffs, new discoveries, 2D mood classification, personality archetypes, obscurity scores, streaks, heatmaps, album habits, genre breakdown & evolution, smart recommendations, bridge artists, and user/group comparison)
+- ✅ **Pluggable Cache Layer**: Zero-dependency caching for GET/read requests with `MemoryCacheStore` (LRU) and `StorageCacheStore` (localStorage), plus granular TTL by namespace/method
+- ✅ **Real-Time Scrobble Watcher**: Isomorphic event-driven listening monitor emitting `nowPlaying`, `nowPlayingEnd`, `scrobble`, and `idle` events
 - ✅ **Reports & Wrapped Engine**: Custom Year-in-Review, historical milestone projections, and monthly digests
 - ✅ **Smart Playlists Generator**: Algorithmic playlist generation (heavy rotation, time capsule, deep cuts, discovery radar) with M3U and CSV exports
 - ✅ **Bulk Data Exporter & Backup**: Resilient scrobble, loved tracks, and library catalog backup with UTS checkpointing and ListenBrainz/JSONL/CSV formats
@@ -36,6 +38,8 @@ A universal Last.fm API client for Node.js and Browser, written in TypeScript.
   - [Using Global Configuration](#using-global-configuration)
   - [Using Individual Services](#using-individual-services)
 - [Zod Schema Validation](#zod-schema-validation)
+- [Pluggable Cache Layer](#pluggable-cache-layer)
+- [Real-Time Scrobble Watcher](#real-time-scrobble-watcher)
 - [Insights & Analytics Engine](#insights--analytics-engine)
 - [Reports & Wrapped Engine](#reports--wrapped-engine)
 - [Smart Playlists Generator](#smart-playlists-generator)
@@ -233,6 +237,8 @@ const tracks = await trackService.search({ track: 'Come Together' });
 - `@ansango/lastfm-api/geo`
 - `@ansango/lastfm-api/library`
 - `@ansango/lastfm-api/auth`
+- `@ansango/lastfm-api/cache`
+- `@ansango/lastfm-api/watcher`
 - `@ansango/lastfm-api/insights`
 - `@ansango/lastfm-api/reports`
 - `@ansango/lastfm-api/playlists`
@@ -250,6 +256,8 @@ Schemas are available through modular imports, following the same pattern as the
 import { userGetInfoRequestSchema, userGetInfoResponseSchema } from '@ansango/lastfm-api/user/schemas';
 import { albumSearchRequestSchema } from '@ansango/lastfm-api/album/schemas';
 import { trackGetInfoResponseSchema } from '@ansango/lastfm-api/track/schemas';
+import { cacheOptionsSchema } from '@ansango/lastfm-api/cache/schemas';
+import { watcherOptionsSchema } from '@ansango/lastfm-api/watcher/schemas';
 import { insightsSummaryResponseSchema } from '@ansango/lastfm-api/insights/schemas';
 import { reportsWrappedResponseSchema } from '@ansango/lastfm-api/reports/schemas';
 import { playlistsGenerateResponseSchema } from '@ansango/lastfm-api/playlists/schemas';
@@ -290,11 +298,84 @@ if (result.success) {
 - `@ansango/lastfm-api/geo/schemas`
 - `@ansango/lastfm-api/library/schemas`
 - `@ansango/lastfm-api/auth/schemas`
+- `@ansango/lastfm-api/cache/schemas`
+- `@ansango/lastfm-api/watcher/schemas`
 - `@ansango/lastfm-api/insights/schemas`
 - `@ansango/lastfm-api/reports/schemas`
 - `@ansango/lastfm-api/playlists/schemas`
 - `@ansango/lastfm-api/exporter/schemas`
 - `@ansango/lastfm-api/schemas` (base types like `imageSchema`, `datePropSchema`, etc.)
+
+## Pluggable Cache Layer
+
+Transparent caching for read (`GET`) operations with configurable TTLs, LRU eviction, and interchangeable storage backends:
+
+```typescript
+import { LastFmClient, MemoryCacheStore, StorageCacheStore } from '@ansango/lastfm-api';
+
+// 1. Enable in-memory cache with granular TTL policies
+const client = new LastFmClient({
+  apiKey: 'YOUR_API_KEY',
+  cache: {
+    defaultTtlMs: 300_000, // 5 minutes default
+    ttlByNamespace: {
+      artist: 86_400_000, // 24 hours for artist metadata
+      user: 60_000,       // 1 minute for user endpoints
+    },
+    ttlByMethod: {
+      'user.getRecentTracks': 15_000, // 15 seconds for recent tracks
+    },
+  },
+});
+
+// 2. First call performs network fetch; second call hits cache instantly
+const artist1 = await client.artist.getInfo({ artist: 'Radiohead' });
+const artist2 = await client.artist.getInfo({ artist: 'Radiohead' }); // Cache hit!
+
+// 3. Inspect or manage cache metrics directly
+console.log(client.cache.stats()); // { hits: 1, misses: 1, size: 1 }
+await client.cache.clear();
+```
+
+## Real-Time Scrobble Watcher
+
+Isomorphic event-driven listening monitor emitting events as playback updates in real time:
+
+```typescript
+import { LastFmClient } from '@ansango/lastfm-api';
+
+const client = new LastFmClient({ apiKey: 'YOUR_API_KEY' });
+
+// Create a watcher for a user with 10-second polling
+const watcher = client.watcher.watchUser({
+  user: 'ansango',
+  intervalMs: 10_000,
+  idleThresholdMs: 300_000, // 5 minutes without activity triggers idle
+});
+
+// Event listeners
+watcher.on('nowPlaying', (track) => {
+  console.log(`🎵 Now Playing: ${track.name} by ${track.artist}`);
+});
+
+watcher.on('nowPlayingEnd', (track) => {
+  console.log(`⏹️ Finished: ${track.name}`);
+});
+
+watcher.on('scrobble', (track) => {
+  console.log(`✅ Scrobble recorded: ${track.name} (UTS: ${track.uts})`);
+});
+
+watcher.on('idle', ({ idleMinutes }) => {
+  console.log(`💤 User has been idle for ${idleMinutes} minutes`);
+});
+
+// Start polling
+watcher.start();
+
+// Stop when done
+// watcher.stop();
+```
 
 ## Insights & Analytics Engine
 
@@ -636,6 +717,8 @@ class LastFmClient {
   reports: ReportsService;
   playlists: PlaylistsService;
   exporter: ExporterService;
+  cache: CacheService;
+  watcher: WatcherService;
   
   constructor(config?: Partial<LastFmConfig>);
   getConfig(): Readonly<LastFmConfig>;
