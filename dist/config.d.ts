@@ -1,8 +1,12 @@
+import type { CacheOptions, CacheStore } from './cache/interface.js';
+import { CacheManager } from './cache/manager.js';
 export interface LastFmConfig {
     apiKey: string;
     sharedSecret?: string;
     sessionKey?: string;
     baseUrl?: string;
+    cache?: CacheOptions | CacheStore | boolean;
+    cacheManager?: CacheManager;
 }
 /**
  * Crea una nueva configuración validada

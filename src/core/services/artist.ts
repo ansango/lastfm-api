@@ -168,19 +168,22 @@ export function createArtistService(config: LastFmConfig): ArtistService {
 	}
 
 	return {
-		getInfo: (params, init) => fetcher<ArtistGetInfoResponse>(buildUrl(config, 'artist.getInfo', params), init),
-		getTags: (params, init) => fetcher<ArtistGetTagsResponse>(buildUrl(config, 'artist.getTags', params), init),
+		getInfo: (params, init) =>
+			fetcher<ArtistGetInfoResponse>(buildUrl(config, 'artist.getInfo', params), init, config.cacheManager),
+		getTags: (params, init) =>
+			fetcher<ArtistGetTagsResponse>(buildUrl(config, 'artist.getTags', params), init, config.cacheManager),
 		getSimilar: (params, init) =>
-			fetcher<ArtistGetSimilarResponse>(buildUrl(config, 'artist.getSimilar', params), init),
+			fetcher<ArtistGetSimilarResponse>(buildUrl(config, 'artist.getSimilar', params), init, config.cacheManager),
 		getTopTags: (params, init) =>
-			fetcher<ArtistGetTopTagsResponse>(buildUrl(config, 'artist.getTopTags', params), init),
+			fetcher<ArtistGetTopTagsResponse>(buildUrl(config, 'artist.getTopTags', params), init, config.cacheManager),
 		getTopAlbums: (params, init) =>
-			fetcher<ArtistGetTopAlbumsResponse>(buildUrl(config, 'artist.getTopAlbums', params), init),
+			fetcher<ArtistGetTopAlbumsResponse>(buildUrl(config, 'artist.getTopAlbums', params), init, config.cacheManager),
 		getTopTracks: (params, init) =>
-			fetcher<ArtistGetTopTracksResponse>(buildUrl(config, 'artist.getTopTracks', params), init),
-		search: (params, init) => fetcher<ArtistSearchResponse>(buildUrl(config, 'artist.search', params), init),
+			fetcher<ArtistGetTopTracksResponse>(buildUrl(config, 'artist.getTopTracks', params), init, config.cacheManager),
+		search: (params, init) =>
+			fetcher<ArtistSearchResponse>(buildUrl(config, 'artist.search', params), init, config.cacheManager),
 		getCorrection: (params, init) =>
-			fetcher<ArtistGetCorrectionResponse>(buildUrl(config, 'artist.getCorrection', params), init),
+			fetcher<ArtistGetCorrectionResponse>(buildUrl(config, 'artist.getCorrection', params), init, config.cacheManager),
 		addTags: addTagsImpl,
 		removeTag: removeTagImpl,
 	}

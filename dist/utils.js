@@ -1,5 +1,14 @@
 import { md5 } from 'js-md5';
 const DEFAULT_BASE_URL = 'https://ws.audioscrobbler.com/2.0/';
+function extractMethodFromUrl(url) {
+    try {
+        const parsed = new URL(url);
+        return parsed.searchParams.get('method') ?? undefined;
+    }
+    catch {
+        return undefined;
+    }
+}
 /**
  * Error thrown when a Last.fm API call fails. Carries the HTTP status and
  * (when available) the Last.fm-specific error code so callers can branch on
@@ -40,9 +49,17 @@ export async function parseLastFmResponse(response) {
     return body;
 }
 /**
- * Realiza una petición HTTP y parsea la respuesta como JSON
+ * Realiza una petición HTTP y parsea la respuesta como JSON con soporte de caché transparente
  */
-export async function fetcher(url, init) {
+export async function fetcher(url, init, cacheManager) {
+    if (cacheManager?.isEnabled() && (!init?.method || init.method.toUpperCase() === 'GET')) {
+        const method = extractMethodFromUrl(url);
+        const ttl = cacheManager.resolveTtl(method);
+        return cacheManager.wrap(url, async () => {
+            const response = await fetch(url, init);
+            return (await parseLastFmResponse(response));
+        }, ttl);
+    }
     const response = await fetch(url, init);
     return (await parseLastFmResponse(response));
 }

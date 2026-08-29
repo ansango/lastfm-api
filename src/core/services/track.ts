@@ -256,13 +256,18 @@ export function createTrackService(config: LastFmConfig): TrackService {
 		})
 
 	return {
-		getInfo: (params, init) => fetcher<TrackGetInfoResponse>(buildUrl(config, 'track.getInfo', params), init),
-		getSimilar: (params, init) => fetcher<TrackGetSimilarResponse>(buildUrl(config, 'track.getSimilar', params), init),
-		getTags: (params, init) => fetcher<TrackGetTagsResponse>(buildUrl(config, 'track.getTags', params), init),
-		getTopTags: (params, init) => fetcher<TrackGetTopTagsResponse>(buildUrl(config, 'track.getTopTags', params), init),
+		getInfo: (params, init) =>
+			fetcher<TrackGetInfoResponse>(buildUrl(config, 'track.getInfo', params), init, config.cacheManager),
+		getSimilar: (params, init) =>
+			fetcher<TrackGetSimilarResponse>(buildUrl(config, 'track.getSimilar', params), init, config.cacheManager),
+		getTags: (params, init) =>
+			fetcher<TrackGetTagsResponse>(buildUrl(config, 'track.getTags', params), init, config.cacheManager),
+		getTopTags: (params, init) =>
+			fetcher<TrackGetTopTagsResponse>(buildUrl(config, 'track.getTopTags', params), init, config.cacheManager),
 		getCorrection: (params, init) =>
-			fetcher<TrackGetCorrectionResponse>(buildUrl(config, 'track.getCorrection', params), init),
-		search: (params, init) => fetcher<TrackSearchResponse>(buildUrl(config, 'track.search', params), init),
+			fetcher<TrackGetCorrectionResponse>(buildUrl(config, 'track.getCorrection', params), init, config.cacheManager),
+		search: (params, init) =>
+			fetcher<TrackSearchResponse>(buildUrl(config, 'track.search', params), init, config.cacheManager),
 		scrobble: scrobbleImpl,
 		postTrackScrobble: scrobbleImpl,
 		scrobbleMany: scrobbleManyImpl,

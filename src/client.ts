@@ -1,3 +1,4 @@
+import { CacheManager, type CacheService, createCacheService } from './cache/index.js'
 import type { LastFmConfig } from './config.js'
 import { createConfig, getGlobalConfig } from './config.js'
 import {
@@ -58,11 +59,18 @@ export class LastFmClient {
 	public readonly reports: ReportsService
 	public readonly playlists: PlaylistsService
 	public readonly exporter: ExporterService
+	public readonly cache: CacheService
 
 	private readonly config: LastFmConfig
 
 	constructor(config?: Partial<LastFmConfig>) {
 		this.config = config ? createConfig(config) : getGlobalConfig()
+
+		// Ensure cache manager exists for cache operations
+		if (!this.config.cacheManager) {
+			this.config.cacheManager = new CacheManager({ enabled: false })
+		}
+		this.cache = createCacheService(this.config.cacheManager)
 
 		// Initialize all services
 		this.user = createUserService(this.config)

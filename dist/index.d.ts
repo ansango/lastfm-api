@@ -1,3 +1,5 @@
+export type * from './cache/index.js';
+export * from './cache/index.js';
 export { createClient, LastFmClient } from './client.js';
 export { createConfig, getGlobalConfig, type LastFmConfig, resetGlobalConfig, setGlobalConfig, } from './config.js';
 export { CANONICAL_METHODS, type CanonicalMethod } from './core/canonical-methods.js';

@@ -131,10 +131,14 @@ export function createAlbumService(config: LastFmConfig): AlbumService {
 	}
 
 	return {
-		getInfo: (params, init) => fetcher<AlbumGetInfoResponse>(buildUrl(config, 'album.getInfo', params), init),
-		getTags: (params, init) => fetcher<AlbumGetTagsResponse>(buildUrl(config, 'album.getTags', params), init),
-		getTopTags: (params, init) => fetcher<AlbumGetTopTagsResponse>(buildUrl(config, 'album.getTopTags', params), init),
-		search: (params, init) => fetcher<AlbumSearchResponse>(buildUrl(config, 'album.search', params), init),
+		getInfo: (params, init) =>
+			fetcher<AlbumGetInfoResponse>(buildUrl(config, 'album.getInfo', params), init, config.cacheManager),
+		getTags: (params, init) =>
+			fetcher<AlbumGetTagsResponse>(buildUrl(config, 'album.getTags', params), init, config.cacheManager),
+		getTopTags: (params, init) =>
+			fetcher<AlbumGetTopTagsResponse>(buildUrl(config, 'album.getTopTags', params), init, config.cacheManager),
+		search: (params, init) =>
+			fetcher<AlbumSearchResponse>(buildUrl(config, 'album.search', params), init, config.cacheManager),
 		addTags: addTagsImpl,
 		removeTag: removeTagImpl,
 	}

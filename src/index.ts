@@ -1,5 +1,8 @@
 // Configuration
 
+export type * from './cache/index.js'
+// Cache service, stores & schemas
+export * from './cache/index.js'
 // Clients
 export { createClient, LastFmClient } from './client.js'
 export {

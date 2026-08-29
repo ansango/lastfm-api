@@ -1,3 +1,4 @@
+import { CacheManager } from './cache/manager.js';
 let globalConfig = null;
 /**
  * Carga configuración desde variables de entorno (solo Node.js)
@@ -33,6 +34,18 @@ export function createConfig(options = {}) {
         ...options,
     };
     validateConfig(config);
+    // Resolve cache manager if cache option was specified
+    if (options.cache !== undefined && !config.cacheManager) {
+        if (typeof options.cache === 'boolean') {
+            config.cacheManager = new CacheManager({ enabled: options.cache });
+        }
+        else if (typeof options.cache.get === 'function') {
+            config.cacheManager = new CacheManager({ store: options.cache });
+        }
+        else {
+            config.cacheManager = new CacheManager(options.cache);
+        }
+    }
     return config;
 }
 /**

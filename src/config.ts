@@ -1,8 +1,13 @@
+import type { CacheOptions, CacheStore } from './cache/interface.js'
+import { CacheManager } from './cache/manager.js'
+
 export interface LastFmConfig {
 	apiKey: string
 	sharedSecret?: string
 	sessionKey?: string
 	baseUrl?: string
+	cache?: CacheOptions | CacheStore | boolean
+	cacheManager?: CacheManager
 }
 
 let globalConfig: LastFmConfig | null = null
@@ -37,14 +42,26 @@ function validateConfig(config: Partial<LastFmConfig>): config is LastFmConfig {
  */
 export function createConfig(options: Partial<LastFmConfig> = {}): LastFmConfig {
 	const envConfig = loadEnvConfig()
-	const config = {
+	const config: LastFmConfig = {
 		baseUrl: 'https://ws.audioscrobbler.com/2.0/',
 		...envConfig,
 		...options,
-	}
+	} as LastFmConfig
 
 	validateConfig(config)
-	return config as LastFmConfig
+
+	// Resolve cache manager if cache option was specified
+	if (options.cache !== undefined && !config.cacheManager) {
+		if (typeof options.cache === 'boolean') {
+			config.cacheManager = new CacheManager({ enabled: options.cache })
+		} else if (typeof (options.cache as CacheStore).get === 'function') {
+			config.cacheManager = new CacheManager({ store: options.cache as CacheStore })
+		} else {
+			config.cacheManager = new CacheManager(options.cache as CacheOptions)
+		}
+	}
+
+	return config
 }
 
 /**

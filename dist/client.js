@@ -1,3 +1,4 @@
+import { CacheManager, createCacheService } from './cache/index.js';
 import { createConfig, getGlobalConfig } from './config.js';
 import { createAlbumService, createArtistService, createAuthService, createChartService, createGeoService, createLibraryService, createTagService, createTrackService, createUserService, } from './core/services/index.js';
 import { createExporterService } from './exporter/index.js';
@@ -37,9 +38,15 @@ export class LastFmClient {
     reports;
     playlists;
     exporter;
+    cache;
     config;
     constructor(config) {
         this.config = config ? createConfig(config) : getGlobalConfig();
+        // Ensure cache manager exists for cache operations
+        if (!this.config.cacheManager) {
+            this.config.cacheManager = new CacheManager({ enabled: false });
+        }
+        this.cache = createCacheService(this.config.cacheManager);
         // Initialize all services
         this.user = createUserService(this.config);
         this.album = createAlbumService(this.config);
