@@ -379,7 +379,9 @@ watcher.start();
 
 ## Insights & Analytics Engine
 
-The package includes a comprehensive, built-in analytics engine providing 20 high-level derived views and statistical metrics computed over Last.fm data:
+The package includes a comprehensive, built-in analytics engine providing 20 high-level derived views and statistical metrics computed over Last.fm data.
+
+> 📖 **Deep Dive Documentation:** See [docs/insights.md](docs/insights.md) for full mathematical definitions (Shannon entropy, Jaccard similarity, Russell's Circumplex mood model, HHI concentration), formulas, schemas, and usage details.
 
 ```typescript
 import { createClient } from '@ansango/lastfm-api';

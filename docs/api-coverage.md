@@ -11,7 +11,7 @@ in the same PR.
 ## Summary
 
 - **Canonical API Coverage: 56 / 56** canonical Last.fm methods across 9 namespaces.
-- **Insights & Analytics Engine: 20 / 20** higher-level derived methods under `client.insights`.
+- **Insights & Analytics Engine: 20 / 20** higher-level derived methods under `client.insights` (see [Insights Guide](insights.md) for full algorithmic documentation).
 - **Baseline: 43 / 57** at the start of epic #67.
 - **Gap closed by epic #67 (PRs #83–#89):** 14 new methods.
 - **Breaking removal in #117:** `auth.getMobileSession` removed (57 → 56).
