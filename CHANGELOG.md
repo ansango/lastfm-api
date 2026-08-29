@@ -9,6 +9,71 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 > [ansango/lastfm-api](https://github.com/ansango/lastfm-api). Entries below preserve the
 > historical package and repository names used by their original releases.
 
+## [3.6.0] - 2026-08-29
+
+### ✨ Features
+
+- **watcher**: implement real-time scrobble watcher and event emitter (closes #164, #165) (#167) ([a9545a1](https://github.com/ansango/lastfm-api/commit/a9545a1))
+- **cache**: implement pluggable cache layer (closes #163) (#166) ([4eaa1e0](https://github.com/ansango/lastfm-api/commit/4eaa1e0))
+
+### ♻️ Code Refactoring
+
+- **index**: remove dotenv loading for environment variables ([57236a6](https://github.com/ansango/lastfm-api/commit/57236a6))
+
+### 🔧 Chores
+
+- **docs**: update README with complete v3.5.0 features and remove dotenv and test-real ([e2abeb9](https://github.com/ansango/lastfm-api/commit/e2abeb9))
+
+
+## [3.5.0] - 2026-08-29
+
+### ✨ Features
+
+- **exporter**: implement exporter namespace (closes #157) (#161) ([d7385ff](https://github.com/ansango/lastfm-api/commit/d7385ff))
+- **playlists**: implement playlists namespace (closes #156) (#160) ([9113b17](https://github.com/ansango/lastfm-api/commit/9113b17))
+- **reports**: implement reports namespace (closes #155) (#159) ([b5524e1](https://github.com/ansango/lastfm-api/commit/b5524e1))
+- **core**: implement automatic async pagination and streaming iterators (closes #154) (#158) ([406caa0](https://github.com/ansango/lastfm-api/commit/406caa0))
+- **insights**: implement compareTasteGroup (closes #143) (#150) ([49b69b4](https://github.com/ansango/lastfm-api/commit/49b69b4))
+- **insights**: implement getSmartRecommendations and getBridgeArtists (closes #142) (#149) ([3b2b2f2](https://github.com/ansango/lastfm-api/commit/3b2b2f2))
+- **insights**: implement getGenreBreakdown and getGenreEvolution (closes #141) (#148) ([4c82e23](https://github.com/ansango/lastfm-api/commit/4c82e23))
+- **insights**: implement getAlbumHabits (closes #140) (#147) ([0b9ceeb](https://github.com/ansango/lastfm-api/commit/0b9ceeb))
+- **insights**: implement getListeningStreaks and getListeningHeatmap (closes #139) (#146) ([756b4de](https://github.com/ansango/lastfm-api/commit/756b4de))
+- **insights**: implement getForgottenFavorites and getObsessions (closes #138) (#145) ([aac4776](https://github.com/ansango/lastfm-api/commit/aac4776))
+- **insights**: implement getObscurityScore (closes #137) (#144) ([83be889](https://github.com/ansango/lastfm-api/commit/83be889))
+
+### 🐛 Bug Fixes
+
+- **ci**: point test-real to src and smoke-test core entrypoints ([847da33](https://github.com/ansango/lastfm-api/commit/847da33))
+
+### ♻️ Code Refactoring
+
+- **arch**: decouple core canonical API from insights engine (closes #151) (#152) ([6e3b261](https://github.com/ansango/lastfm-api/commit/6e3b261))
+
+### 📚 Documentation
+
+- **insights**: document 11 new analytical methods in README and api-coverage (closes #136) ([35f5d60](https://github.com/ansango/lastfm-api/commit/35f5d60))
+
+### 🔧 Chores
+
+- **release**: bump version to v3.5.0 ([abcc3c7](https://github.com/ansango/lastfm-api/commit/abcc3c7))
+
+
+## [3.5.0] - 2026-08-29
+
+### ✨ Features
+
+- **watcher**: implement real-time scrobble watcher and event emitter (closes #164, #165) (#167) ([a9545a1](https://github.com/ansango/lastfm-api/commit/a9545a1))
+- **cache**: implement pluggable cache layer (closes #163) (#166) ([4eaa1e0](https://github.com/ansango/lastfm-api/commit/4eaa1e0))
+
+### ♻️ Code Refactoring
+
+- **index**: remove dotenv loading for environment variables ([57236a6](https://github.com/ansango/lastfm-api/commit/57236a6))
+
+### 🔧 Chores
+
+- **docs**: update README with complete v3.5.0 features and remove dotenv and test-real ([e2abeb9](https://github.com/ansango/lastfm-api/commit/e2abeb9))
+
+
 ## [3.4.0] - 2026-08-28
 
 ### ✨ Features
