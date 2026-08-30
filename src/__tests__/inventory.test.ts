@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'bun:test'
-import { CANONICAL_METHODS } from '../canonical-methods.js'
-import { LastFmClient } from '../client.js'
-import { createCoreClient, LastFmCoreClient } from '../entrypoints/core.js'
+import { CANONICAL_METHODS } from '@/canonical-methods.js'
+import { LastFmClient } from '@/client.js'
+import { createCoreClient, LastFmCoreClient } from '@/entrypoints/core.js'
 
 /**
  * Tests that the package's exported client covers the canonical

@@ -1,1 +1,1 @@
-export * from '../modules/playlists/index.js'
+export * from '@/modules/playlists/index.js'

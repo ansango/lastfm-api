@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, test } from 'bun:test'
-import { createClient, LastFmClient } from '../client.js'
-import { createPlaylistsService, type PlaylistsService } from '../entrypoints/playlists.js'
-import * as playlistSchemas from '../entrypoints/playlists.schemas.js'
+import { createClient, LastFmClient } from '@/client.js'
+import { createPlaylistsService, type PlaylistsService } from '@/entrypoints/playlists.js'
+import * as playlistSchemas from '@/entrypoints/playlists.schemas.js'
 import { fakeTrack, okAttr } from './fixtures/lastfm-responses.js'
 import { installFetchMock } from './helpers/fetch-mock.js'
 

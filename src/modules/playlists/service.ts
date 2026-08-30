@@ -1,4 +1,4 @@
-import type { LastFmConfig } from '../../core/config.js'
+import type { LastFmConfig } from '@/core/config.js'
 import { formatCsv } from './formatters/csv.js'
 import { formatM3U } from './formatters/m3u.js'
 import { generatePlaylist } from './generators/generator.js'

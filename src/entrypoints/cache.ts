@@ -1,1 +1,1 @@
-export * from '../modules/cache/index.js'
+export * from '@/modules/cache/index.js'

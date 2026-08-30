@@ -1,1 +1,1 @@
-export * from '../api/geo/schemas.js'
+export * from '@/api/geo/schemas.js'

@@ -1,5 +1,5 @@
-import { createUserService } from '../../../api/user/service.js'
-import type { LastFmConfig } from '../../../core/config.js'
+import { createUserService } from '@/api/user/service.js'
+import type { LastFmConfig } from '@/core/config.js'
 import type { ReportMilestoneItem, ReportsMilestonesRequest, ReportsMilestonesResponse } from '../schemas.js'
 
 function formatUtcDate(uts: number): string {

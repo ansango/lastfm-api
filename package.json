@@ -153,7 +153,7 @@
 		"node": ">=20.0.0"
 	},
 	"scripts": {
-		"build": "rimraf dist && tsc -p tsconfig.build.json",
+		"build": "rimraf dist && tsc -p tsconfig.build.json && tsc-alias -p tsconfig.build.json",
 		"clean": "rimraf dist",
 		"dev": "bun run clean && tsc --watch --project tsconfig.dev.json",
 		"typecheck": "tsc --noEmit -p tsconfig.json",
@@ -213,6 +213,7 @@
 		"@types/bun": "^1.4.0",
 		"@types/node": "^26.4.0",
 		"rimraf": "^6.1.0",
+		"tsc-alias": "^1.9.2",
 		"typescript": "^5.9.3"
 	},
 	"config": {

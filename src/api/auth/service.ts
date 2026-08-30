@@ -1,5 +1,5 @@
-import type { LastFmConfig } from '../../core/config.js'
-import { buildAuthUrl, fetcher } from '../../core/index.js'
+import type { LastFmConfig } from '@/core/config.js'
+import { buildAuthUrl, fetcher } from '@/core/index.js'
 import type { AuthGetSessionRequest, AuthGetSessionResponse, AuthGetTokenResponse } from './schemas.js'
 
 export interface AuthService {

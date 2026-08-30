@@ -1,5 +1,5 @@
-import { createUserService } from '../../../api/user/index.js'
-import type { LastFmConfig } from '../../../core/config.js'
+import { createUserService } from '@/api/user/index.js'
+import type { LastFmConfig } from '@/core/config.js'
 import type { InsightsTrendsRequest, InsightsTrendsResponse } from '../schemas.js'
 import { resolvePeriod } from './math/periods.js'
 import { diffRankings, type RankedItem } from './math/trends.js'

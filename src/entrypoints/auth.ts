@@ -1,1 +1,1 @@
-export * from '../api/auth/index.js'
+export * from '@/api/auth/index.js'

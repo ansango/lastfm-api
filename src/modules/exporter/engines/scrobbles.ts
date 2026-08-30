@@ -1,5 +1,5 @@
-import { createUserService } from '../../../api/user/service.js'
-import type { LastFmConfig } from '../../../core/config.js'
+import { createUserService } from '@/api/user/service.js'
+import type { LastFmConfig } from '@/core/config.js'
 import { formatCsvScrobbles } from '../formats/csv.js'
 import { formatJsonLines } from '../formats/jsonl.js'
 import { formatListenBrainz } from '../formats/listenbrainz.js'

@@ -1,1 +1,1 @@
-export * from '../api/artist/index.js'
+export * from '@/api/artist/index.js'

@@ -1,4 +1,4 @@
-import type { LastFmConfig } from '../../../core/config.js'
+import type { LastFmConfig } from '@/core/config.js'
 import type { InsightsPersonalityRequest, InsightsPersonalityResponse } from '../schemas.js'
 import { getDiscoveries } from './discoveries.js'
 import { getHoursHistogram } from './hours.js'

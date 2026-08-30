@@ -1,1 +1,1 @@
-export * from '../modules/playlists/schemas.js'
+export * from '@/modules/playlists/schemas.js'

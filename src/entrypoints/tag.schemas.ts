@@ -1,1 +1,1 @@
-export * from '../api/tag/schemas.js'
+export * from '@/api/tag/schemas.js'

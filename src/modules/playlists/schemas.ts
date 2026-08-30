@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { artistNameSchema, limitSchema, trackNameSchema, userNameSchema } from '../../core/schemas/index.js'
+import { artistNameSchema, limitSchema, trackNameSchema, userNameSchema } from '@/core/schemas/index.js'
 
 export const playlistTrackItemSchema = z.object({
 	name: trackNameSchema,

@@ -1,5 +1,5 @@
-import type { LastFmConfig } from '../../core/config.js'
-import { buildUrl, fetcher } from '../../core/index.js'
+import type { LastFmConfig } from '@/core/config.js'
+import { buildUrl, fetcher } from '@/core/index.js'
 import type {
 	UserGetFriendsRequest,
 	UserGetFriendsResponse,

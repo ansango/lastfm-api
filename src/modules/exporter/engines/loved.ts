@@ -1,5 +1,5 @@
-import { createUserService } from '../../../api/user/service.js'
-import type { LastFmConfig } from '../../../core/config.js'
+import { createUserService } from '@/api/user/service.js'
+import type { LastFmConfig } from '@/core/config.js'
 import { formatCsvLovedTracks } from '../formats/csv.js'
 import type { ExporterLovedTracksRequest, ExporterLovedTracksResponse, ExportLovedTrackRecord } from '../schemas.js'
 

@@ -1,1 +1,1 @@
-export * from '../modules/insights/index.js'
+export * from '@/modules/insights/index.js'

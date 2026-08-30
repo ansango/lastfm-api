@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, test } from 'bun:test'
-import { createClient, LastFmClient } from '../client.js'
-import { createReportsService, type ReportsService } from '../entrypoints/reports.js'
-import * as reportSchemas from '../entrypoints/reports.schemas.js'
+import { createClient, LastFmClient } from '@/client.js'
+import { createReportsService, type ReportsService } from '@/entrypoints/reports.js'
+import * as reportSchemas from '@/entrypoints/reports.schemas.js'
 import { fakeTrack, okAttr } from './fixtures/lastfm-responses.js'
 import { installFetchMock } from './helpers/fetch-mock.js'
 

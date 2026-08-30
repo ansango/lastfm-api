@@ -1,1 +1,1 @@
-export * from '../api/artist/schemas.js'
+export * from '@/api/artist/schemas.js'

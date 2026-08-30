@@ -17,8 +17,8 @@ import {
 	type TagService,
 	type TrackService,
 	type UserService,
-} from './api/index.js'
-import { createConfig, getGlobalConfig, type LastFmConfig } from './core/index.js'
+} from '@/api/index.js'
+import { createConfig, getGlobalConfig, type LastFmConfig } from '@/core/index.js'
 import {
 	CacheManager,
 	type CacheService,
@@ -33,7 +33,7 @@ import {
 	type PlaylistsService,
 	type ReportsService,
 	type WatcherService,
-} from './modules/index.js'
+} from '@/modules/index.js'
 
 /**
  * Last.fm API Client

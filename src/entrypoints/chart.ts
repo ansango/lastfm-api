@@ -1,1 +1,1 @@
-export * from '../api/chart/index.js'
+export * from '@/api/chart/index.js'

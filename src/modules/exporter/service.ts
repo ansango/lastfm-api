@@ -1,4 +1,4 @@
-import type { LastFmConfig } from '../../core/config.js'
+import type { LastFmConfig } from '@/core/config.js'
 import { exportLibrary } from './engines/library.js'
 import { exportLovedTracks } from './engines/loved.js'
 import { exportScrobbles } from './engines/scrobbles.js'

@@ -1,5 +1,5 @@
-import { createUserService } from '../../../api/user/index.js'
-import type { LastFmConfig } from '../../../core/config.js'
+import { createUserService } from '@/api/user/index.js'
+import type { LastFmConfig } from '@/core/config.js'
 import type { InsightsCompareRequest, InsightsCompareResponse } from '../schemas.js'
 import { compareArtists, type NamedArtistEntry } from './math/compare.js'
 import { resolvePeriod } from './math/periods.js'

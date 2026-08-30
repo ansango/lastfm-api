@@ -1,7 +1,7 @@
-import { createArtistService } from '../../../api/artist/index.js'
-import { createTagService } from '../../../api/tag/index.js'
-import { createUserService } from '../../../api/user/index.js'
-import type { LastFmConfig } from '../../../core/config.js'
+import { createArtistService } from '@/api/artist/index.js'
+import { createTagService } from '@/api/tag/index.js'
+import { createUserService } from '@/api/user/index.js'
+import type { LastFmConfig } from '@/core/config.js'
 import type {
 	InsightBridgeArtist,
 	InsightRecommendationItem,

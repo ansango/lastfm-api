@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { imageSchema, userNameSchema } from '../../core/schemas/index.js'
+import { imageSchema, userNameSchema } from '@/core/schemas/index.js'
 
 export const watcherTrackSchema = z.object({
 	name: z.string(),

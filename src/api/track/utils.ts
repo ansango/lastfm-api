@@ -1,4 +1,4 @@
-import type { LastFmConfig } from '../../core/config.js'
+import type { LastFmConfig } from '@/core/config.js'
 import type { BatchTracksScrobbleRequest, TrackScrobbleRequest } from './schemas.js'
 
 export const MAX_BATCH_SCROBBLE_SIZE = 50

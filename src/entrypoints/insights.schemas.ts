@@ -1,1 +1,1 @@
-export * from '../modules/insights/schemas.js'
+export * from '@/modules/insights/schemas.js'

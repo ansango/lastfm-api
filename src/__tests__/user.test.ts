@@ -1,9 +1,9 @@
 import { afterEach, beforeEach, describe, expect, test } from 'bun:test'
-import { LastFmClient } from '../client.js'
-import { createUserService, type UserService } from '../entrypoints/user.js'
-import * as userSchemas from '../entrypoints/user.schemas.js'
-import { createClient } from '../index.js'
-import { LastFmApiError } from '../utils.js'
+import { LastFmClient } from '@/client.js'
+import { createUserService, type UserService } from '@/entrypoints/user.js'
+import * as userSchemas from '@/entrypoints/user.schemas.js'
+import { createClient } from '@/index.js'
+import { LastFmApiError } from '@/utils.js'
 import {
 	fakeAlbum,
 	fakeArtist,

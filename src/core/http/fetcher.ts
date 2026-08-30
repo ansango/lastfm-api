@@ -1,7 +1,7 @@
-import type { CacheManager } from '../../modules/cache/manager.js'
-import { generateSignature } from '../auth/signature.js'
-import type { LastFmConfig } from '../config.js'
-import { parseLastFmResponse } from '../errors/errors.js'
+import { generateSignature } from '@/core/auth/signature.js'
+import type { LastFmConfig } from '@/core/config.js'
+import { parseLastFmResponse } from '@/core/errors/errors.js'
+import type { CacheManager } from '@/modules/cache/manager.js'
 
 export const DEFAULT_BASE_URL = 'https://ws.audioscrobbler.com/2.0/'
 

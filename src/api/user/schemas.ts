@@ -8,7 +8,7 @@ import {
 	pageSchema,
 	urlSchema,
 	userNameSchema,
-} from '../../core/schemas/index.js'
+} from '@/core/schemas/index.js'
 
 const ageSchema = z.string().or(z.number()).optional()
 const albumCountSchema = z.string().or(z.number()).optional()

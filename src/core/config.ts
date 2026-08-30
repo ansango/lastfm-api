@@ -1,5 +1,5 @@
-import type { CacheOptions, CacheStore } from '../modules/cache/interface.js'
-import { CacheManager } from '../modules/cache/manager.js'
+import type { CacheOptions, CacheStore } from '@/modules/cache/interface.js'
+import { CacheManager } from '@/modules/cache/manager.js'
 
 export interface LastFmConfig {
 	apiKey: string

@@ -1,1 +1,1 @@
-export * from '../modules/reports/schemas.js'
+export * from '@/modules/reports/schemas.js'

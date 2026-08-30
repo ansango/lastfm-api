@@ -8,7 +8,7 @@ import {
 	pageSchema,
 	urlSchema,
 	userNameSchema,
-} from '../../core/schemas/index.js'
+} from '@/core/schemas/index.js'
 
 const countSchema = z.string().or(z.number()).optional()
 const langSchema = z.string().optional()

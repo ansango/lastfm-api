@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, test } from 'bun:test'
-import { LastFmClient } from '../client.js'
-import { LastFmApiError, signedPost } from '../utils.js'
+import { LastFmClient } from '@/client.js'
+import { LastFmApiError, signedPost } from '@/utils.js'
 import { type FetchMock, installFetchMock, parseFormBody, parseUrl } from './helpers/fetch-mock.js'
 
 const API_KEY = 'test-api-key'

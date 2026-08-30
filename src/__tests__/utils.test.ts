@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, test } from 'bun:test'
-import { LastFmClient } from '../client.js'
-import type { LastFmConfig } from '../config.js'
-import { buildAuthUrl, buildUrl } from '../utils.js'
+import { LastFmClient } from '@/client.js'
+import type { LastFmConfig } from '@/config.js'
+import { buildAuthUrl, buildUrl } from '@/utils.js'
 import { fakeArtist } from './fixtures/lastfm-responses.js'
 import { type FetchMock, installFetchMock } from './helpers/fetch-mock.js'
 

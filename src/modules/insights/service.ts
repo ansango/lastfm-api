@@ -1,4 +1,4 @@
-import type { LastFmConfig } from '../../core/config.js'
+import type { LastFmConfig } from '@/core/config.js'
 import { getAlbumHabits } from './analytics/album-habits.js'
 import { getBinges } from './analytics/binges.js'
 import { compareUsers } from './analytics/compare.js'

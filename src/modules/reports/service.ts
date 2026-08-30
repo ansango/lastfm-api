@@ -1,4 +1,4 @@
-import type { LastFmConfig } from '../../core/config.js'
+import type { LastFmConfig } from '@/core/config.js'
 import { getMonthlyDigest } from './generators/digest.js'
 import { getMilestones } from './generators/milestones.js'
 import { getWrapped } from './generators/wrapped.js'

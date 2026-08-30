@@ -1,7 +1,7 @@
 import { md5 } from 'js-md5'
-import type { LastFmConfig } from '../config.js'
-import { LastFmApiError, parseLastFmResponse } from '../errors/errors.js'
-import { DEFAULT_BASE_URL } from '../http/fetcher.js'
+import type { LastFmConfig } from '@/core/config.js'
+import { LastFmApiError, parseLastFmResponse } from '@/core/errors/errors.js'
+import { DEFAULT_BASE_URL } from '@/core/http/fetcher.js'
 
 /**
  * Genera la firma MD5 requerida para métodos autenticados

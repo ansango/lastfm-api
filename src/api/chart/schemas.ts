@@ -7,7 +7,7 @@ import {
 	pageSchema,
 	trackNameSchema,
 	urlSchema,
-} from '../../core/schemas/index.js'
+} from '@/core/schemas/index.js'
 
 const durationSchema = z.string().or(z.number()).optional()
 const itemsPerPageSchema = z.string().or(z.number()).optional()

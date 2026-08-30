@@ -1,9 +1,9 @@
 import { afterEach, beforeEach, describe, expect, test } from 'bun:test'
-import { LastFmClient } from '../client.js'
-import { type ChartService, createChartService } from '../entrypoints/chart.js'
-import * as chartSchemas from '../entrypoints/chart.schemas.js'
-import { createClient } from '../index.js'
-import { LastFmApiError } from '../utils.js'
+import { LastFmClient } from '@/client.js'
+import { type ChartService, createChartService } from '@/entrypoints/chart.js'
+import * as chartSchemas from '@/entrypoints/chart.schemas.js'
+import { createClient } from '@/index.js'
+import { LastFmApiError } from '@/utils.js'
 import {
 	fakeArtist,
 	fakeTag,

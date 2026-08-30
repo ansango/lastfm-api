@@ -1,6 +1,6 @@
-import { createArtistService } from '../../../api/artist/index.js'
-import { createUserService } from '../../../api/user/index.js'
-import type { LastFmConfig } from '../../../core/config.js'
+import { createArtistService } from '@/api/artist/index.js'
+import { createUserService } from '@/api/user/index.js'
+import type { LastFmConfig } from '@/core/config.js'
 import type { InsightsNowPlayingRequest, InsightsNowPlayingResponse } from '../schemas.js'
 
 export function stripWiki(s: string): string {

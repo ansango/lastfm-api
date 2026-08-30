@@ -8,7 +8,7 @@ import {
 	pageSchema,
 	trackNameSchema,
 	urlSchema,
-} from '../../core/schemas/index.js'
+} from '@/core/schemas/index.js'
 
 const countrySchema = countryNameSchema
 const durationSchema = z.string().or(z.number()).optional()
