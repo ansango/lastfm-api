@@ -1,1 +1,1 @@
-export * from '../geo/service.js'
+export * from '../api/geo/index.js'

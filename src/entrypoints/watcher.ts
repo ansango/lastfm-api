@@ -1,1 +1,1 @@
-export * from '../watcher/index.js'
+export * from '../modules/watcher/index.js'

@@ -1,1 +1,1 @@
-export * from '../watcher/schemas.js'
+export * from '../modules/watcher/schemas.js'

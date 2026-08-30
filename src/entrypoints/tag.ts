@@ -1,1 +1,1 @@
-export * from '../tag/service.js'
+export * from '../api/tag/index.js'

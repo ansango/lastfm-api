@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, test } from 'bun:test'
 import { LastFmClient } from '../client.js'
-import { TypedEventEmitter, type WatcherTrack } from '../watcher/index.js'
+import { TypedEventEmitter, type WatcherTrack } from '../modules/watcher/index.js'
 import { installFetchMock } from './helpers/fetch-mock.js'
 
 describe('TypedEventEmitter', () => {

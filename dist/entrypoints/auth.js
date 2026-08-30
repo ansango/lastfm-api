@@ -1,2 +1,2 @@
-export * from '../auth/service.js';
+export * from '../api/auth/index.js';
 //# sourceMappingURL=auth.js.map

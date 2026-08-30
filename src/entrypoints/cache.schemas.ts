@@ -1,1 +1,1 @@
-export * from '../cache/schemas.js'
+export * from '../modules/cache/schemas.js'

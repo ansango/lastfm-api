@@ -1,37 +1,27 @@
-// Clients
+// Core (Transport, Auth, Errors, Pagination, Base Schemas, Config)
 
-export * from './album/index.js'
-export * from './artist/index.js'
-export * from './auth/index.js'
-export * from './cache/index.js'
+// Canonical Last.fm API Namespaces
+export * from './api/index.js'
 // Canonical Methods
 export { CANONICAL_METHODS, type CanonicalMethod } from './canonical-methods.js'
-export * from './chart/index.js'
+// Client Facade
 export {
 	createClient,
 	createClient as createCoreClient,
 	LastFmClient,
 	LastFmClient as LastFmCoreClient,
 } from './client.js'
-// Common & Utilities
-export * from './common/index.js'
-// Configuration
+export * from './core/index.js'
+// Feature Modules & Extensions
+export * from './modules/index.js'
+
+// Transport & Signature Utilities
 export {
-	createConfig,
-	getGlobalConfig,
-	type LastFmConfig,
-	resetGlobalConfig,
-	setGlobalConfig,
-} from './config.js'
-export * from './exporter/index.js'
-export * from './geo/index.js'
-export * from './insights/index.js'
-export * from './library/index.js'
-export * from './playlists/index.js'
-export * from './reports/index.js'
-export * from './tag/index.js'
-export * from './track/index.js'
-// Domain Services & Schemas
-export * from './user/index.js'
-export { buildAuthUrl, buildUrl, fetcher, generateSignature, LastFmApiError, parseLastFmResponse } from './utils.js'
-export * from './watcher/index.js'
+	buildAuthUrl,
+	buildUrl,
+	fetcher,
+	generateSignature,
+	LastFmApiError,
+	parseLastFmResponse,
+	signedPost,
+} from './utils.js'

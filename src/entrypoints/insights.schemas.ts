@@ -1,2 +1,1 @@
-export type * from '../insights/schemas.js'
-export * from '../insights/schemas.js'
+export * from '../modules/insights/schemas.js'

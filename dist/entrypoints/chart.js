@@ -1,2 +1,2 @@
-export * from '../chart/service.js';
+export * from '../api/chart/index.js';
 //# sourceMappingURL=chart.js.map

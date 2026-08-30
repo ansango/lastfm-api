@@ -1,2 +1,2 @@
-export * from '../geo/service.js';
+export * from '../api/geo/index.js';
 //# sourceMappingURL=geo.d.ts.map

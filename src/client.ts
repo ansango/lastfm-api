@@ -1,20 +1,39 @@
-import { type AlbumService, createAlbumService } from './album/index.js'
-import { type ArtistService, createArtistService } from './artist/index.js'
-import { type AuthService, createAuthService } from './auth/index.js'
-import { CacheManager, type CacheService, createCacheService } from './cache/index.js'
-import { type ChartService, createChartService } from './chart/index.js'
-import type { LastFmConfig } from './config.js'
-import { createConfig, getGlobalConfig } from './config.js'
-import { createExporterService, type ExporterService } from './exporter/index.js'
-import { createGeoService, type GeoService } from './geo/index.js'
-import { createInsightsService, type InsightsService } from './insights/index.js'
-import { createLibraryService, type LibraryService } from './library/index.js'
-import { createPlaylistsService, type PlaylistsService } from './playlists/index.js'
-import { createReportsService, type ReportsService } from './reports/index.js'
-import { createTagService, type TagService } from './tag/index.js'
-import { createTrackService, type TrackService } from './track/index.js'
-import { createUserService, type UserService } from './user/index.js'
-import { createWatcherService, type WatcherService } from './watcher/index.js'
+import {
+	type AlbumService,
+	type ArtistService,
+	type AuthService,
+	type ChartService,
+	createAlbumService,
+	createArtistService,
+	createAuthService,
+	createChartService,
+	createGeoService,
+	createLibraryService,
+	createTagService,
+	createTrackService,
+	createUserService,
+	type GeoService,
+	type LibraryService,
+	type TagService,
+	type TrackService,
+	type UserService,
+} from './api/index.js'
+import { createConfig, getGlobalConfig, type LastFmConfig } from './core/index.js'
+import {
+	CacheManager,
+	type CacheService,
+	createCacheService,
+	createExporterService,
+	createInsightsService,
+	createPlaylistsService,
+	createReportsService,
+	createWatcherService,
+	type ExporterService,
+	type InsightsService,
+	type PlaylistsService,
+	type ReportsService,
+	type WatcherService,
+} from './modules/index.js'
 
 /**
  * Last.fm API Client

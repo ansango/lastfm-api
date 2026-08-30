@@ -1,4 +1,4 @@
 /**
- * Re-export common transport, error handling, and signing utilities.
+ * Re-export core transport, error handling, and signing utilities.
  */
-export * from './common/index.js'
+export * from './core/index.js'

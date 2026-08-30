@@ -1,2 +1,1 @@
-export * from '../playlists/index.js'
-export { createPlaylistsService, type PlaylistsService } from '../playlists/index.js'
+export * from '../modules/playlists/index.js'
