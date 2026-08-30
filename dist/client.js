@@ -1,10 +1,18 @@
+import { createAlbumService } from './album/index.js';
+import { createArtistService } from './artist/index.js';
+import { createAuthService } from './auth/index.js';
 import { CacheManager, createCacheService } from './cache/index.js';
+import { createChartService } from './chart/index.js';
 import { createConfig, getGlobalConfig } from './config.js';
-import { createAlbumService, createArtistService, createAuthService, createChartService, createGeoService, createLibraryService, createTagService, createTrackService, createUserService, } from './core/services/index.js';
 import { createExporterService } from './exporter/index.js';
+import { createGeoService } from './geo/index.js';
 import { createInsightsService } from './insights/index.js';
+import { createLibraryService } from './library/index.js';
 import { createPlaylistsService } from './playlists/index.js';
 import { createReportsService } from './reports/index.js';
+import { createTagService } from './tag/index.js';
+import { createTrackService } from './track/index.js';
+import { createUserService } from './user/index.js';
 import { createWatcherService } from './watcher/index.js';
 /**
  * Last.fm API Client

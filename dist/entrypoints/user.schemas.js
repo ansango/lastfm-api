@@ -1,2 +1,2 @@
-export * from '../core/schemas/user.schemas.js';
+export * from '../user/schemas.js';
 //# sourceMappingURL=user.schemas.js.map

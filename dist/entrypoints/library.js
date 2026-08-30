@@ -1,3 +1,2 @@
-export * from '../core/schemas/library.schemas.js';
-export { createLibraryService } from '../core/services/library.js';
+export * from '../library/service.js';
 //# sourceMappingURL=library.js.map

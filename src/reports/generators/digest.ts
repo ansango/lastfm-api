@@ -1,5 +1,5 @@
 import type { LastFmConfig } from '../../config.js'
-import { createUserService } from '../../core/services/user.js'
+import { createUserService } from '../../user/service.js'
 import type {
 	ReportRankedEntity,
 	ReportRankedTrack,

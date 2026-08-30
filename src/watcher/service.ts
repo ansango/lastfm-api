@@ -1,4 +1,4 @@
-import type { UserService } from '../core/services/user.js'
+import type { UserService } from '../user/service.js'
 import type { WatcherOptions } from './schemas.js'
 import { ScrobbleWatcher } from './watcher.js'
 

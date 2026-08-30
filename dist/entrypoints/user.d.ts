@@ -1,4 +1,2 @@
-export type * from '../core/schemas/user.schemas.js';
-export * from '../core/schemas/user.schemas.js';
-export { createUserService, type UserService } from '../core/services/user.js';
+export * from '../user/service.js';
 //# sourceMappingURL=user.d.ts.map

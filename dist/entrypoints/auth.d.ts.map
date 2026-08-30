@@ -1,1 +1,1 @@
-{"version":3,"file":"auth.d.ts","sourceRoot":"","sources":["../../src/entrypoints/auth.ts"],"names":[],"mappings":"AAAA,mBAAmB,iCAAiC,CAAA;AACpD,cAAc,iCAAiC,CAAA;AAC/C,OAAO,EAAE,KAAK,WAAW,EAAE,iBAAiB,EAAE,MAAM,0BAA0B,CAAA"}
+{"version":3,"file":"auth.d.ts","sourceRoot":"","sources":["../../src/entrypoints/auth.ts"],"names":[],"mappings":"AAAA,cAAc,oBAAoB,CAAA"}

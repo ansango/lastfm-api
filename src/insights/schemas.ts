@@ -8,7 +8,7 @@ import {
 	trackNameSchema,
 	urlSchema,
 	userNameSchema,
-} from '../core/schemas/base/index.js'
+} from '../common/schemas/index.js'
 
 // Period schema supporting canonical tokens and human aliases
 export const insightsPeriodSchema = z.union([

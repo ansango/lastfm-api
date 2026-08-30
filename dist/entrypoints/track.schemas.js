@@ -1,2 +1,2 @@
-export * from '../core/schemas/track.schemas.js';
+export * from '../track/schemas.js';
 //# sourceMappingURL=track.schemas.js.map

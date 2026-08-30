@@ -1,2 +1,2 @@
-export * from '../core/schemas/album.schemas.js';
+export * from '../album/schemas.js';
 //# sourceMappingURL=album.schemas.js.map

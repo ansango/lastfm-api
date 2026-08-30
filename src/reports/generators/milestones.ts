@@ -1,5 +1,5 @@
 import type { LastFmConfig } from '../../config.js'
-import { createUserService } from '../../core/services/user.js'
+import { createUserService } from '../../user/service.js'
 import type { ReportMilestoneItem, ReportsMilestonesRequest, ReportsMilestonesResponse } from '../schemas.js'
 
 function formatUtcDate(uts: number): string {
@@ -48,7 +48,7 @@ export async function getMilestones(
 						? (hit.artist['#text'] ?? hit.artist.name ?? '')
 						: String(hit.artist ?? '')
 				const name = hit.name ?? ''
-				const uts = Number.parseInt(hit.date?.uts ?? '0', 10) || 0
+				const uts = Number.parseInt(String(hit.date?.uts ?? '0'), 10) || 0
 				milestones.push({
 					milestone: target,
 					track: name,
