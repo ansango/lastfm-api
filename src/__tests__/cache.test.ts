@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, test } from 'bun:test'
-import { CacheManager, MemoryCacheStore, StorageCacheStore, type StorageLike } from '../cache/index.js'
 import { LastFmClient } from '../client.js'
+import { CacheManager, MemoryCacheStore, StorageCacheStore, type StorageLike } from '../modules/cache/index.js'
 import { installFetchMock } from './helpers/fetch-mock.js'
 
 describe('MemoryCacheStore', () => {

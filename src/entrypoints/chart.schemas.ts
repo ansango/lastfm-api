@@ -1,1 +1,1 @@
-export * from '../chart/schemas.js'
+export * from '../api/chart/schemas.js'

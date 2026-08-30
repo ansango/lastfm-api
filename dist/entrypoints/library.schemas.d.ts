@@ -1,2 +1,2 @@
-export * from '../library/schemas.js';
+export * from '../api/library/schemas.js';
 //# sourceMappingURL=library.schemas.d.ts.map

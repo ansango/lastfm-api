@@ -1,2 +1,2 @@
-export * from '../geo/schemas.js';
+export * from '../api/geo/schemas.js';
 //# sourceMappingURL=geo.schemas.js.map
