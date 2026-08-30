@@ -9,6 +9,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 > [ansango/lastfm-api](https://github.com/ansango/lastfm-api). Entries below preserve the
 > historical package and repository names used by their original releases.
 
+## [3.7.0] - 2026-08-30
+
+### ♻️ Code Refactoring
+
+- **arch**: structure codebase into core, api, and modules layers ([2134783](https://github.com/ansango/lastfm-api/commit/2134783))
+- **arch**: migrate from core/ to domain-first namespaces and clean insights architecture ([571fa41](https://github.com/ansango/lastfm-api/commit/571fa41))
+
+### 📚 Documentation
+
+- **insights**: add comprehensive mathematical models and algorithms guide (closes #168) ([a6447a7](https://github.com/ansango/lastfm-api/commit/a6447a7))
+
+
 ## [3.6.0] - 2026-08-29
 
 ### ✨ Features
