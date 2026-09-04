@@ -9,6 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 > [ansango/lastfm-api](https://github.com/ansango/lastfm-api). Entries below preserve the
 > historical package and repository names used by their original releases.
 
+## [3.7.1] - 2026-09-04
+
+### 🐛 Bug Fixes
+
+- **user**: correct pagination schema field names in `getLovedTracks`, `getRecentTracks`, `getTopAlbums`, `getTopArtists`, and `getTopTracks` `@attr` to match the Last.fm wire names (`page`/`perPage` instead of the previously incorrect `pages`/`perPages`). Also drops the unsupported `page` parameter from `user.getTopTags` to align with the Last.fm API surface. (#172)
+
+
 ## [3.7.0] - 2026-08-30
 
 ### ♻️ Code Refactoring
