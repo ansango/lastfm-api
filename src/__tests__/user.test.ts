@@ -96,6 +96,38 @@ describe('user service', () => {
 			expect(params.method).toBe('user.getLovedTracks')
 			expect(result.lovedtracks.track[0].name).toBe('Test Track')
 		})
+		test('exposes page, perPage, totalPages, total on @attr (Last.fm wire names)', async () => {
+			mock.respondWithJson({
+				lovedtracks: {
+					track: [
+						{
+							artist: { name: 'Test Artist', mbid: '', url: '' },
+							date: { uts: '1700000000', '#text': '2024-01-01' },
+							name: 'Test Track',
+							mbid: '',
+							url: 'https://example.com',
+							image: [],
+						},
+					],
+					'@attr': { user: TEST_USER, ...okAttr(2, 25, 137) },
+				},
+			})
+
+			const result = await client.user.getLovedTracks({ user: TEST_USER })
+
+			const attr = result.lovedtracks['@attr'] as {
+				page: string
+				perPage: string
+				totalPages: string
+				total: string
+			}
+			expect(attr.page).toBe('2')
+			expect(attr.perPage).toBe('25')
+			expect(attr.totalPages).toBe('1')
+			expect(attr.total).toBe('137')
+			expect('pages' in attr).toBe(false)
+			expect('perPages' in attr).toBe(false)
+		})
 	})
 
 	describe('getRecentTracks', () => {
@@ -122,6 +154,39 @@ describe('user service', () => {
 			const { params } = parseUrl(mock.lastCall().url)
 			expect(params.method).toBe('user.getRecentTracks')
 			expect(result.recenttracks.track[0].name).toBe('Test Track')
+		})
+		test('exposes page, perPage, totalPages, total on @attr (Last.fm wire names)', async () => {
+			mock.respondWithJson({
+				recenttracks: {
+					track: [
+						{
+							artist: { mbid: '', '#text': 'Test Artist' },
+							album: { mbid: '', '#text': 'Test Album' },
+							date: { uts: '1700000000', '#text': '2024-01-01' },
+							name: 'Test Track',
+							mbid: '',
+							url: 'https://example.com',
+							image: [],
+						},
+					],
+					'@attr': { user: TEST_USER, ...okAttr(3, 50, 250) },
+				},
+			})
+
+			const result = await client.user.getRecentTracks({ user: TEST_USER })
+
+			const attr = result.recenttracks['@attr'] as {
+				page: string
+				perPage: string
+				totalPages: string
+				total: string
+			}
+			expect(attr.page).toBe('3')
+			expect(attr.perPage).toBe('50')
+			expect(attr.totalPages).toBe('1')
+			expect(attr.total).toBe('250')
+			expect('pages' in attr).toBe(false)
+			expect('perPages' in attr).toBe(false)
 		})
 	})
 
@@ -151,6 +216,29 @@ describe('user service', () => {
 			const { params } = parseUrl(mock.lastCall().url)
 			expect(params.period).toBe('7day')
 		})
+		test('exposes page, perPage, totalPages, total on @attr (Last.fm wire names)', async () => {
+			mock.respondWithJson({
+				topalbums: {
+					album: [{ ...fakeAlbum, '@attr': { rank: '1' } }],
+					'@attr': { user: TEST_USER, ...okAttr(4, 50, 1000) },
+				},
+			})
+
+			const result = await client.user.getTopAlbums({ user: TEST_USER })
+
+			const attr = result.topalbums['@attr'] as {
+				page: string
+				perPage: string
+				totalPages: string
+				total: string
+			}
+			expect(attr.page).toBe('4')
+			expect(attr.perPage).toBe('50')
+			expect(attr.totalPages).toBe('1')
+			expect(attr.total).toBe('1000')
+			expect('pages' in attr).toBe(false)
+			expect('perPages' in attr).toBe(false)
+		})
 	})
 
 	describe('getTopArtists', () => {
@@ -168,6 +256,29 @@ describe('user service', () => {
 			expect(params.method).toBe('user.getTopArtists')
 			expect(result.topartists.artist[0].name).toBe(fakeArtist.name)
 		})
+		test('exposes page, perPage, totalPages, total on @attr (Last.fm wire names)', async () => {
+			mock.respondWithJson({
+				topartists: {
+					artist: [{ ...fakeArtist, '@attr': { rank: '1' } }],
+					'@attr': { user: TEST_USER, ...okAttr(5, 50, 500) },
+				},
+			})
+
+			const result = await client.user.getTopArtists({ user: TEST_USER })
+
+			const attr = result.topartists['@attr'] as {
+				page: string
+				perPage: string
+				totalPages: string
+				total: string
+			}
+			expect(attr.page).toBe('5')
+			expect(attr.perPage).toBe('50')
+			expect(attr.totalPages).toBe('1')
+			expect(attr.total).toBe('500')
+			expect('pages' in attr).toBe(false)
+			expect('perPages' in attr).toBe(false)
+		})
 	})
 
 	describe('getTopTags', () => {
@@ -181,6 +292,18 @@ describe('user service', () => {
 			const { params } = parseUrl(mock.lastCall().url)
 			expect(params.method).toBe('user.getTopTags')
 			expect(result.toptags.tag[0].name).toBe(fakeTag.name)
+		})
+		test('request schema does not accept page (Last.fm API does not support it)', () => {
+			const parsed = userSchemas.userGetTopTagsRequestSchema.safeParse({
+				user: TEST_USER,
+				limit: 50,
+				page: '2',
+			})
+			expect(parsed.success).toBe(true)
+			if (parsed.success) {
+				expect('page' in parsed.data).toBe(false)
+				expect(parsed.data).toEqual({ user: TEST_USER, limit: 50 })
+			}
 		})
 	})
 
@@ -198,6 +321,29 @@ describe('user service', () => {
 			const { params } = parseUrl(mock.lastCall().url)
 			expect(params.method).toBe('user.getTopTracks')
 			expect(result.toptracks.track[0].name).toBe(fakeTrack.name)
+		})
+		test('exposes page, perPage, totalPages, total on @attr (Last.fm wire names)', async () => {
+			mock.respondWithJson({
+				toptracks: {
+					track: [{ ...fakeTrack, '@attr': { rank: '1' } }],
+					'@attr': { user: TEST_USER, ...okAttr(6, 50, 750) },
+				},
+			})
+
+			const result = await client.user.getTopTracks({ user: TEST_USER })
+
+			const attr = result.toptracks['@attr'] as {
+				page: string
+				perPage: string
+				totalPages: string
+				total: string
+			}
+			expect(attr.page).toBe('6')
+			expect(attr.perPage).toBe('50')
+			expect(attr.totalPages).toBe('1')
+			expect(attr.total).toBe('750')
+			expect('pages' in attr).toBe(false)
+			expect('perPages' in attr).toBe(false)
 		})
 	})
 
