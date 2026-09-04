@@ -108,9 +108,9 @@ export const lovedTracksSchema = z.object({
 	),
 	'@attr': z.object({
 		user: userNameSchema,
+		page: pageSchema,
+		perPage: pageSchema,
 		totalPages: totalPagesSchema,
-		pages: pageSchema,
-		perPages: pageSchema,
 		total: totalSchema,
 	}),
 })
@@ -153,9 +153,9 @@ export const recentTracksSchema = z.object({
 	),
 	'@attr': z.object({
 		user: userNameSchema,
+		page: pageSchema,
+		perPage: pageSchema,
 		totalPages: totalPagesSchema,
-		pages: pageSchema,
-		perPages: pageSchema,
 		total: totalSchema,
 	}),
 })
@@ -191,9 +191,9 @@ export const topAlbumsSchema = z.object({
 	),
 	'@attr': z.object({
 		user: userNameSchema,
+		page: pageSchema,
+		perPage: pageSchema,
 		totalPages: totalPagesSchema,
-		pages: pageSchema,
-		perPages: pageSchema,
 		total: totalSchema,
 	}),
 })
@@ -224,9 +224,9 @@ export const topArtistsSchema = z.object({
 	),
 	'@attr': z.object({
 		user: userNameSchema,
+		page: pageSchema,
+		perPage: pageSchema,
 		totalPages: totalPagesSchema,
-		pages: pageSchema,
-		perPages: pageSchema,
 		total: totalSchema,
 	}),
 })
@@ -238,7 +238,6 @@ export const userGetTopArtistsResponseSchema = z.object({
 export const userGetTopTagsRequestSchema = z.object({
 	user: userNameSchema,
 	limit: limitSchema.optional(),
-	page: pageSchema.optional(),
 })
 
 export const topTagsSchema = z.object({
@@ -286,9 +285,9 @@ export const topTracksSchema = z.object({
 	),
 	'@attr': z.object({
 		user: userNameSchema,
+		page: pageSchema,
+		perPage: pageSchema,
 		totalPages: totalPagesSchema,
-		pages: pageSchema,
-		perPages: pageSchema,
 		total: totalSchema,
 	}),
 })
